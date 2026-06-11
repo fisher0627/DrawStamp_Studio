@@ -45,16 +45,14 @@
             </div>
 
             <!-- 顶部文字工具栏：字体 / 字号 / 粗体 / 颜色 -->
+            <FontPicker
+              :model-value="company.fontFamily"
+              :fonts="fonts"
+              :preview-text="company.companyName || '示例科技有限公司'"
+              label="字体"
+              @update:model-value="value => updateCompanyFont(index, value)"
+            />
             <div class="text-toolbar">
-              <select
-                :value="company.fontFamily"
-                class="toolbar-font-select"
-                @change="onFieldInput(index, 'fontFamily', $event)"
-              >
-                <option v-for="font in fonts" :key="font" :value="font" :style="{ fontFamily: font }">
-                  {{ getFontDisplayName(font) }}
-                </option>
-              </select>
               <input
                 type="number"
                 class="toolbar-font-size"
@@ -284,7 +282,7 @@
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ICompany, IDrawStampConfig } from '../../../DrawStampTypes'
-import { getFontDisplayName } from '../../../utils/fontUtils'
+import FontPicker from '../controls/FontPicker.vue'
 import icItalicPng from "../../../assets/icons/ic_italic.png";
 
 const { t } = useI18n()
@@ -310,14 +308,9 @@ const selectedIndex = computed(() => props.selectedIndex ?? -1)
 // 跟踪每个项的展开状态
 const expandedItems = ref<Record<number, boolean>>({})
 
-// 当 selectedIndex 变化时，自动展开对应的项，并关闭其他项
+// 当 selectedIndex 变化时，自动展开对应的项
 watch(selectedIndex, (newIndex) => {
   if (newIndex >= 0) {
-    // 关闭所有其他项
-    Object.keys(expandedItems.value).forEach(key => {
-      expandedItems.value[Number(key)] = false
-    })
-    // 展开当前选中的项
     expandedItems.value[newIndex] = true
   }
 }, { immediate: true })
@@ -327,25 +320,18 @@ const toggleExpanded = () => {
 }
 
 const toggleItem = (index: number) => {
-  // 如果当前项已展开，则关闭它；否则先关闭所有其他项，再展开当前项
-  if (expandedItems.value[index]) {
+  if (isItemExpanded(index)) {
     expandedItems.value[index] = false
   } else {
-    // 关闭所有其他项
-    Object.keys(expandedItems.value).forEach(key => {
-      expandedItems.value[Number(key)] = false
-    })
-    // 展开当前项
     expandedItems.value[index] = true
   }
 }
 
 const isItemExpanded = (index: number) => {
-  // 如果该项被选中，自动展开；否则使用本地展开状态
   if (selectedIndex.value === index) {
     return true
   }
-  return expandedItems.value[index] ?? false
+  return expandedItems.value[index] ?? true
 }
 
 const updateConfig = (updater: (company: ICompany) => void, index: number) => {
@@ -361,6 +347,12 @@ const onFieldInput = (index: number, field: keyof ICompany, event: Event) => {
   const value = (event.target as HTMLInputElement).value as any
   updateConfig((company) => {
     ;(company as any)[field] = value
+  }, index)
+}
+
+const updateCompanyFont = (index: number, value: string) => {
+  updateConfig((company) => {
+    company.fontFamily = value
   }, index)
 }
 

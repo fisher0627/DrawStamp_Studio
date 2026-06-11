@@ -20,6 +20,7 @@ import { DrawImageCanvas } from "./utils/DrawImageCanvas.ts";
 import { DrawCodeUtils } from './utils/DrawCodeUtils'
 import { DrawStampTypeUtils } from './utils/DrawStampTypeUtils'
 import { DrawTaxNumberUtils } from './utils/DrawTaxNumberUtils'
+import { getCanvasFontString } from './utils/fontUtils'
 // 标尺宽度
 const RULER_WIDTH = 8
 // 标尺高度
@@ -70,7 +71,9 @@ export class DrawStampUtils {
     private isDraggable: boolean = true;
     private isDragging: boolean = false;
     private dragStartPos: { x: number, y: number } = { x: 0, y: 0 };
+    private dragStartOffset: { x: number, y: number } = { x: 0, y: 0 };
     private stampPosition: { x: number, y: number } = { x: 0, y: 0 };
+    private onConfigChange?: (config: IDrawStampConfig) => void;
 
     /**
      * 构造函数
@@ -244,6 +247,95 @@ export class DrawStampUtils {
         this.refreshStamp();
     }
 
+    public zoomBy(factor: number) {
+        this.zoomCanvas(this.canvas.width / 2, this.canvas.height / 2, factor)
+    }
+
+    public fitToView() {
+        const contentWidth = (this.drawStampConfigs.width + RULER_WIDTH * 2) * this.mmToPixel
+        const contentHeight = (this.drawStampConfigs.height + RULER_HEIGHT * 2) * this.mmToPixel
+        const nextScale = Math.min(
+            (this.canvas.width - 36) / Math.max(contentWidth, 1),
+            (this.canvas.height - 36) / Math.max(contentHeight, 1),
+            1.8
+        )
+        this.scale = Math.max(0.35, Math.min(nextScale, 5))
+        const stampCenterX = (this.drawStampConfigs.width / 2) * this.mmToPixel + RULER_WIDTH * this.mmToPixel
+        const stampCenterY = (this.drawStampConfigs.height / 2) * this.mmToPixel + RULER_HEIGHT * this.mmToPixel
+        const effectiveOffsetX = (this.drawStampConfigs.offsetX ?? this.stampOffsetX) * this.mmToPixel * this.scale
+        const effectiveOffsetY = (this.drawStampConfigs.offsetY ?? this.stampOffsetY) * this.mmToPixel * this.scale
+        this.offsetX = this.canvas.width / 2 - stampCenterX - effectiveOffsetX
+        this.offsetY = this.canvas.height / 2 - stampCenterY - effectiveOffsetY
+        this.refreshStamp()
+    }
+
+    public getViewState() {
+        return {
+            scale: this.scale,
+            offsetX: this.offsetX,
+            offsetY: this.offsetY
+        }
+    }
+
+    public getStampViewportFrame() {
+        const stampCenterX = (this.drawStampConfigs.width / 2) * this.mmToPixel + RULER_WIDTH * this.mmToPixel
+        const stampCenterY = (this.drawStampConfigs.height / 2) * this.mmToPixel + RULER_HEIGHT * this.mmToPixel
+        const effectiveOffsetX = (this.drawStampConfigs.offsetX ?? this.stampOffsetX) * this.mmToPixel * this.scale
+        const effectiveOffsetY = (this.drawStampConfigs.offsetY ?? this.stampOffsetY) * this.mmToPixel * this.scale
+        const width = this.drawStampConfigs.width * this.mmToPixel * this.scale
+        const height = this.drawStampConfigs.height * this.mmToPixel * this.scale
+        const centerX = this.offsetX + stampCenterX + effectiveOffsetX
+        const centerY = this.offsetY + stampCenterY + effectiveOffsetY
+
+        return {
+            left: centerX - width / 2,
+            top: centerY - height / 2,
+            width,
+            height
+        }
+    }
+
+    public setOnConfigChange(callback?: (config: IDrawStampConfig) => void) {
+        this.onConfigChange = callback
+    }
+
+    private getCanvasDisplayScale() {
+        const rect = this.canvas.getBoundingClientRect()
+        return {
+            x: rect.width ? rect.width / this.canvas.width : 1,
+            y: rect.height ? rect.height / this.canvas.height : 1
+        }
+    }
+
+    private clampStampOffset(offsetX: number, offsetY: number) {
+        const stampCenterX = (this.drawStampConfigs.width / 2) * this.mmToPixel + RULER_WIDTH * this.mmToPixel
+        const stampCenterY = (this.drawStampConfigs.height / 2) * this.mmToPixel + RULER_HEIGHT * this.mmToPixel
+        const frameWidth = this.drawStampConfigs.width * this.mmToPixel * this.scale
+        const frameHeight = this.drawStampConfigs.height * this.mmToPixel * this.scale
+        const scalePixels = this.mmToPixel * this.scale
+        const workLeft = RULER_WIDTH * this.mmToPixel
+        const workTop = RULER_HEIGHT * this.mmToPixel
+
+        const minCenterX = workLeft + frameWidth / 2
+        const maxCenterX = this.canvas.width - frameWidth / 2
+        const minCenterY = workTop + frameHeight / 2
+        const maxCenterY = this.canvas.height - frameHeight / 2
+        const safeMinCenterX = Math.min(minCenterX, maxCenterX)
+        const safeMaxCenterX = Math.max(minCenterX, maxCenterX)
+        const safeMinCenterY = Math.min(minCenterY, maxCenterY)
+        const safeMaxCenterY = Math.max(minCenterY, maxCenterY)
+
+        const minOffsetX = (safeMinCenterX - this.offsetX - stampCenterX) / scalePixels
+        const maxOffsetX = (safeMaxCenterX - this.offsetX - stampCenterX) / scalePixels
+        const minOffsetY = (safeMinCenterY - this.offsetY - stampCenterY) / scalePixels
+        const maxOffsetY = (safeMaxCenterY - this.offsetY - stampCenterY) / scalePixels
+
+        return {
+            x: Math.min(maxOffsetX, Math.max(minOffsetX, offsetX)),
+            y: Math.min(maxOffsetY, Math.max(minOffsetY, offsetY))
+        }
+    }
+
     private onMouseUp = () => {
         this.isDragging = false
         this.refreshStamp(false, false);
@@ -263,8 +355,12 @@ export class DrawStampUtils {
     private onMouseDown = (event: MouseEvent) => {
         this.isDragging = true
         this.dragStartPos = {
-            x: event.clientX - this.stampOffsetX * this.mmToPixel,
-            y: event.clientY - this.stampOffsetY * this.mmToPixel
+            x: event.clientX,
+            y: event.clientY
+        }
+        this.dragStartOffset = {
+            x: this.stampOffsetX,
+            y: this.stampOffsetY
         }
     }
 
@@ -274,11 +370,18 @@ export class DrawStampUtils {
         }
 
         if (this.isDragging) {
-            const newOffsetX = (event.clientX - this.dragStartPos.x) / this.mmToPixel
-            const newOffsetY = (event.clientY - this.dragStartPos.y) / this.mmToPixel
-            this.stampOffsetX = Math.round(newOffsetX * 10) / 10 // 四舍五入到小数点后一位
-            this.stampOffsetY = Math.round(newOffsetY * 10) / 10
+            const displayScale = this.getCanvasDisplayScale()
+            const deltaX = (event.clientX - this.dragStartPos.x) / displayScale.x
+            const deltaY = (event.clientY - this.dragStartPos.y) / displayScale.y
+            const nextOffsetX = this.dragStartOffset.x + deltaX / (this.mmToPixel * this.scale)
+            const nextOffsetY = this.dragStartOffset.y + deltaY / (this.mmToPixel * this.scale)
+            const clampedOffset = this.clampStampOffset(nextOffsetX, nextOffsetY)
+            this.stampOffsetX = Math.round(clampedOffset.x * 10) / 10 // 四舍五入到小数点后一位
+            this.stampOffsetY = Math.round(clampedOffset.y * 10) / 10
+            this.drawStampConfigs.offsetX = this.stampOffsetX
+            this.drawStampConfigs.offsetY = this.stampOffsetY
             this.refreshStamp()
+            this.onConfigChange?.(this.drawStampConfigs)
         } else {
             // 原有的鼠标移动逻辑
             const rect = this.canvas.getBoundingClientRect()
@@ -383,6 +486,31 @@ export class DrawStampUtils {
         }
         
         ctx.restore();
+    }
+
+    private shouldClipStampContent(): boolean {
+        const config = this.drawStampConfigs
+        const hasOnlyExtractedImage =
+            (config.imageList?.length || 0) > 0 &&
+            !config.outBorder?.drawInnerCircle &&
+            !config.innerCircle?.drawInnerCircle &&
+            !config.outThinCircle?.drawInnerCircle &&
+            (config.innerCircleList?.length || 0) === 0 &&
+            (config.svgList?.length || 0) === 0 &&
+            (config.lineList?.length || 0) === 0 &&
+            !config.drawStar?.drawStar &&
+            !config.securityPattern?.openSecurityPattern &&
+            !config.roughEdge?.drawRoughEdge &&
+            !config.agingEffect?.applyAging &&
+            !config.company?.companyName?.trim() &&
+            (config.companyList?.length || 0) === 0 &&
+            !config.stampType?.stampType?.trim() &&
+            (config.stampTypeList?.length || 0) === 0 &&
+            !config.stampCode?.code?.trim() &&
+            (config.stampCodeList?.length || 0) === 0 &&
+            !config.taxNumber?.code?.trim()
+
+        return !hasOnlyExtractedImage
     }
 
     private resetSvgCache() {
@@ -614,7 +742,7 @@ export class DrawStampUtils {
         const lineSpacing = stampType.lineSpacing * this.mmToPixel; // 新增：行间距
 
         ctx.save()
-        ctx.font = `${fontWeight} ${fontSize}px ${stampType.fontFamily}`
+        ctx.font = getCanvasFontString(stampType.fontFamily, fontSize, fontWeight)
         ctx.fillStyle = this.drawStampConfigs.primaryColor
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
@@ -685,7 +813,7 @@ export class DrawStampUtils {
 
         ctx.save()
 
-        ctx.font = `${fontWeight} ${fontSize}px ${taxNumber.fontFamily}`;
+        ctx.font = getCanvasFontString(taxNumber.fontFamily, fontSize, fontWeight);
         ctx.fillStyle = this.drawStampConfigs.primaryColor
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
@@ -880,7 +1008,11 @@ export class DrawStampUtils {
         format: 'png' | 'jpeg' | 'svg' = 'png',
         quality: number = 0.92,
         targetWidth?: number,
-        targetHeight?: number
+        targetHeight?: number,
+        options: {
+            filenameBase?: string
+            background?: 'transparent' | 'white'
+        } = {}
     ) {
         // 图像与边框的间距
         let imagePadding = 1
@@ -952,6 +1084,10 @@ export class DrawStampUtils {
 
             let dataURL: string
             let filename: string
+            const safeFilenameBase = (options.filenameBase || 'mystamp')
+                .trim()
+                .replace(/[\\/:*?"<>|]/g, '_')
+                .replace(/\s+/g, '_') || 'mystamp'
 
             if (format === 'svg') {
                 // 对于 SVG，将 PNG 数据嵌入到 SVG 中
@@ -960,7 +1096,7 @@ export class DrawStampUtils {
   <image href="${pngDataURL}" width="${outputCanvas.width}" height="${outputCanvas.height}"/>
 </svg>`
                 dataURL = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgContent)))}`
-                filename = 'mystamp.svg'
+                filename = `${safeFilenameBase}.svg`
             } else if (format === 'jpeg') {
                 // JPEG 格式，需要白色背景
                 const tempCanvas = document.createElement('canvas')
@@ -975,11 +1111,26 @@ export class DrawStampUtils {
                 } else {
                     dataURL = outputCanvas.toDataURL('image/jpeg', quality)
                 }
-                filename = 'mystamp.jpg'
+                filename = `${safeFilenameBase}.jpg`
             } else {
                 // PNG 格式（默认）
-                dataURL = outputCanvas.toDataURL('image/png')
-                filename = 'mystamp.png'
+                if (options.background === 'white') {
+                    const tempCanvas = document.createElement('canvas')
+                    tempCanvas.width = outputCanvas.width
+                    tempCanvas.height = outputCanvas.height
+                    const tempCtx = tempCanvas.getContext('2d')
+                    if (tempCtx) {
+                        tempCtx.fillStyle = '#FFFFFF'
+                        tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height)
+                        tempCtx.drawImage(outputCanvas, 0, 0, tempCanvas.width, tempCanvas.height)
+                        dataURL = tempCanvas.toDataURL('image/png')
+                    } else {
+                        dataURL = outputCanvas.toDataURL('image/png')
+                    }
+                } else {
+                    dataURL = outputCanvas.toDataURL('image/png')
+                }
+                filename = `${safeFilenameBase}.png`
             }
 
             // 创建一个临时的 <a> 元素来触发下载
@@ -1235,18 +1386,6 @@ export class DrawStampUtils {
     ) {
         // 清除整个画布
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-        // 在离屏 canvas 上绘制
-        const offscreenCanvas = this.offscreenCanvas
-        offscreenCanvas.width = this.canvas.width
-        offscreenCanvas.height = this.canvas.height
-        const offscreenCtx = offscreenCanvas.getContext('2d')
-        if (!offscreenCtx) return
-        // 创建一个临时的 canvas 用于存储原始图片
-        const tempCanvas = document.createElement('canvas')
-        tempCanvas.width = this.canvas.width
-        tempCanvas.height = this.canvas.height
-        const tempCtx = tempCanvas.getContext('2d')
-        if (!tempCtx) return
         // 检查是否有矩形印章
         const hasRectangleStamp =
             this.drawStampConfigs.companyList.some(company => company.shape === 'rectangle') ||
@@ -1262,10 +1401,31 @@ export class DrawStampUtils {
             this.drawStampConfigs.company?.shape === 'triangle'
         const stampShape = hasOrganicStamp ? 'organic' : hasTriangleStamp ? 'triangle' : hasRhombusStamp ? 'rhombus' : hasRectangleStamp ? 'rectangle' : 'ellipse'
         const isEllipseShape = stampShape === 'ellipse'
-        
+
         // 矩形印章的尺寸（使用 width 和 height）
         const rectWidth = this.drawStampConfigs.width * this.mmToPixel
         const rectHeight = this.drawStampConfigs.height * this.mmToPixel
+        const renderPadding = 160
+        const maxHalfWidth = Math.max(rectWidth / 2, radiusX)
+        const maxHalfHeight = Math.max(rectHeight / 2, radiusY)
+        const minContentX = centerX - maxHalfWidth - renderPadding
+        const minContentY = centerY - maxHalfHeight - renderPadding
+        const maxContentX = centerX + maxHalfWidth + renderPadding
+        const maxContentY = centerY + maxHalfHeight + renderPadding
+        const renderShiftX = Math.max(0, -minContentX)
+        const renderShiftY = Math.max(0, -minContentY)
+        const renderWidth = Math.ceil(Math.max(this.canvas.width + renderShiftX, maxContentX + renderShiftX))
+        const renderHeight = Math.ceil(Math.max(this.canvas.height + renderShiftY, maxContentY + renderShiftY))
+
+        // 在离屏 canvas 上绘制。缩放视图时章心会落在逻辑画布外侧，
+        // 这里按内容范围扩容，再以反向偏移贴回主画布，避免预览先被离屏画布裁切。
+        const offscreenCanvas = this.offscreenCanvas
+        offscreenCanvas.width = renderWidth
+        offscreenCanvas.height = renderHeight
+        const offscreenCtx = offscreenCanvas.getContext('2d')
+        if (!offscreenCtx) return
+        centerX += renderShiftX
+        centerY += renderShiftY
 
         const outBorderStyle = this.drawStampConfigs.outBorder.lineStyle || 'solid'
         const outBorderDash = (this.drawStampConfigs.outBorder.dashLength ?? 2) * this.mmToPixel
@@ -1365,75 +1525,78 @@ export class DrawStampUtils {
             }
         }
         
-        // 创建裁剪区域，确保所有内容（文字、图片、五角星等）都被限制在印章形状内
+        // 创建裁剪区域，确保普通生成印章内容被限制在印章形状内。
+        // 纯图片提取模式需要允许位置微调，否则图片移动时会被原始章形区域裁掉。
         offscreenCtx.save()
-        offscreenCtx.beginPath()
-        if (stampShape === 'rectangle') {
-            // 矩形裁剪区域
-            offscreenCtx.rect(
-                centerX - rectWidth / 2,
-                centerY - rectHeight / 2,
-                rectWidth,
-                rectHeight
-            )
-        } else if (stampShape === 'rhombus') {
-            offscreenCtx.moveTo(centerX, centerY - rectHeight / 2)
-            offscreenCtx.lineTo(centerX + rectWidth / 2, centerY)
-            offscreenCtx.lineTo(centerX, centerY + rectHeight / 2)
-            offscreenCtx.lineTo(centerX - rectWidth / 2, centerY)
-            offscreenCtx.closePath()
-        } else if (stampShape === 'organic') {
-            // 不规则形状裁剪区域（使用与绘制相同的算法）
-            const halfWidth = rectWidth / 2
-            const halfHeight = rectHeight / 2
-            const points = 64
-            const irregularity = 0.15
-            
-            const noise = (angle: number) => {
-                return (
-                    Math.sin(angle * 2) * 0.3 +
-                    Math.sin(angle * 3) * 0.2 +
-                    Math.sin(angle * 5) * 0.15 +
-                    Math.sin(angle * 7) * 0.1 +
-                    Math.sin(angle * 11) * 0.05
-                ) * irregularity
-            }
-            
-            const pathPoints: { x: number; y: number }[] = []
-            for (let i = 0; i < points; i++) {
-                const angle = (i / points) * Math.PI * 2
-                const noiseValue = noise(angle * 2)
-                const radiusX = halfWidth * (1 + noiseValue)
-                const radiusY = halfHeight * (1 + noiseValue * 0.8)
-                const x = centerX + Math.cos(angle) * radiusX
-                const y = centerY + Math.sin(angle) * radiusY
-                pathPoints.push({ x, y })
-            }
-            
-            if (pathPoints.length > 0) {
-                offscreenCtx.moveTo(pathPoints[0].x, pathPoints[0].y)
-                for (let i = 0; i < pathPoints.length; i++) {
-                    const current = pathPoints[i]
-                    const next = pathPoints[(i + 1) % pathPoints.length]
-                    const cpX = (current.x + next.x) / 2
-                    const cpY = (current.y + next.y) / 2
-                    offscreenCtx.quadraticCurveTo(current.x, current.y, cpX, cpY)
-                }
+        if (this.shouldClipStampContent()) {
+            offscreenCtx.beginPath()
+            if (stampShape === 'rectangle') {
+                // 矩形裁剪区域
+                offscreenCtx.rect(
+                    centerX - rectWidth / 2,
+                    centerY - rectHeight / 2,
+                    rectWidth,
+                    rectHeight
+                )
+            } else if (stampShape === 'rhombus') {
+                offscreenCtx.moveTo(centerX, centerY - rectHeight / 2)
+                offscreenCtx.lineTo(centerX + rectWidth / 2, centerY)
+                offscreenCtx.lineTo(centerX, centerY + rectHeight / 2)
+                offscreenCtx.lineTo(centerX - rectWidth / 2, centerY)
                 offscreenCtx.closePath()
+            } else if (stampShape === 'organic') {
+                // 不规则形状裁剪区域（使用与绘制相同的算法）
+                const halfWidth = rectWidth / 2
+                const halfHeight = rectHeight / 2
+                const points = 64
+                const irregularity = 0.15
+                
+                const noise = (angle: number) => {
+                    return (
+                        Math.sin(angle * 2) * 0.3 +
+                        Math.sin(angle * 3) * 0.2 +
+                        Math.sin(angle * 5) * 0.15 +
+                        Math.sin(angle * 7) * 0.1 +
+                        Math.sin(angle * 11) * 0.05
+                    ) * irregularity
+                }
+                
+                const pathPoints: { x: number; y: number }[] = []
+                for (let i = 0; i < points; i++) {
+                    const angle = (i / points) * Math.PI * 2
+                    const noiseValue = noise(angle * 2)
+                    const radiusX = halfWidth * (1 + noiseValue)
+                    const radiusY = halfHeight * (1 + noiseValue * 0.8)
+                    const x = centerX + Math.cos(angle) * radiusX
+                    const y = centerY + Math.sin(angle) * radiusY
+                    pathPoints.push({ x, y })
+                }
+                
+                if (pathPoints.length > 0) {
+                    offscreenCtx.moveTo(pathPoints[0].x, pathPoints[0].y)
+                    for (let i = 0; i < pathPoints.length; i++) {
+                        const current = pathPoints[i]
+                        const next = pathPoints[(i + 1) % pathPoints.length]
+                        const cpX = (current.x + next.x) / 2
+                        const cpY = (current.y + next.y) / 2
+                        offscreenCtx.quadraticCurveTo(current.x, current.y, cpX, cpY)
+                    }
+                    offscreenCtx.closePath()
+                }
+            } else if (stampShape === 'triangle') {
+                // 三角形裁剪区域
+                const halfWidth = rectWidth / 2
+                const halfHeight = rectHeight / 2
+                offscreenCtx.moveTo(centerX, centerY - halfHeight)
+                offscreenCtx.lineTo(centerX + halfWidth, centerY + halfHeight)
+                offscreenCtx.lineTo(centerX - halfWidth, centerY + halfHeight)
+                offscreenCtx.closePath()
+            } else {
+                // 椭圆裁剪区域
+                offscreenCtx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, Math.PI * 2)
             }
-        } else if (stampShape === 'triangle') {
-            // 三角形裁剪区域
-            const halfWidth = rectWidth / 2
-            const halfHeight = rectHeight / 2
-            offscreenCtx.moveTo(centerX, centerY - halfHeight)
-            offscreenCtx.lineTo(centerX + halfWidth, centerY + halfHeight)
-            offscreenCtx.lineTo(centerX - halfWidth, centerY + halfHeight)
-            offscreenCtx.closePath()
-        } else {
-            // 椭圆裁剪区域
-            offscreenCtx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, Math.PI * 2)
+            offscreenCtx.clip()
         }
-        offscreenCtx.clip()
         // 绘制内圈列表
         if (this.drawStampConfigs.innerCircleList.length > 0) {
             this.drawCircleUtils.drawCircleList(offscreenCtx, this.drawStampConfigs.innerCircleList, centerX, centerY, borderColor)
@@ -1520,7 +1683,7 @@ export class DrawStampUtils {
 
         // 设置合成模式，确保印章内容只在椭圆区域内显示
         ctx.globalCompositeOperation = 'source-over'
-        ctx.drawImage(offscreenCanvas, 0, 0)
+        ctx.drawImage(offscreenCanvas, -renderShiftX, -renderShiftY)
         ctx.restore()
         // 添加做旧效果
         if (isEllipseShape && this.drawStampConfigs.agingEffect.applyAging) {

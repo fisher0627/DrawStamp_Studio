@@ -1,5 +1,6 @@
 const svgModules = import.meta.glob('../assets/svgs/*.svg', {
-  as: 'raw',
+  query: '?raw',
+  import: 'default',
   eager: true
 })
 
@@ -22,4 +23,3 @@ const svgAssets: SvgAsset[] = Object.entries(svgModules).map(([path, content]) =
 export function getSvgAssets() {
   return svgAssets
 }
-

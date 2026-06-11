@@ -1,4 +1,5 @@
 import { ITaxNumber } from "../DrawStampTypes"
+import { getCanvasFontString } from "./fontUtils"
 
 export class DrawTaxNumberUtils {
     private mmToPixel = 10
@@ -44,7 +45,7 @@ export class DrawTaxNumberUtils {
         const letterSpacing = taxNumber.letterSpacing * this.mmToPixel
 
         ctx.save()
-        ctx.font = `${fontWeight} ${fontSize}px ${taxNumber.fontFamily}`
+        ctx.font = getCanvasFontString(taxNumber.fontFamily, fontSize, fontWeight)
         ctx.fillStyle = primaryColor
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'

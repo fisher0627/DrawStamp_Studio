@@ -45,21 +45,14 @@
             </div>
 
             <!-- 顶部文字工具栏：字体 / 字号 / 粗体 / 颜色 -->
+            <FontPicker
+              :model-value="code.fontFamily"
+              :fonts="systemFonts"
+              :preview-text="code.code || 'NO.000001'"
+              label="字体"
+              @update:model-value="value => updateCode(index, 'fontFamily', value)"
+            />
             <div class="text-toolbar">
-              <select
-                :value="code.fontFamily"
-                class="toolbar-font-select"
-                @change="updateCode(index, 'fontFamily', ($event.target as HTMLSelectElement).value)"
-              >
-                <option
-                  v-for="font in systemFonts"
-                  :key="font"
-                  :value="font"
-                  :style="{ fontFamily: font }"
-                >
-                  {{ getFontDisplayName(font) }}
-                </option>
-              </select>
               <input
                 type="number"
                 class="toolbar-font-size"
@@ -153,7 +146,7 @@
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { IDrawStampConfig, ICode } from '../../../DrawStampTypes'
-import { getFontDisplayName } from '../../../utils/fontUtils'
+import FontPicker from '../controls/FontPicker.vue'
 
 const { t } = useI18n()
 
@@ -173,7 +166,7 @@ const toggleExpanded = () => {
   emit('update:expanded', !props.expanded)
 }
 
-const primaryColor = computed(() => props.config.primaryColor || '#d40000')
+const primaryColor = computed(() => props.config.primaryColor || '#c91523')
 const selectedIndex = computed(() => props.selectedIndex ?? -1)
 
 const codeList = computed(() => {
@@ -185,14 +178,11 @@ const codeList = computed(() => {
 // 跟踪每个编码项的展开状态
 const expandedItems = ref<Record<number, boolean>>({})
 
-// 当选中索引变化时，自动只展开当前选中项，收起其他项
+// 当选中索引变化时，自动展开当前选中项
 watch(
   selectedIndex,
   (newIndex) => {
     if (newIndex >= 0) {
-      Object.keys(expandedItems.value).forEach((key) => {
-        expandedItems.value[Number(key)] = false
-      })
       expandedItems.value[newIndex] = true
     }
   },
@@ -200,12 +190,9 @@ watch(
 )
 
 const toggleItem = (index: number) => {
-  if (expandedItems.value[index]) {
+  if (isItemExpanded(index)) {
     expandedItems.value[index] = false
   } else {
-    Object.keys(expandedItems.value).forEach((key) => {
-      expandedItems.value[Number(key)] = false
-    })
     expandedItems.value[index] = true
   }
 }
@@ -214,10 +201,32 @@ const isItemExpanded = (index: number) => {
   if (selectedIndex.value === index) {
     return true
   }
-  return expandedItems.value[index] ?? false
+  return expandedItems.value[index] ?? true
 }
 
 const parseNumber = (event: Event) => Number((event.target as HTMLInputElement).value)
+
+const createDefaultCode = (config: IDrawStampConfig): ICode => ({
+  code: '',
+  compression: 1,
+  fontHeight: 1.2,
+  fontFamily: 'Arial',
+  borderOffset: 1,
+  fontWidth: 1.2,
+  textDistributionFactor: 50,
+  fontWeight: 'normal',
+  color: config.primaryColor || '#c91523'
+})
+
+const ensureCodeList = (config: IDrawStampConfig) => {
+  if (!config.stampCodeList) {
+    config.stampCodeList = []
+  }
+  if (config.stampCodeList.length === 0) {
+    config.stampCodeList.push(config.stampCode ? { ...createDefaultCode(config), ...config.stampCode } : createDefaultCode(config))
+  }
+  return config.stampCodeList
+}
 
 const updateCode = <K extends keyof ICode>(
   index: number,
@@ -225,13 +234,7 @@ const updateCode = <K extends keyof ICode>(
   value: ICode[K]
 ) => {
   emit('update-config', (config) => {
-    if (!config.stampCodeList) {
-      config.stampCodeList = []
-      if (config.stampCode) {
-        config.stampCodeList.push({ ...config.stampCode })
-      }
-    }
-    const list = config.stampCodeList
+    const list = ensureCodeList(config)
     if (!list[index]) return
     list[index][key] = value
     // 同步第一条到单个 stampCode，兼容旧逻辑
@@ -246,13 +249,7 @@ const onColorInput = (index: number, event: Event) => {
 
 const toggleBold = (index: number) => {
   emit('update-config', (config) => {
-    if (!config.stampCodeList) {
-      config.stampCodeList = []
-      if (config.stampCode) {
-        config.stampCodeList.push({ ...config.stampCode })
-      }
-    }
-    const list = config.stampCodeList
+    const list = ensureCodeList(config)
     if (!list[index]) return
     const current = list[index].fontWeight
     if (current === 'bold' || current === 700) {
@@ -266,48 +263,16 @@ const toggleBold = (index: number) => {
 
 const removeCode = (index: number) => {
   emit('update-config', (config) => {
-    if (!config.stampCodeList) {
-      // 如果还没有列表结构，则尝试从单个 stampCode 删除
-      if (index === 0 && config.stampCode) {
-        config.stampCode = {
-          code: '',
-          compression: 1,
-          fontHeight: 1.2,
-          fontFamily: 'Arial',
-          borderOffset: 1,
-          fontWidth: 1.2,
-          textDistributionFactor: 50,
-          fontWeight: 'normal',
-          color: config.primaryColor || '#d40000'
-        }
-      }
-      return
-    }
+    if (!config.stampCodeList) config.stampCodeList = []
     config.stampCodeList.splice(index, 1)
     // 同步第一条到单个 stampCode，兼容旧逻辑
-    config.stampCode = config.stampCodeList[0] || {
-      code: '',
-      compression: 1,
-      fontHeight: 1.2,
-      fontFamily: 'Arial',
-      borderOffset: 1,
-      fontWidth: 1.2,
-      textDistributionFactor: 50,
-      fontWeight: 'normal',
-      color: config.primaryColor || '#d40000'
-    }
+    config.stampCode = config.stampCodeList[0] || createDefaultCode(config)
   })
 }
 
 const copyCode = (index: number) => {
   emit('update-config', (config) => {
-    if (!config.stampCodeList) {
-      config.stampCodeList = []
-      if (config.stampCode) {
-        config.stampCodeList.push({ ...config.stampCode })
-      }
-    }
-    const list = config.stampCodeList
+    const list = ensureCodeList(config)
     if (!list[index]) return
     const original = list[index]
     const clone: ICode = {
@@ -320,23 +285,8 @@ const copyCode = (index: number) => {
 }
 const addCode = () => {
   emit('update-config', (config) => {
-    if (!config.stampCodeList) {
-      config.stampCodeList = []
-      if (config.stampCode) {
-        config.stampCodeList.push({ ...config.stampCode })
-      }
-    }
-    const base = config.stampCodeList[config.stampCodeList.length - 1] || config.stampCode || {
-      code: '',
-      compression: 1,
-      fontHeight: 1.2,
-      fontFamily: 'Arial',
-      borderOffset: 1,
-      fontWidth: 1.2,
-      textDistributionFactor: 50,
-      fontWeight: 'normal',
-      color: config.primaryColor || '#d40000'
-    }
+    const list = ensureCodeList(config)
+    const base = list[list.length - 1] || createDefaultCode(config)
     config.stampCodeList.push({ ...base, code: '' })
     config.stampCode = config.stampCodeList[0]
   })
@@ -344,13 +294,7 @@ const addCode = () => {
 
 const adjustCompression = (index: number, delta: number) => {
   emit('update-config', (config) => {
-    if (!config.stampCodeList) {
-      config.stampCodeList = []
-      if (config.stampCode) {
-        config.stampCodeList.push({ ...config.stampCode })
-      }
-    }
-    const list = config.stampCodeList
+    const list = ensureCodeList(config)
     if (!list[index]) return
     const newValue = Math.max(0.0, Math.min(3, list[index].compression + delta))
     list[index].compression = newValue
@@ -360,13 +304,7 @@ const adjustCompression = (index: number, delta: number) => {
 
 const adjustDistribution = (index: number, delta: number) => {
   emit('update-config', (config) => {
-    if (!config.stampCodeList) {
-      config.stampCodeList = []
-      if (config.stampCode) {
-        config.stampCodeList.push({ ...config.stampCode })
-      }
-    }
-    const list = config.stampCodeList
+    const list = ensureCodeList(config)
     if (!list[index]) return
     const newValue = Math.max(0, Math.min(100, list[index].textDistributionFactor + delta))
     list[index].textDistributionFactor = newValue

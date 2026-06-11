@@ -41,16 +41,14 @@
             </div>
 
             <!-- 顶部文字工具栏：字体 / 字号 / 粗体 / 倾斜 / 颜色 -->
+            <FontPicker
+              :model-value="type.fontFamily"
+              :fonts="systemFonts"
+              :preview-text="type.stampType || '合同专用章'"
+              label="字体"
+              @update:model-value="value => updateStampType(index, 'fontFamily', value)"
+            />
             <div class="text-toolbar">
-              <select
-                :value="type.fontFamily"
-                class="toolbar-font-select"
-                @change="updateStampType(index, 'fontFamily', ($event.target as HTMLSelectElement).value)"
-              >
-                <option v-for="font in systemFonts" :key="font" :value="font" :style="{ fontFamily: font }">
-                  {{ getFontDisplayName(font) }}
-                </option>
-              </select>
               <input
                 type="number"
                 class="toolbar-font-size"
@@ -208,7 +206,7 @@
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { IDrawStampConfig, IStampType } from '../../../DrawStampTypes'
-import { getFontDisplayName } from '../../../utils/fontUtils'
+import FontPicker from '../controls/FontPicker.vue'
 import icItalicPng from '../../../assets/icons/ic_italic.png'
 
 const { t } = useI18n()
@@ -232,14 +230,9 @@ const selectedIndex = computed(() => props.selectedIndex ?? -1)
 // 跟踪每个项的展开状态
 const expandedItems = ref<Record<number, boolean>>({})
 
-// 当 selectedIndex 变化时，自动展开对应的项，并关闭其他项
+// 当 selectedIndex 变化时，自动展开对应的项
 watch(selectedIndex, (newIndex) => {
   if (newIndex >= 0) {
-    // 关闭所有其他项
-    Object.keys(expandedItems.value).forEach(key => {
-      expandedItems.value[Number(key)] = false
-    })
-    // 展开当前选中的项
     expandedItems.value[newIndex] = true
   }
 }, { immediate: true })
@@ -249,15 +242,9 @@ const toggleExpanded = () => {
 }
 
 const toggleItem = (index: number) => {
-  // 如果当前项已展开，则关闭它；否则先关闭所有其他项，再展开当前项
-  if (expandedItems.value[index]) {
+  if (isItemExpanded(index)) {
     expandedItems.value[index] = false
   } else {
-    // 关闭所有其他项
-    Object.keys(expandedItems.value).forEach(key => {
-      expandedItems.value[Number(key)] = false
-    })
-    // 展开当前项
     expandedItems.value[index] = true
   }
 }
@@ -323,11 +310,10 @@ const copyStampType = (index: number) => {
 }
 
 const isItemExpanded = (index: number) => {
-  // 如果该项被选中，自动展开；否则使用本地展开状态
   if (selectedIndex.value === index) {
     return true
   }
-  return expandedItems.value[index] ?? false
+  return expandedItems.value[index] ?? true
 }
 
 const addStampType = () => {

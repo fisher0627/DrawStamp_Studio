@@ -1,4 +1,5 @@
 import { ICode } from "../DrawStampTypes"
+import { getCanvasFontString } from "./fontUtils"
 
 export class DrawCodeUtils {
     private mmToPixel = 10
@@ -39,11 +40,12 @@ export class DrawCodeUtils {
         color: string
     ) {
         const fontSize = code.fontHeight * this.mmToPixel
-        const text = code.code
+        const text = code.code?.trim()
+        if (!text) return
         const fontWeight = code.fontWeight || 'normal'
 
         ctx.save()
-        ctx.font = `${fontWeight} ${fontSize}px ${code.fontFamily}`
+        ctx.font = getCanvasFontString(code.fontFamily, fontSize, fontWeight)
         ctx.fillStyle = color
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'

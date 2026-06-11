@@ -3,7 +3,7 @@ import { IAgingEffect, ICode, ICompany, IDrawImage, IDrawStampConfig, IDrawStar,
 export class InitDrawStampConfigsUtils {
 
     // 默认主色
-    private primaryColor: string = 'blue'
+    private primaryColor: string = '#c91523'
 
     private ruler: IShowRuler = {
         showRuler: true,

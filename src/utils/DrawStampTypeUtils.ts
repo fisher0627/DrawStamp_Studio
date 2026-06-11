@@ -1,4 +1,5 @@
 import { IStampType } from "../DrawStampTypes"
+import { getCanvasFontString } from "./fontUtils"
 
 export class DrawStampTypeUtils {
     private mmToPixel = 10
@@ -65,7 +66,7 @@ export class DrawStampTypeUtils {
 
         ctx.save()
         const fontStyle = stampType.fontStyle || 'normal'
-        ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${stampType.fontFamily}`
+        ctx.font = getCanvasFontString(stampType.fontFamily, fontSize, fontWeight, fontStyle)
         ctx.fillStyle = stampType.color || primaryColor
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'

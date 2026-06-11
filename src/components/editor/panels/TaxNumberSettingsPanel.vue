@@ -20,32 +20,13 @@
             @input="updateTaxNumber('code', ($event.target as HTMLInputElement).value)"
           />
         </div>
-        <label>
-          {{ t('stamp.taxNumber.font') }}:
-          <div class="font-input-group">
-            <select
-              :value="config.taxNumber.fontFamily"
-              class="font-select"
-              @change="updateTaxNumber('fontFamily', ($event.target as HTMLSelectElement).value)"
-            >
-              <option
-                v-for="font in systemFonts"
-                :key="font"
-                :value="font"
-                :style="{ fontFamily: font }"
-              >
-                {{ getFontDisplayName(font) }}
-              </option>
-            </select>
-            <input
-              type="text"
-              :value="config.taxNumber.fontFamily"
-              class="font-input"
-              @input="updateTaxNumber('fontFamily', ($event.target as HTMLInputElement).value)"
-              :placeholder="t('stamp.common.fontPlaceholder')"
-            />
-          </div>
-        </label>
+        <FontPicker
+          :model-value="config.taxNumber.fontFamily"
+          :fonts="systemFonts"
+          :preview-text="config.taxNumber.code || '税号 000000000000000000'"
+          :label="t('stamp.taxNumber.font')"
+          @update:model-value="value => updateTaxNumber('fontFamily', value)"
+        />
         <label class="inline-label">
           <span class="label-text">{{ t('stamp.taxNumber.fontWeight') }}:</span>
           <select
@@ -131,7 +112,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import type { IDrawStampConfig, ITaxNumber } from '../../../DrawStampTypes'
-import { getFontDisplayName } from '../../../utils/fontUtils'
+import FontPicker from '../controls/FontPicker.vue'
 
 const { t } = useI18n()
 

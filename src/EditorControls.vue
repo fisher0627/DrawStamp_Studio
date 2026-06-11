@@ -2,122 +2,122 @@
     <div class="editor-container" :class="{ 'has-warning': showSecurityWarning }">
       <div class="editor-controls" ref="editorControls">
         <BasicSettingsPanel
-          v-show="props.showAll || currentGroupName === 'basic'"
-          :expanded="props.showAll ? expandedGroups.basic : true"
+          v-show="isGroupVisible('basic')"
+          :expanded="expandedGroups.basic"
           :is-circle-detect="isCircleDetect"
           :config="getDrawConfigs()"
-          @update:expanded="value => (expandedGroups.basic = value)"
+          @update:expanded="value => handleGroupExpandedChange('basic', value)"
           @update:is-circle-detect="handleIsCircleDetectChange"
           @update-config="handleBasicConfigUpdate"
         />
 
         <CompanySettingsPanel
-          v-show="props.showAll || currentGroupName === 'company'"
-          :expanded="props.showAll ? expandedGroups.company : true"
+          v-show="isGroupVisible('company')"
+          :expanded="expandedGroups.company"
           :config="getDrawConfigs()"
           :system-fonts="systemFonts"
           :selected-index="props.selectedElementType === 'company' ? props.selectedElementIndex ?? -1 : -1"
-          @update:expanded="value => (expandedGroups.company = value)"
+          @update:expanded="value => handleGroupExpandedChange('company', value)"
           @update-config="handleCompanyConfigUpdate"
         />
 
         <StampTypeSettingsPanel
-          v-show="props.showAll || currentGroupName === 'stampType'"
-          :expanded="props.showAll ? expandedGroups.stampType : true"
+          v-show="isGroupVisible('stampType')"
+          :expanded="expandedGroups.stampType"
           :config="getDrawConfigs()"
           :system-fonts="systemFonts"
           :selected-index="props.selectedElementType === 'stampType' ? props.selectedElementIndex ?? -1 : -1"
-          @update:expanded="value => (expandedGroups.stampType = value)"
+          @update:expanded="value => handleGroupExpandedChange('stampType', value)"
           @update-config="handleStampTypeConfigUpdate"
         />
 
         <CodeSettingsPanel
-          v-show="props.showAll || currentGroupName === 'code'"
-          :expanded="props.showAll ? expandedGroups.code : true"
+          v-show="isGroupVisible('code')"
+          :expanded="expandedGroups.code"
           :config="getDrawConfigs()"
           :system-fonts="systemFonts"
           :selected-index="props.selectedElementType === 'code' ? props.selectedElementIndex ?? -1 : -1"
-          @update:expanded="value => (expandedGroups.code = value)"
+          @update:expanded="value => handleGroupExpandedChange('code', value)"
           @update-config="handleCodeConfigUpdate"
         />
 
         <TaxNumberSettingsPanel
-          v-show="props.showAll || currentGroupName === 'taxNumber'"
-          :expanded="props.showAll ? expandedGroups.taxNumber : true"
+          v-show="isGroupVisible('taxNumber')"
+          :expanded="expandedGroups.taxNumber"
           :config="getDrawConfigs()"
           :system-fonts="systemFonts"
-          @update:expanded="value => (expandedGroups.taxNumber = value)"
+          @update:expanded="value => handleGroupExpandedChange('taxNumber', value)"
           @update-config="handleTaxNumberConfigUpdate"
         />
 
         <ImageListSettingsPanel
-          v-show="props.showAll || currentGroupName === 'images'"
-          :expanded="props.showAll ? expandedGroups.images : true"
+          v-show="isGroupVisible('images')"
+          :expanded="expandedGroups.images"
           :config="getDrawConfigs()"
           :selected-index="props.selectedElementType === 'image' ? props.selectedElementIndex ?? -1 : -1"
-          @update:expanded="value => (expandedGroups.images = value)"
+          @update:expanded="value => handleGroupExpandedChange('images', value)"
           @update-config="handleImageListConfigUpdate"
         />
 
         <SvgSettingsPanel
-          v-show="props.showAll || currentGroupName === 'svg'"
-          :expanded="props.showAll ? expandedGroups.svg : true"
+          v-show="isGroupVisible('svg')"
+          :expanded="expandedGroups.svg"
           :config="getDrawConfigs()"
           :selected-index="props.selectedElementType === 'svg' ? props.selectedElementIndex ?? -1 : -1"
-          @update:expanded="value => (expandedGroups.svg = value)"
+          @update:expanded="value => handleGroupExpandedChange('svg', value)"
           @update-config="handleSvgConfigUpdate"
         />
 
         <LineSettingsPanel
-          v-show="props.showAll || currentGroupName === 'lines'"
-          :expanded="props.showAll ? expandedGroups.lines : true"
+          v-show="isGroupVisible('lines')"
+          :expanded="expandedGroups.lines"
           :config="getDrawConfigs()"
           :selected-index="props.selectedElementType === 'line' ? props.selectedElementIndex ?? -1 : -1"
-          @update:expanded="value => (expandedGroups.lines = value)"
+          @update:expanded="value => handleGroupExpandedChange('lines', value)"
           @update-config="handleLineConfigUpdate"
         />
 
         <StarSettingsPanel
-          v-show="props.showAll || currentGroupName === 'star'"
-          :expanded="props.showAll ? expandedGroups.star : true"
+          v-show="isGroupVisible('star')"
+          :expanded="expandedGroups.star"
           :config="getDrawConfigs()"
-          @update:expanded="value => (expandedGroups.star = value)"
+          @update:expanded="value => handleGroupExpandedChange('star', value)"
           @update-config="handleStarConfigUpdate"
         />
 
         <SecurityPatternSettingsPanel
-          v-show="props.showAll || currentGroupName === 'security'"
-          :expanded="props.showAll ? expandedGroups.security : true"
+          v-show="isGroupVisible('security')"
+          :expanded="expandedGroups.security"
           :config="getDrawConfigs()"
-          @update:expanded="value => (expandedGroups.security = value)"
+          @update:expanded="value => handleGroupExpandedChange('security', value)"
           @update-config="handleSecurityPatternConfigUpdate"
           @refresh-security-pattern="refreshSecurityPattern"
         />
 
         <RoughEdgeSettingsPanel
-          v-show="props.showAll || currentGroupName === 'roughEdge'"
-          :expanded="props.showAll ? expandedGroups.roughEdge : true"
+          v-show="isGroupVisible('roughEdge')"
+          :expanded="expandedGroups.roughEdge"
           :config="getDrawConfigs()"
-          @update:expanded="value => (expandedGroups.roughEdge = value)"
+          @update:expanded="value => handleGroupExpandedChange('roughEdge', value)"
           @update-config="handleRoughEdgeConfigUpdate"
           @refresh-rough-edge="refreshRoughEdge"
         />
 
         <AgingEffectSettingsPanel
-          v-show="props.showAll || currentGroupName === 'aging'"
-          :expanded="props.showAll ? expandedGroups.aging : true"
+          v-show="isGroupVisible('aging')"
+          :expanded="expandedGroups.aging"
           :config="getDrawConfigs()"
-          @update:expanded="value => (expandedGroups.aging = value)"
+          @update:expanded="value => handleGroupExpandedChange('aging', value)"
           @update-config="handleAgingEffectConfigUpdate"
           @refresh-aging-effect="refreshAgingEffect"
         />
 
         <InnerCircleSettingsPanel
-          v-show="props.showAll || currentGroupName === 'innerCircle'"
-          :expanded="props.showAll ? expandedGroups.innerCircle : true"
+          v-show="isGroupVisible('innerCircle')"
+          :expanded="expandedGroups.innerCircle"
           :config="getDrawConfigs()"
           :selected-index="props.selectedElementType === 'circle' ? props.selectedElementIndex ?? -1 : -1"
-          @update:expanded="value => (expandedGroups.innerCircle = value)"
+          @update:expanded="value => handleGroupExpandedChange('innerCircle', value)"
           @update-config="handleInnerCircleConfigUpdate"
         />
       </div>
@@ -126,7 +126,6 @@
   <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
   import {DrawStampUtils} from './DrawStampUtils'
-  import { getSystemFonts } from './utils/fontUtils'
 import { ICompany, IDrawStampConfig, IInnerCircle, IStampType } from './DrawStampTypes'
   import { useI18n } from 'vue-i18n'
 import { useStampStore } from './stores/stampStore'
@@ -154,6 +153,7 @@ import SvgSettingsPanel from './components/editor/panels/SvgSettingsPanel.vue'
     selectedElementType?: string
     selectedElementIndex?: number
     showAll?: boolean
+    settingsCategory?: 'basic' | 'advanced' | 'all'
     }>()
 
   // 元素类型到设置组名称的映射
@@ -173,14 +173,41 @@ const elementTypeToGroupMap: Record<string, string> = {
     'line': 'lines'
   }
 
+type SettingsCategory = 'basic' | 'advanced'
+
+const groupCategoryMap: Record<string, SettingsCategory> = {
+  basic: 'basic',
+  company: 'basic',
+  stampType: 'basic',
+  code: 'basic',
+  taxNumber: 'basic',
+  star: 'basic',
+  innerCircle: 'basic',
+  images: 'advanced',
+  svg: 'advanced',
+  lines: 'advanced',
+  security: 'advanced',
+  roughEdge: 'advanced',
+  aging: 'advanced'
+}
+
   // 获取当前应该显示的组名
   const currentGroupName = computed(() => {
     if (!props.selectedElementType) return ''
     return elementTypeToGroupMap[props.selectedElementType] || ''
   })
 
+const isGroupVisible = (groupName: string) => {
+  if (!props.showAll) {
+    return currentGroupName.value === groupName
+  }
+
+  const category = props.settingsCategory || 'all'
+  return category === 'all' || groupCategoryMap[groupName] === category
+}
+
   // 更新drawStampUtils，更新绘制印章
-  const emit = defineEmits(['updateDrawStamp'])
+  const emit = defineEmits(['updateDrawStamp', 'collapseContext'])
 const stampStore = useStampStore()
 
 const getDrawConfigs = (): IDrawStampConfig => {
@@ -203,7 +230,7 @@ const getDrawConfigs = (): IDrawStampConfig => {
   // 圆形边框宽度（毫米）
   const circleBorderWidth = ref(1)
   // 主题颜色
-  const primaryColor = ref('blue')
+  const primaryColor = ref('#c91523')
   // 做旧效果、防伪纹路、毛边效果、内圈圆设置现在从 config 中直接读取，不需要单独的 ref
   // 文字分布因子，控制公司名称文字在椭圆上的分布范围
   const textDistributionFactor = ref(3)
@@ -505,27 +532,11 @@ const handleLineConfigUpdate = (updater: (config: IDrawStampConfig) => void) => 
   drawStamp()
 }
 
-  // 添加系统字体列表
   const systemFonts = ref<string[]>([])
-
-  // 加载系统字体
-  const loadSystemFonts = async () => {
-    try {
-      const fonts = await getSystemFonts()
-      systemFonts.value = fonts
-      console.log('EditorControls: 加载系统字体成功，共', fonts.length, '个字体')
-    } catch (error) {
-      console.error('EditorControls: 加载系统字体失败', error)
-      // 即使失败也设置一个默认字体列表
-    systemFonts.value = await getSystemFonts()
-    }
-  }
 
   // 在组件挂载时加载字体
   onMounted(async () => {
     console.log('EditorControls: onMounted drawStampUtils', props.drawStampUtils)
-    await loadSystemFonts()
-    console.log('EditorControls: 系统字体列表已加载，共', systemFonts.value.length, '个字体')
     restoreDrawConfigs()
     drawStamp()
     loadPresetsFromLocalStorage()
@@ -691,7 +702,7 @@ type GroupKey =
   | 'lines'
 
 const expandedGroups = reactive<Record<GroupKey, boolean>>({
-    basic: false,
+    basic: true,
     company: false,
     stampType: false,
     code: false,
@@ -705,6 +716,22 @@ const expandedGroups = reactive<Record<GroupKey, boolean>>({
     svg: false,
     lines: false
   })
+
+watch(
+  currentGroupName,
+  (groupName) => {
+    if (!groupName) return
+    expandedGroups[groupName as GroupKey] = true
+  },
+  { immediate: true }
+)
+
+const handleGroupExpandedChange = (groupName: GroupKey, value: boolean) => {
+  expandedGroups[groupName] = value
+  if (!props.showAll && currentGroupName.value === groupName && !value) {
+    emit('collapseContext')
+  }
+}
 
   // 切换组的展开/折叠状态
 const toggleGroup = (groupName: GroupKey) => {

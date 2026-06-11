@@ -1,4 +1,16 @@
 :root {
+  --stamp-font-liti: "DrawStamp-STLiti";
+}
+
+@font-face {
+  font-family: "DrawStamp-STLiti";
+  src: url("./assets/fonts/STLiti.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -27,6 +39,7 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 h1 {
@@ -58,12 +71,15 @@ button:focus-visible {
 }
 
 #app {
-  background-color: #f2f2f2;
+  width: 100%;
+  min-width: 0;
+  background-color: #eef2f6;
   flex: 1;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-sizing: border-box;
 }
 
 @media (prefers-color-scheme: light) {
@@ -110,15 +126,15 @@ button:focus-visible {
 .editor-controls {
   height: 100%;
   width: 100%;
-  padding: 6px;
-  background-color: white;
+  padding: 10px;
+  background-color: #f7f9fb;
   overflow-y: auto;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   scrollbar-width: thin;
-  scrollbar-color: #888 #f5f5f5;
+  scrollbar-color: #b8c2cf transparent;
 }
 
 .editor-controls::-webkit-scrollbar {
@@ -126,24 +142,25 @@ button:focus-visible {
 }
 
 .editor-controls::-webkit-scrollbar-track {
-  background: #f5f5f5;
+  background: transparent;
 }
 
 .editor-controls::-webkit-scrollbar-thumb {
-  background: #888;
+  background: #b8c2cf;
   border-radius: 4px;
 }
 
 .editor-controls::-webkit-scrollbar-thumb:hover {
-  background: #666;
+  background: #8d9aad;
 }
 
 /* 控制组样式 */
 .control-group {
   background-color: white;
+  border: 1px solid #e3e8ef;
   border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 14px;
+  box-shadow: 0 1px 2px rgba(37, 48, 68, 0.05);
 }
 
 .group-header {
@@ -151,7 +168,7 @@ button:focus-visible {
 }
 
 .control-group:hover {
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 18px rgba(37, 48, 68, 0.08);
 }
 
 /* 按钮组样式 */
@@ -188,8 +205,8 @@ button:focus-visible {
 .control-group h3 {
   margin: 0 0 15px 0;
   padding-bottom: 8px;
-  border-bottom: 2px solid #4caf50;
-  color: #333;
+  border-bottom: 1px solid #e3e8ef;
+  color: #202733;
   font-size: 16px;
   font-weight: 600;
 }
@@ -255,23 +272,26 @@ button:focus-visible {
   gap: 4px;
   margin-bottom: 10px;
   font-size: 14px;
-  color: #555;
+  color: #47566a;
 }
 
 .editor-controls input[type='text'],
 .editor-controls input[type='number'],
 .editor-controls select {
-  padding: 6px 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 7px 9px;
+  border: 1px solid #d2dae6;
+  border-radius: 7px;
   font-size: 14px;
-  transition: border-color 0.3s ease;
+  background: #ffffff;
+  color: #202733;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .editor-controls input[type='text']:focus,
 .editor-controls input[type='number']:focus,
 .editor-controls select:focus {
-  border-color: #4caf50;
+  border-color: #bd2431;
+  box-shadow: 0 0 0 3px rgba(189, 36, 49, 0.12);
   outline: none;
 }
 
@@ -286,8 +306,8 @@ button:focus-visible {
 .font-select {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid #d2dae6;
+  border-radius: 7px;
   font-size: 14px;
   background-color: #fff;
   cursor: pointer;
@@ -300,22 +320,24 @@ button:focus-visible {
 }
 
 .font-select:focus {
-  border-color: #4caf50;
+  border-color: #bd2431;
+  box-shadow: 0 0 0 3px rgba(189, 36, 49, 0.12);
   outline: none;
 }
 
 .font-input {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: 1px solid #d2dae6;
+  border-radius: 7px;
   font-size: 14px;
   transition: border-color 0.3s ease;
   box-sizing: border-box;
 }
 
 .font-input:focus {
-  border-color: #4caf50;
+  border-color: #bd2431;
+  box-shadow: 0 0 0 3px rgba(189, 36, 49, 0.12);
   outline: none;
 }
 
@@ -325,7 +347,7 @@ button:focus-visible {
   -webkit-appearance: none;
   width: 100%;
   height: 6px;
-  background: #ddd;
+  background: #d9e0ea;
   border-radius: 3px;
   outline: none;
 }
@@ -335,14 +357,14 @@ button:focus-visible {
   -webkit-appearance: none;
   width: 16px;
   height: 16px;
-  background: #4caf50;
+  background: #bd2431;
   border-radius: 50%;
   cursor: pointer;
   transition: background 0.3s ease;
 }
 
 .editor-controls input[type='range']::-webkit-slider-thumb:hover {
-  background: #45a049;
+  background: #9f1e29;
 }
 
 /* 复选框样式 */
@@ -383,9 +405,9 @@ button:focus-visible {
 
 
 .add-button {
-  border: 1px dashed #1890ff;
-  background: #e6f7ff;
-  color: #1890ff;
+  border: 1px dashed #bd2431;
+  background: #fff5f6;
+  color: #bd2431;
   padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
@@ -393,9 +415,9 @@ button:focus-visible {
 }
 
 .add-button:hover {
-  background: #bae7ff;
-  border-color: #40a9ff;
-  color: #096dd9;
+  background: #f6eef0;
+  border-color: #bd2431;
+  color: #9f1e29;
 }
 
 .delete-button:hover {

@@ -1,4 +1,5 @@
 import { ICompany } from "../DrawStampTypes"
+import { getCanvasFontString } from "./fontUtils"
 
 export class DrawCompanyUtils {
     private mmToPixel = 10
@@ -89,7 +90,7 @@ export class DrawCompanyUtils {
         const fontWeight = company.fontWeight || 'normal'
         const fontStyle = company.fontStyle || 'normal'
         ctx.save()
-        ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${company.fontFamily}`
+        ctx.font = getCanvasFontString(company.fontFamily, fontSize, fontWeight, fontStyle)
         ctx.fillStyle = color
         ctx.textAlign = 'center'
         ctx.textBaseline = 'bottom'
@@ -221,7 +222,7 @@ export class DrawCompanyUtils {
         const adjustedCenterY = centerY + positionOffsetY
 
         ctx.save()
-        ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${company.fontFamily}`
+        ctx.font = getCanvasFontString(company.fontFamily, fontSize, fontWeight, fontStyle)
         ctx.fillStyle = color
 
         // 矩形尺寸（像素）
