@@ -3,6 +3,7 @@
 在线电子印章生成器，一个基于 Vue 3 + Vite 的前端印章生成与编辑工具。
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-c91523?style=for-the-badge)](https://wosp.cc.cd/)
+[![CI](https://img.shields.io/github/actions/workflow/status/fisher0627/drawstamputils/deploy.yml?branch=main&label=CI&style=for-the-badge)](https://github.com/fisher0627/drawstamputils/actions)
 [![Vue 3](https://img.shields.io/badge/Vue-3-42b883?style=for-the-badge&logo=vue.js&logoColor=white)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5-646cff?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-334155?style=for-the-badge)](LICENSE)
@@ -12,6 +13,12 @@
 在线访问：[https://wosp.cc.cd/](https://wosp.cc.cd/)
 
 GitHub 仓库：[https://github.com/fisher0627/drawstamputils](https://github.com/fisher0627/drawstamputils)
+
+相关文档：
+
+- [贡献指南](CONTRIBUTING.md)
+- [版本记录](CHANGELOG.md)
+- [问题反馈](https://github.com/fisher0627/drawstamputils/issues)
 
 ## 项目定位
 

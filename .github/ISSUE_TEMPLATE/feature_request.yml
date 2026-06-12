@@ -1,0 +1,44 @@
+name: Feature request
+description: 提出一个功能或体验优化建议
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        欢迎提出真实使用场景。越具体，越容易判断怎么做。
+  - type: textarea
+    id: problem
+    attributes:
+      label: 使用场景
+      description: 你希望在什么场景下使用这个功能？
+      placeholder: 例如：我想快速生成收讫章，并能直接导出透明 PNG。
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: 期望方案
+      description: 你希望产品怎么解决？
+      placeholder: 例如：在常用模板中增加收讫章模板，并提供默认文字。
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 其他想法
+      description: 有没有可接受的替代方案？
+  - type: dropdown
+    id: area
+    attributes:
+      label: 相关模块
+      options:
+        - 模板
+        - 画布编辑
+        - 属性设置
+        - 图片提取
+        - 导出
+        - 字体
+        - 文档
+        - 其他
+

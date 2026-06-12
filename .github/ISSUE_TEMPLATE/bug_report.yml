@@ -1,0 +1,66 @@
+name: Bug report
+description: 反馈一个可复现的问题
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈。请尽量使用不含敏感信息的截图或测试数据。
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述
+      description: 简单说明你遇到的问题。
+      placeholder: 例如：点击适配窗口后，印章位置发生偏移。
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 请写出可以复现问题的步骤。
+      placeholder: |
+        1. 打开在线页面
+        2. 选择某个模板
+        3. 点击某个按钮
+        4. 看到异常
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望结果
+      placeholder: 正常情况下应该发生什么？
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际结果
+      placeholder: 实际发生了什么？
+    validations:
+      required: true
+  - type: dropdown
+    id: browser
+    attributes:
+      label: 浏览器
+      options:
+        - Chrome
+        - Edge
+        - Safari
+        - Firefox
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: 系统环境
+      placeholder: macOS / Windows / iOS / Android / Linux
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 截图或录屏
+      description: 如方便，请上传截图或录屏。请先遮挡敏感信息。
+
