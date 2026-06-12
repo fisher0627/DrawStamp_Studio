@@ -157,13 +157,17 @@ src/utils/Draw*.ts
 
 ## 截图
 
-![印章导出示例](public/stamp_export.png)
+### 印章工作台
 
-![矩形印章示例](public/stamp_rectangle.png)
+![印章工作台](public/readme-workspace.png)
 
-![SVG 印章示例](public/stamp_svg.png)
+### 图片提取印章
 
-![图片提取示例](public/stamp_extract.png)
+![图片提取印章](public/readme-extractor.png)
+
+### 导出设置
+
+![导出设置](public/readme-export.png)
 
 ## 常见问题
 
