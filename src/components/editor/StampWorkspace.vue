@@ -214,18 +214,48 @@
         </div>
         <div class="toolbar-status-group" aria-label="本地草稿状态">
           <span class="toolbar-status">本地编辑</span>
-          <span class="toolbar-draft-status" :class="draftStatusClass">
-            {{ draftStatusLabel }}
-          </span>
-          <button
-            v-if="hasLocalDraft"
-            type="button"
-            class="toolbar-draft-clear"
-            @click="clearLocalDraft"
-            title="清除浏览器本地保存的草稿"
-          >
-            清除
-          </button>
+          <div class="draft-menu-wrap">
+            <button
+              type="button"
+              class="toolbar-draft-status"
+              :class="draftStatusClass"
+              @click="isDraftMenuOpen = !isDraftMenuOpen"
+              :aria-expanded="isDraftMenuOpen"
+              title="查看最近草稿版本"
+            >
+              <span class="draft-status-dot"></span>
+              <span>{{ draftStatusLabel }}</span>
+              <span class="draft-status-chevron">⌄</span>
+            </button>
+            <div v-if="isDraftMenuOpen" class="draft-menu">
+              <div class="draft-menu-head">
+                <strong>最近草稿</strong>
+                <button
+                  v-if="draftVersions.length"
+                  type="button"
+                  @click="clearLocalDraft"
+                >
+                  清空
+                </button>
+              </div>
+              <div v-if="draftVersions.length" class="draft-version-list">
+                <button
+                  v-for="draft in draftVersions"
+                  :key="draft.id"
+                  type="button"
+                  class="draft-version-item"
+                  @click="restoreDraftVersion(draft.id)"
+                >
+                  <span>
+                    <strong>{{ formatDraftTime(draft.savedAt) }}</strong>
+                    <small>{{ draft.summary }}</small>
+                  </span>
+                  <em>恢复</em>
+                </button>
+              </div>
+              <p v-else class="draft-menu-empty">开始编辑后会自动保存最近 5 个版本</p>
+            </div>
+          </div>
         </div>
       </div>
       <div class="toolbar-actions">
@@ -515,6 +545,8 @@ const templateFileInput = ref<HTMLInputElement | null>(null)
 const MM_PER_PIXEL = 10 // 毫米换算像素
 const DRAFT_STORAGE_KEY = 'drawstamp-studio:draft:v1'
 const DRAFT_SAVE_DELAY = 500
+const DRAFT_VERSION_INTERVAL = 30 * 1000
+const MAX_DRAFT_VERSIONS = 5
 // 绘制工具
 let drawStampUtils: DrawStampUtils
 let exportPreviewRequestId = 0
@@ -542,6 +574,8 @@ const canvasBackgroundMode = ref<'grid' | 'paper' | 'checker'>('grid')
 const draftSavedAt = ref<number | null>(null)
 const draftSaveState = ref<'idle' | 'saved' | 'saving' | 'failed'>('idle')
 const hasLocalDraft = ref(false)
+const draftVersions = ref<LocalDraftItem[]>([])
+const isDraftMenuOpen = ref(false)
 
 // 导出模板元信息弹窗状态
 const showTemplateMetaDialog = ref(false)
@@ -580,9 +614,9 @@ const exportBackgroundLabel = computed(() => {
 })
 
 const draftStatusLabel = computed(() => {
-  if (draftSaveState.value === 'saving') return '草稿保存中'
-  if (draftSaveState.value === 'failed') return '草稿未保存'
-  if (!draftSavedAt.value) return hasLocalDraft.value ? '已恢复草稿' : '自动草稿'
+  if (draftSaveState.value === 'saving') return '保存中'
+  if (draftSaveState.value === 'failed') return '未保存'
+  if (!draftSavedAt.value) return hasLocalDraft.value ? '已恢复' : '自动保存'
 
   const savedDate = new Date(draftSavedAt.value)
   const time = savedDate.toLocaleTimeString('zh-CN', {
@@ -590,14 +624,34 @@ const draftStatusLabel = computed(() => {
     minute: '2-digit',
     hour12: false
   })
-  return `草稿已保存 ${time}`
+  return `已保存 ${time}`
 })
 
 const draftStatusClass = computed(() => ({
   saving: draftSaveState.value === 'saving',
   saved: draftSaveState.value === 'saved',
-  failed: draftSaveState.value === 'failed'
+  failed: draftSaveState.value === 'failed',
+  open: isDraftMenuOpen.value
 }))
+
+const formatDraftTime = (timestamp: number) => {
+  const date = new Date(timestamp)
+  const now = new Date()
+  const isToday = date.toDateString() === now.toDateString()
+  const time = date.toLocaleTimeString('zh-CN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  })
+  if (isToday) return `今天 ${time}`
+  return date.toLocaleString('zh-CN', {
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  })
+}
 
 const canvasMeta = computed(() => {
   const config = stampStore.state.config
@@ -1031,27 +1085,83 @@ const updateViewState = () => {
   canvasViewRevision.value += 1
 }
 
-type LocalDraftPayload = {
+type LocalDraftItem = {
+  id: string
+  savedAt: number
+  summary: string
+  config: IDrawStampConfig
+}
+
+type LegacyLocalDraftPayload = {
   version: 1
   savedAt: number
   config: IDrawStampConfig
+}
+
+type LocalDraftPayload = {
+  version: 2
+  updatedAt: number
+  drafts: LocalDraftItem[]
 }
 
 const cloneConfig = (config: IDrawStampConfig): IDrawStampConfig => {
   return JSON.parse(JSON.stringify(config)) as IDrawStampConfig
 }
 
-const readLocalDraft = (): LocalDraftPayload | null => {
+const buildDraftSummary = (config: IDrawStampConfig) => {
+  const width = Math.round(Number(config.width) || 0)
+  const height = Math.round(Number(config.height) || 0)
+  const companyName = config.company?.name?.trim()
+  const stampType = config.stampType?.name?.trim()
+  const title = companyName || stampType || '未命名印章'
+  return `${title} · ${width} x ${height} mm`
+}
+
+const normalizeDraftList = (drafts: LocalDraftItem[]) => {
+  return drafts
+    .filter(draft => draft?.config && draft?.savedAt)
+    .sort((a, b) => b.savedAt - a.savedAt)
+    .slice(0, MAX_DRAFT_VERSIONS)
+}
+
+const readLocalDrafts = (): LocalDraftItem[] => {
   try {
     const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY)
-    if (!raw) return null
-    const parsed = JSON.parse(raw) as LocalDraftPayload
-    if (parsed?.version !== 1 || !parsed.config) return null
-    return parsed
+    if (!raw) return []
+    const parsed = JSON.parse(raw) as LocalDraftPayload | LegacyLocalDraftPayload
+
+    if (parsed?.version === 2 && Array.isArray((parsed as LocalDraftPayload).drafts)) {
+      return normalizeDraftList((parsed as LocalDraftPayload).drafts)
+    }
+
+    if (parsed?.version === 1 && (parsed as LegacyLocalDraftPayload).config) {
+      const legacyDraft = parsed as LegacyLocalDraftPayload
+      return [{
+        id: `draft-${legacyDraft.savedAt}`,
+        savedAt: legacyDraft.savedAt,
+        summary: buildDraftSummary(legacyDraft.config),
+        config: legacyDraft.config
+      }]
+    }
+
+    return []
   } catch (error) {
     console.warn('读取本地草稿失败:', error)
-    return null
+    return []
   }
+}
+
+const writeLocalDrafts = (drafts: LocalDraftItem[]) => {
+  const nextDrafts = normalizeDraftList(drafts)
+  const payload: LocalDraftPayload = {
+    version: 2,
+    updatedAt: Date.now(),
+    drafts: nextDrafts
+  }
+  window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload))
+  draftVersions.value = nextDrafts
+  hasLocalDraft.value = nextDrafts.length > 0
+  draftSavedAt.value = nextDrafts[0]?.savedAt ?? null
 }
 
 const saveLocalDraftNow = (config: IDrawStampConfig | null) => {
@@ -1059,13 +1169,20 @@ const saveLocalDraftNow = (config: IDrawStampConfig | null) => {
 
   draftSaveState.value = 'saving'
   try {
-    const payload: LocalDraftPayload = {
-      version: 1,
-      savedAt: Date.now(),
+    const savedAt = Date.now()
+    const drafts = readLocalDrafts()
+    const latestDraft = drafts[0]
+    const nextDraft: LocalDraftItem = {
+      id: latestDraft && savedAt - latestDraft.savedAt < DRAFT_VERSION_INTERVAL ? latestDraft.id : `draft-${savedAt}`,
+      savedAt,
+      summary: buildDraftSummary(config),
       config: cloneConfig(config)
     }
-    window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload))
-    draftSavedAt.value = payload.savedAt
+    const nextDrafts = latestDraft && nextDraft.id === latestDraft.id
+      ? [nextDraft, ...drafts.slice(1)]
+      : [nextDraft, ...drafts]
+    writeLocalDrafts(nextDrafts)
+    draftSavedAt.value = savedAt
     draftSaveState.value = 'saved'
     hasLocalDraft.value = true
   } catch (error) {
@@ -1098,10 +1215,41 @@ const clearLocalDraft = () => {
   }
   hasLocalDraft.value = false
   draftSavedAt.value = null
+  draftVersions.value = []
   draftSaveState.value = 'idle'
+  isDraftMenuOpen.value = false
   window.setTimeout(() => {
     suppressDraftSave = false
   }, DRAFT_SAVE_DELAY)
+}
+
+const restoreDraftVersion = async (draftId: string) => {
+  const draft = draftVersions.value.find(item => item.id === draftId)
+  if (!draft || !drawStampUtils) return
+
+  suppressDraftSave = true
+  const draftConfig = cloneConfig(draft.config)
+  drawStampUtils.setDrawConfigs(draftConfig)
+  stampStore.setConfig(draftConfig)
+  syncConfigToParent()
+  exportFilename.value = buildExportFilename(draftConfig)
+  drawStamp()
+  draftSavedAt.value = draft.savedAt
+  draftSaveState.value = 'saved'
+  isDraftMenuOpen.value = false
+
+  await nextTick()
+  propertiesPanelRef.value?.restoreDrawConfigs()
+  window.setTimeout(() => {
+    suppressDraftSave = false
+  }, DRAFT_SAVE_DELAY)
+}
+
+const handleGlobalClick = (event: MouseEvent) => {
+  const target = event.target as HTMLElement | null
+  if (!target?.closest?.('.draft-menu-wrap')) {
+    isDraftMenuOpen.value = false
+  }
 }
 
 const handleBeforeUnload = () => {
@@ -1145,7 +1293,9 @@ const initDrawStampUtils = () => {
     drawStampUtils.setDrawConfigs(initialConfig)
     stampStore.setConfig(initialConfig)
   } else {
-    const draft = readLocalDraft()
+    const drafts = readLocalDrafts()
+    draftVersions.value = drafts
+    const draft = drafts[0]
     if (draft) {
       const draftConfig = cloneConfig(draft.config)
       drawStampUtils.setDrawConfigs(draftConfig)
@@ -1644,6 +1794,7 @@ onMounted(async () => {
 
   window.addEventListener('beforeunload', handleBeforeUnload)
   window.addEventListener('mousemove', handleMouseMove)
+  window.addEventListener('click', handleGlobalClick)
   drawStampUtils?.canvas?.addEventListener('click', handleCanvasClick)
 })
 
@@ -1652,6 +1803,7 @@ onUnmounted(() => {
   handleBeforeUnload()
   window.removeEventListener('beforeunload', handleBeforeUnload)
   window.removeEventListener('mousemove', handleMouseMove)
+  window.removeEventListener('click', handleGlobalClick)
   drawStampUtils?.canvas?.removeEventListener('click', handleCanvasClick)
 })
 </script>
@@ -1695,7 +1847,7 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  flex-wrap: wrap;
+  position: relative;
 }
 
 .toolbar-brand h1,
@@ -1727,7 +1879,14 @@ onUnmounted(() => {
   white-space: nowrap;
 }
 
+.draft-menu-wrap {
+  position: relative;
+}
+
 .toolbar-draft-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   border: 1px solid #e2e7ef;
   border-radius: 999px;
   color: #667386;
@@ -1736,6 +1895,29 @@ onUnmounted(() => {
   line-height: 1.2;
   padding: 4px 9px;
   white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.toolbar-draft-status:hover,
+.toolbar-draft-status.open {
+  color: #303b4b;
+  border-color: #cfd7e4;
+  background: #f8fafc;
+}
+
+.draft-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #9aa5b5;
+  box-shadow: 0 0 0 3px rgba(154, 165, 181, 0.12);
+}
+
+.draft-status-chevron {
+  color: #9aa5b5;
+  font-size: 11px;
+  transform: translateY(-1px);
 }
 
 .toolbar-draft-status.saving {
@@ -1756,18 +1938,139 @@ onUnmounted(() => {
   border-color: #efc4ca;
 }
 
-.toolbar-draft-clear {
+.toolbar-draft-status.saving .draft-status-dot {
+  background: #d49a2b;
+  box-shadow: 0 0 0 3px rgba(212, 154, 43, 0.14);
+}
+
+.toolbar-draft-status.saved .draft-status-dot {
+  background: #3fa66b;
+  box-shadow: 0 0 0 3px rgba(63, 166, 107, 0.14);
+}
+
+.toolbar-draft-status.failed .draft-status-dot {
+  background: #bd2431;
+  box-shadow: 0 0 0 3px rgba(189, 36, 49, 0.13);
+}
+
+.draft-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 30;
+  width: 270px;
+  padding: 10px;
+  border: 1px solid #dbe2ec;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 18px 44px rgba(35, 45, 66, 0.16);
+}
+
+.draft-menu::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 22px;
+  width: 9px;
+  height: 9px;
+  border-left: 1px solid #dbe2ec;
+  border-top: 1px solid #dbe2ec;
+  background: #ffffff;
+  transform: rotate(45deg);
+}
+
+.draft-menu-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 2px 8px;
+  border-bottom: 1px solid #edf1f5;
+}
+
+.draft-menu-head strong {
+  color: #202733;
+  font-size: 13px;
+}
+
+.draft-menu-head button {
   border: 0;
   background: transparent;
   color: #8a95a5;
   font-size: 12px;
-  line-height: 1.2;
-  padding: 4px 3px;
+  padding: 2px 4px;
   cursor: pointer;
 }
 
-.toolbar-draft-clear:hover {
+.draft-menu-head button:hover {
   color: #bd2431;
+}
+
+.draft-version-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 8px;
+}
+
+.draft-version-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: #fbfcfd;
+  padding: 9px 8px;
+  color: #303b4b;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.draft-version-item:hover {
+  background: #f6f8fb;
+  border-color: #dce3ec;
+}
+
+.draft-version-item span {
+  min-width: 0;
+}
+
+.draft-version-item strong,
+.draft-version-item small {
+  display: block;
+}
+
+.draft-version-item strong {
+  font-size: 12px;
+  line-height: 1.3;
+  color: #202733;
+}
+
+.draft-version-item small {
+  margin-top: 3px;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #7a8495;
+  font-size: 11px;
+}
+
+.draft-version-item em {
+  flex: 0 0 auto;
+  font-style: normal;
+  color: #bd2431;
+  font-size: 12px;
+}
+
+.draft-menu-empty {
+  margin: 0;
+  padding: 14px 4px 4px;
+  color: #8a95a5;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .toolbar-actions {
