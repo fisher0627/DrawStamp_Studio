@@ -8,7 +8,7 @@
 [![Vite](https://img.shields.io/badge/Vite-5-646cff?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-334155?style=for-the-badge)](LICENSE)
 
-当前项目已经从单纯的印章绘制工具，整理成一个可以直接使用的在线编辑器：支持常用模板、画布编辑、字体选择、图片提取印章、模板导入导出，以及 PNG 图片下载。所有核心处理都在浏览器本地完成，不依赖后端接口。
+当前项目已经从单纯的印章绘制工具，整理成一个可以直接使用的在线编辑器：支持常用模板、画布编辑、字体选择、图片提取印章、模板导入导出，以及 PNG / SVG / JPEG 多格式下载。所有核心处理都在浏览器本地完成，不依赖后端接口。
 
 在线访问：[https://wosp.cc.cd/](https://wosp.cc.cd/)
 
@@ -46,7 +46,7 @@ DrawStamp Studio 更适合这些场景：
 - 字体选择：内置常用中文字体选项，并支持本地打包的华文隶书字体。
 - 图片提取印章：支持拖拽上传图片，本地提取红色印章区域，生成透明 PNG，并可直接替换到画布。
 - 模板导入导出：可将当前印章配置保存为 JSON，也可以重新导入继续编辑。
-- 导出设置：支持导出倍数、白底 PNG、文件名设置。
+- 导出面板：支持 PNG / SVG / JPEG、多倍导出、白底 PNG、文件名设置、导出预览和高级尺寸设置。
 - 本地优先：印章生成、图片提取、导出都在浏览器端完成。
 
 ## 技术栈
@@ -178,7 +178,7 @@ src/utils/Draw*.ts
 2. 在左侧元素列表选择要编辑的对象。
 3. 在右侧属性设置中调整文字、字体、位置、尺寸、颜色等参数。
 4. 使用画布工具栏缩放或适配窗口，检查印章边界和排版。
-5. 通过底部导出区域设置倍数、背景和文件名，再下载 PNG。
+5. 通过底部导出区域或下载弹窗选择格式、倍数、背景和文件名，再下载 PNG / SVG / JPEG。
 
 ## 截图
 
@@ -190,9 +190,9 @@ src/utils/Draw*.ts
 
 ![图片提取印章](public/readme-extractor.png)
 
-### 导出设置
+### 导出面板
 
-![导出设置](public/readme-export.png)
+![导出面板](public/readme-export.png)
 
 ## 常见问题
 
