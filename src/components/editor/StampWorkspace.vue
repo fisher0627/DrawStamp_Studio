@@ -1,38 +1,68 @@
 <template>
   <!-- 导出格式弹窗 -->
   <div v-if="showFormatDialog" class="legal-dialog-overlay" @click.self="closeFormatDialog">
-    <div class="legal-dialog">
-      <h3>{{ t('stamp.exportFormat.title') }}</h3>
-      <div class="legal-content">
-        <p>{{ t('stamp.exportFormat.description') }}</p>
-        <div class="format-options">
-          <button
-            v-for="format in exportFormats"
-            :key="format.value"
-            type="button"
-            class="format-button"
-            :class="{ active: selectedFormat === format.value }"
-            @click="selectedFormat = format.value"
-          >
-            <span class="format-icon">{{ format.icon }}</span>
-            <span class="format-name">{{ format.name }}</span>
-            <span class="format-desc">{{ format.desc }}</span>
-          </button>
+    <div class="legal-dialog export-dialog">
+      <div class="export-dialog-header">
+        <div>
+          <span class="export-eyebrow">EXPORT</span>
+          <h3>{{ t('stamp.exportFormat.title') }}</h3>
         </div>
-        <div v-if="selectedFormat === 'jpeg'" class="quality-setting">
-          <label>{{ t('stamp.exportFormat.quality') }}: {{ jpegQuality }}%</label>
-          <input
-            type="range"
-            v-model.number="jpegQuality"
-            min="10"
-            max="100"
-            step="5"
-            class="quality-slider"
-          />
-        </div>
-        <div class="export-quick-settings">
-          <div class="quick-setting">
-            <label>导出倍率</label>
+        <button type="button" class="export-close-button" @click="closeFormatDialog" aria-label="关闭">×</button>
+      </div>
+      <div class="legal-content export-dialog-content">
+        <section class="export-preview-panel">
+          <div class="export-preview-card" :class="{ checker: selectedFormat === 'png' && !useWhitePngBackground }">
+            <img v-if="exportPreviewUrl" :src="exportPreviewUrl" alt="导出预览" />
+            <div v-else class="export-preview-empty">预览生成中</div>
+          </div>
+          <div class="export-preview-meta">
+            <strong>{{ exportSummary }}</strong>
+            <span>{{ exportBackgroundLabel }}</span>
+          </div>
+        </section>
+
+        <section class="export-settings-panel">
+          <div class="export-section">
+            <div class="export-section-title">
+              <label>文件格式</label>
+              <span>{{ selectedFormatInfo?.tip }}</span>
+            </div>
+            <div class="format-options">
+              <button
+                v-for="format in exportFormats"
+                :key="format.value"
+                type="button"
+                class="format-button"
+                :class="{ active: selectedFormat === format.value }"
+                @click="selectedFormat = format.value"
+              >
+                <span class="format-icon">{{ format.icon }}</span>
+                <span>
+                  <span class="format-name">{{ format.name }}</span>
+                  <span class="format-desc">{{ format.desc }}</span>
+                </span>
+                <em v-if="format.value === 'png'">推荐</em>
+              </button>
+            </div>
+          </div>
+
+          <div v-if="selectedFormat === 'jpeg'" class="quality-setting">
+            <label>{{ t('stamp.exportFormat.quality') }} <strong>{{ jpegQuality }}%</strong></label>
+            <input
+              type="range"
+              v-model.number="jpegQuality"
+              min="10"
+              max="100"
+              step="5"
+              class="quality-slider"
+            />
+          </div>
+
+          <div class="export-section">
+            <div class="export-section-title">
+              <label>导出倍率</label>
+              <span>{{ exportSizeLabel }}</span>
+            </div>
             <div class="scale-options">
               <button
                 v-for="option in scaleOptions"
@@ -46,12 +76,17 @@
               </button>
             </div>
           </div>
+
           <label v-if="selectedFormat === 'png'" class="export-checkbox">
             <input type="checkbox" v-model="useWhitePngBackground" />
             <span>PNG 使用白色背景</span>
           </label>
-          <div class="quick-setting">
-            <label>文件名</label>
+
+          <div class="export-section">
+            <div class="export-section-title">
+              <label>文件名</label>
+              <span>自动补充扩展名</span>
+            </div>
             <input
               v-model="exportFilename"
               type="text"
@@ -59,65 +94,69 @@
               placeholder="自动使用公司名"
             />
           </div>
-        </div>
-        <div class="size-setting">
-          <div class="size-setting-header">
-            <label>{{ t('stamp.exportFormat.sizeTitle') }}</label>
-            <button class="size-reset" type="button" @click="resetExportSize">
-              {{ t('stamp.exportFormat.resetSize') }}
-            </button>
-          </div>
-          <div class="ratio-setting">
-            <label>{{ t('stamp.exportFormat.ratioTitle') }}</label>
-            <div class="ratio-options">
-              <button
-                v-for="option in ratioOptions"
-                :key="option.value"
-                type="button"
-                class="ratio-button"
-                :class="{ active: selectedRatio === option.value }"
-                @click="applyRatio(option.value)"
-              >
-                {{ option.label }}
-              </button>
+
+          <details class="export-advanced">
+            <summary>更多尺寸设置</summary>
+            <div class="size-setting">
+              <div class="size-setting-header">
+                <label>{{ t('stamp.exportFormat.sizeTitle') }}</label>
+                <button class="size-reset" type="button" @click="resetExportSize">
+                  {{ t('stamp.exportFormat.resetSize') }}
+                </button>
+              </div>
+              <div class="ratio-setting">
+                <label>{{ t('stamp.exportFormat.ratioTitle') }}</label>
+                <div class="ratio-options">
+                  <button
+                    v-for="option in ratioOptions"
+                    :key="option.value"
+                    type="button"
+                    class="ratio-button"
+                    :class="{ active: selectedRatio === option.value }"
+                    @click="applyRatio(option.value)"
+                  >
+                    {{ option.label }}
+                  </button>
+                </div>
+                <p class="ratio-hint">{{ t('stamp.exportFormat.ratioHint') }}</p>
+              </div>
+              <div class="size-inputs">
+                <div class="size-field">
+                  <span>{{ t('stamp.exportFormat.width') }} (px)</span>
+                  <input
+                    type="number"
+                    v-model.number="exportWidth"
+                    :min="MIN_EXPORT_SIZE"
+                    :max="MAX_EXPORT_SIZE"
+                    @input="handleWidthInput"
+                    @change="handleWidthInput"
+                  />
+                </div>
+                <div class="size-field">
+                  <span>{{ t('stamp.exportFormat.height') }} (px)</span>
+                  <input
+                    type="number"
+                    v-model.number="exportHeight"
+                    :min="MIN_EXPORT_SIZE"
+                    :max="MAX_EXPORT_SIZE"
+                    @input="handleHeightInput"
+                    @change="handleHeightInput"
+                  />
+                </div>
+              </div>
+              <p class="size-hint">
+                {{ t('stamp.exportFormat.sizeHint', { width: Math.round(defaultExportWidth) || 0, height: Math.round(defaultExportHeight) || 0 }) }}
+              </p>
+              <p class="size-hint">
+                {{ t('stamp.exportFormat.sizeLimit', { min: MIN_EXPORT_SIZE, max: MAX_EXPORT_SIZE }) }}
+              </p>
             </div>
-            <p class="ratio-hint">{{ t('stamp.exportFormat.ratioHint') }}</p>
-          </div>
-          <div class="size-inputs">
-            <div class="size-field">
-              <span>{{ t('stamp.exportFormat.width') }} (px)</span>
-              <input
-                type="number"
-                v-model.number="exportWidth"
-                :min="MIN_EXPORT_SIZE"
-                :max="MAX_EXPORT_SIZE"
-                @input="handleWidthInput"
-                @change="handleWidthInput"
-              />
-            </div>
-            <div class="size-field">
-              <span>{{ t('stamp.exportFormat.height') }} (px)</span>
-              <input
-                type="number"
-                v-model.number="exportHeight"
-                :min="MIN_EXPORT_SIZE"
-                :max="MAX_EXPORT_SIZE"
-                @input="handleHeightInput"
-                @change="handleHeightInput"
-              />
-            </div>
-          </div>
-          <p class="size-hint">
-            {{ t('stamp.exportFormat.sizeHint', { width: Math.round(defaultExportWidth) || 0, height: Math.round(defaultExportHeight) || 0 }) }}
-          </p>
-          <p class="size-hint">
-            {{ t('stamp.exportFormat.sizeLimit', { min: MIN_EXPORT_SIZE, max: MAX_EXPORT_SIZE }) }}
-          </p>
-        </div>
+          </details>
+        </section>
       </div>
       <div class="dialog-buttons">
         <button @click="closeFormatDialog" class="cancel-button">{{ t('stamp.exportFormat.cancel') }}</button>
-        <button @click="confirmExport" class="confirm-button">{{ t('stamp.exportFormat.export') }}</button>
+        <button @click="confirmExport" class="confirm-button">下载 {{ selectedFormat.toUpperCase() }}</button>
       </div>
     </div>
   </div>
@@ -462,6 +501,7 @@ const templateFileInput = ref<HTMLInputElement | null>(null)
 const MM_PER_PIXEL = 10 // 毫米换算像素
 // 绘制工具
 let drawStampUtils: DrawStampUtils
+let exportPreviewRequestId = 0
 const isDraggable = ref(true) // 是否开启拖动
 const showFormatDialog = ref(false)
 const showExtractorDialog = ref(false)
@@ -476,6 +516,7 @@ const exportHeight = ref(0)
 const selectedScale = ref<1 | 2 | 3 | 4>(1)
 const useWhitePngBackground = ref(false)
 const exportFilename = ref('')
+const exportPreviewUrl = ref('')
 const selectedRatio = ref<'original' | 'square' | '4:3' | '16:9' | 'custom'>('original')
 const viewScalePercent = ref(100)
 const canvasViewRevision = ref(0)
@@ -488,10 +529,34 @@ const templateCategories = ref('')
 const pendingTemplateConfig = ref<IDrawStampConfig | null>(null)
 
 const exportFormats = computed(() => [
-  { value: 'png' as const, name: 'PNG', icon: '🖼️', desc: t('stamp.exportFormat.pngDesc') },
-  { value: 'jpeg' as const, name: 'JPEG', icon: '📷', desc: t('stamp.exportFormat.jpegDesc') },
-  { value: 'svg' as const, name: 'SVG', icon: '📐', desc: t('stamp.exportFormat.svgDesc') }
+  { value: 'png' as const, name: 'PNG', icon: 'P', desc: '透明背景，适合文档和打印', tip: '最常用' },
+  { value: 'svg' as const, name: 'SVG', icon: 'S', desc: '矢量格式，适合设计软件', tip: '可放大' },
+  { value: 'jpeg' as const, name: 'JPEG', icon: 'J', desc: '白底图片，适合普通分享', tip: '体积小' }
 ])
+
+const selectedFormatInfo = computed(() => {
+  return exportFormats.value.find(format => format.value === selectedFormat.value)
+})
+
+const exportSizeLabel = computed(() => {
+  const width = Math.round(exportWidth.value) || Math.round(defaultExportWidth.value) || 0
+  const height = Math.round(exportHeight.value) || Math.round(defaultExportHeight.value) || 0
+  return `${width} x ${height}px`
+})
+
+const exportSummary = computed(() => {
+  return `${selectedFormat.value.toUpperCase()} · ${selectedScale.value}x · ${exportSizeLabel.value}`
+})
+
+const exportBackgroundLabel = computed(() => {
+  if (selectedFormat.value === 'png') {
+    return useWhitePngBackground.value ? '白色背景' : '透明背景'
+  }
+  if (selectedFormat.value === 'svg') {
+    return '矢量导出'
+  }
+  return `JPEG 质量 ${jpegQuality.value}%`
+})
 
 const canvasMeta = computed(() => {
   const config = stampStore.state.config
@@ -597,6 +662,7 @@ const clampExportSize = (value: number, fallback: number) => {
 const applyRatio = (ratio: 'original' | 'square' | '4:3' | '16:9' | 'custom') => {
   selectedRatio.value = ratio
   if (ratio === 'custom') {
+    refreshExportPreview()
     return
   }
   const baseWidth = clampExportSize(defaultExportWidth.value, MIN_EXPORT_SIZE)
@@ -604,6 +670,7 @@ const applyRatio = (ratio: 'original' | 'square' | '4:3' | '16:9' | 'custom') =>
   exportWidth.value = Math.round(baseWidth)
   exportHeight.value = Math.round(baseWidth / ratioValue)
   exportHeight.value = clampExportSize(exportHeight.value, MIN_EXPORT_SIZE)
+  refreshExportPreview()
 }
 
 const resetExportSize = () => {
@@ -621,6 +688,7 @@ const applyExportScale = (scale: 1 | 2 | 3 | 4) => {
   exportWidth.value = clampExportSize(Math.round(baseWidth * scale), baseWidth)
   exportHeight.value = clampExportSize(Math.round(baseHeight * scale), baseHeight)
   selectedRatio.value = 'original'
+  refreshExportPreview()
 }
 
 const refreshExportDefaults = () => {
@@ -633,6 +701,7 @@ const refreshExportDefaults = () => {
   if (!exportFilename.value) {
     exportFilename.value = buildExportFilename(drawStampUtils.getDrawConfigs())
   }
+  refreshExportPreview()
 }
 
 const prepareExportDock = () => {
@@ -658,6 +727,7 @@ const handleWidthInput = () => {
     exportHeight.value = Math.round(exportWidth.value / ratioValue)
     exportHeight.value = clampExportSize(exportHeight.value, Math.round(defaultExportHeight.value) || MIN_EXPORT_SIZE)
   }
+  refreshExportPreview()
 }
 
 const handleHeightInput = () => {
@@ -667,6 +737,54 @@ const handleHeightInput = () => {
     const ratioValue = getRatioValue(selectedRatio.value)
     exportWidth.value = Math.round(exportHeight.value * ratioValue)
     exportWidth.value = clampExportSize(exportWidth.value, Math.round(defaultExportWidth.value) || MIN_EXPORT_SIZE)
+  }
+  refreshExportPreview()
+}
+
+const addWhiteBackgroundToDataUrl = (dataUrl: string): Promise<string> => {
+  return new Promise((resolve) => {
+    const image = new Image()
+    image.onload = () => {
+      const previewCanvas = document.createElement('canvas')
+      previewCanvas.width = image.naturalWidth || image.width
+      previewCanvas.height = image.naturalHeight || image.height
+      const ctx = previewCanvas.getContext('2d')
+      if (!ctx) {
+        resolve(dataUrl)
+        return
+      }
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height)
+      ctx.drawImage(image, 0, 0)
+      resolve(previewCanvas.toDataURL('image/png'))
+    }
+    image.onerror = () => resolve(dataUrl)
+    image.src = dataUrl
+  })
+}
+
+const refreshExportPreview = async () => {
+  if (!drawStampUtils) return
+  const requestId = ++exportPreviewRequestId
+  const width = clampExportSize(exportWidth.value, Math.round(defaultExportWidth.value) || MIN_EXPORT_SIZE)
+  const height = clampExportSize(exportHeight.value, Math.round(defaultExportHeight.value) || MIN_EXPORT_SIZE)
+  try {
+    let previewUrl = await drawStampUtils.getStampImageBase64(
+      selectedFormat.value === 'jpeg' ? 'jpeg' : 'png',
+      selectedFormat.value === 'jpeg' ? jpegQuality.value / 100 : 0.92,
+      Math.round(width),
+      Math.round(height)
+    )
+    if (selectedFormat.value === 'png' && useWhitePngBackground.value) {
+      previewUrl = await addWhiteBackgroundToDataUrl(previewUrl)
+    }
+    if (requestId === exportPreviewRequestId) {
+      exportPreviewUrl.value = previewUrl
+    }
+  } catch {
+    if (requestId === exportPreviewRequestId) {
+      exportPreviewUrl.value = ''
+    }
   }
 }
 
@@ -994,6 +1112,7 @@ const saveStampAsPNG = () => {
   jpegQuality.value = 92
   useWhitePngBackground.value = false
   exportFilename.value = buildExportFilename(drawStampUtils.getDrawConfigs())
+  refreshExportPreview()
 
   showFormatDialog.value = true
 }
@@ -1350,6 +1469,12 @@ watch(
     }
   }
 )
+
+watch([selectedFormat, jpegQuality, useWhitePngBackground], () => {
+  if (showFormatDialog.value) {
+    refreshExportPreview()
+  }
+})
 
 // 在组件挂载时初始化
 onMounted(async () => {
@@ -2274,6 +2399,348 @@ onUnmounted(() => {
 
 .save-count-small {
   font-size: 12px;
+}
+
+.export-dialog {
+  width: min(920px, calc(100vw - 40px));
+  max-width: none;
+  padding: 0;
+  border: 1px solid #d9dee7;
+  border-radius: 10px;
+  background: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 26px 80px rgba(29, 39, 56, 0.28);
+}
+
+.export-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+  padding: 16px 18px;
+  border-bottom: 1px solid #e3e8ef;
+  background: linear-gradient(180deg, #ffffff, #fbfcfd);
+}
+
+.export-dialog-header h3 {
+  margin: 1px 0 0;
+  color: #202733;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.export-eyebrow {
+  display: block;
+  color: #7a8495;
+  font-size: 10px;
+  line-height: 1.3;
+  letter-spacing: 0;
+  font-weight: 800;
+}
+
+.export-close-button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  box-sizing: border-box;
+  flex: 0 0 30px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #697586;
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.export-close-button:hover {
+  background: #f3f5f8;
+  color: #9f1e29;
+  transform: translateY(-1px);
+}
+
+.export-dialog-content {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.86fr) minmax(360px, 1fr);
+  gap: 0;
+  margin: 0;
+}
+
+.export-preview-panel,
+.export-settings-panel {
+  min-width: 0;
+  padding: 18px;
+}
+
+.export-preview-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-right: 1px solid #e3e8ef;
+  background:
+    linear-gradient(#edf1f6 1px, transparent 1px),
+    linear-gradient(90deg, #edf1f6 1px, transparent 1px);
+  background-color: #f8fafc;
+  background-size: 24px 24px;
+}
+
+.export-preview-card {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dbe2ec;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 14px 32px rgba(37, 48, 68, 0.08);
+  overflow: hidden;
+}
+
+.export-preview-card.checker {
+  background:
+    linear-gradient(45deg, #edf1f5 25%, transparent 25%),
+    linear-gradient(-45deg, #edf1f5 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #edf1f5 75%),
+    linear-gradient(-45deg, transparent 75%, #edf1f5 75%);
+  background-color: #ffffff;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+  background-size: 20px 20px;
+}
+
+.export-preview-card img {
+  max-width: 86%;
+  max-height: 260px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(37, 48, 68, 0.08));
+}
+
+.export-preview-empty {
+  color: #7a8495;
+  font-size: 13px;
+}
+
+.export-preview-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid #dbe2ec;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.export-preview-meta strong,
+.export-preview-meta span {
+  white-space: nowrap;
+}
+
+.export-preview-meta strong {
+  color: #202733;
+  font-size: 13px;
+}
+
+.export-preview-meta span {
+  color: #7a8495;
+  font-size: 12px;
+}
+
+.export-settings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.export-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.export-section-title {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.export-section-title label {
+  color: #202733;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.export-section-title span {
+  color: #7a8495;
+  font-size: 12px;
+}
+
+.export-dialog .format-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 0;
+}
+
+.export-dialog .format-button {
+  min-width: 0;
+  min-height: 78px;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #dbe2ec;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #ffffff, #fbfcfd);
+  color: #303b4b;
+  position: relative;
+}
+
+.export-dialog .format-button:hover,
+.export-dialog .format-button.active {
+  border-color: #bd2431;
+  background: #fff8f8;
+  box-shadow: 0 0 0 2px rgba(189, 36, 49, 0.08);
+}
+
+.export-dialog .format-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  background: #f6eef0;
+  color: #bd2431;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.export-dialog .format-name,
+.export-dialog .format-desc {
+  display: block;
+}
+
+.export-dialog .format-name {
+  min-width: 0;
+  color: #202733;
+  font-size: 14px;
+}
+
+.export-dialog .format-desc {
+  margin-top: 3px;
+  color: #7a8495;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.export-dialog .format-button em {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  padding: 2px 5px;
+  border-radius: 999px;
+  background: #f6eef0;
+  color: #bd2431;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.export-dialog .quality-setting {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid #dbe2ec;
+  border-radius: 8px;
+  background: #fbfcfd;
+}
+
+.export-dialog .quality-setting label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: #202733;
+  font-weight: 700;
+}
+
+.export-dialog .quality-slider::-webkit-slider-thumb,
+.export-dialog .quality-slider::-moz-range-thumb {
+  background: #bd2431;
+}
+
+.export-dialog .scale-options {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.export-dialog .scale-button {
+  min-height: 36px;
+}
+
+.export-dialog .export-checkbox {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #dbe2ec;
+  border-radius: 8px;
+  background: #fbfcfd;
+  color: #303b4b;
+}
+
+.export-dialog .export-name-input {
+  height: 38px;
+}
+
+.export-advanced {
+  border: 1px solid #dbe2ec;
+  border-radius: 8px;
+  background: #fbfcfd;
+  overflow: hidden;
+}
+
+.export-advanced summary {
+  padding: 12px;
+  color: #303b4b;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 800;
+  list-style-position: inside;
+}
+
+.export-advanced .size-setting {
+  margin: 0;
+  padding: 0 12px 12px;
+  border-top: 1px solid #e3e8ef;
+}
+
+.export-dialog .dialog-buttons {
+  margin-top: 0;
+  padding: 14px 18px;
+  border-top: 1px solid #e3e8ef;
+  background: #fbfcfd;
+}
+
+.export-dialog .cancel-button,
+.export-dialog .confirm-button {
+  min-width: 96px;
+  min-height: 36px;
+  border-radius: 7px;
+  font-weight: 700;
+}
+
+.export-dialog .cancel-button {
+  border: 1px solid #d9dee7;
+  background: #ffffff;
+  color: #47566a;
+}
+
+.export-dialog .confirm-button {
+  background: #bd2431;
+  color: #ffffff;
+}
+
+.export-dialog .confirm-button:hover {
+  background: #9f1e29;
 }
 
 .export-quick-settings {
