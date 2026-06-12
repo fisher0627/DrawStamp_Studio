@@ -289,7 +289,7 @@
             <button
               type="button"
               class="template-current"
-              :class="[`preset-${activeTemplatePresetInfo.key}`, { open: isTemplatePickerOpen }]"
+              :class="[`preset-${activeTemplatePresetInfo.key}`, `preset-${activeTemplatePresetInfo.shape}`, { open: isTemplatePickerOpen }]"
               @click="isTemplatePickerOpen = !isTemplatePickerOpen"
               :aria-expanded="isTemplatePickerOpen"
             >
@@ -311,12 +311,23 @@
             </button>
 
             <div v-if="isTemplatePickerOpen" class="template-menu">
+              <div class="template-category-tabs" aria-label="模板分类">
+                <button
+                  v-for="category in templatePresetCategories"
+                  :key="category.key"
+                  type="button"
+                  :class="{ active: activeTemplateCategory === category.key }"
+                  @click="activeTemplateCategory = category.key"
+                >
+                  {{ category.label }}
+                </button>
+              </div>
               <button
-                v-for="preset in templatePresets"
+                v-for="preset in filteredTemplatePresets"
                 :key="preset.key"
                 type="button"
                 class="template-option"
-                :class="[`preset-${preset.key}`, { active: activeTemplatePreset === preset.key }]"
+                :class="[`preset-${preset.key}`, `preset-${preset.shape}`, { active: activeTemplatePreset === preset.key }]"
                 @click="applyTemplatePreset(preset.key); isTemplatePickerOpen = false"
               >
                 <span class="preset-preview" aria-hidden="true">
@@ -726,18 +737,35 @@ const canvasBackgroundOptions = [
   { value: 'checker' as const, label: '透明棋盘格', icon: '▧' }
 ]
 
+const templatePresetCategories = [
+  { key: 'all' as const, label: '全部' },
+  { key: 'general' as const, label: '通用' },
+  { key: 'finance' as const, label: '财务' },
+  { key: 'business' as const, label: '业务' }
+]
+
 const templatePresets = [
-  { key: 'contract' as const, name: '合同专用章', desc: '圆章 · 公司名 · 五角星', mark: '合', badge: '常用' },
-  { key: 'finance' as const, name: '财务专用章', desc: '椭圆章 · 内圈 · 编码', mark: '财', badge: '财务' },
-  { key: 'invoice' as const, name: '发票专用章', desc: '椭圆章 · 税号 · 编码', mark: '票', badge: '税务' },
-  { key: 'clean' as const, name: '干净空白章', desc: '重置为清爽基础版', mark: '新', badge: '空白' }
+  { key: 'contract' as const, category: 'general' as const, name: '合同专用章', desc: '圆章 · 公司名 · 五角星', mark: '合', badge: '常用', shape: 'circle' },
+  { key: 'official' as const, category: 'general' as const, name: '公司公章', desc: '圆章 · 标准公章布局', mark: '公', badge: '标准', shape: 'circle' },
+  { key: 'finance' as const, category: 'finance' as const, name: '财务专用章', desc: '椭圆章 · 内圈 · 编码', mark: '财', badge: '财务', shape: 'ellipse' },
+  { key: 'invoice' as const, category: 'finance' as const, name: '发票专用章', desc: '椭圆章 · 税号 · 编码', mark: '票', badge: '税务', shape: 'ellipse' },
+  { key: 'receipt' as const, category: 'finance' as const, name: '收讫专用章', desc: '椭圆章 · 收款确认', mark: '收', badge: '收款', shape: 'ellipse' },
+  { key: 'business' as const, category: 'business' as const, name: '业务专用章', desc: '圆章 · 业务办理', mark: '业', badge: '业务', shape: 'circle' },
+  { key: 'quotation' as const, category: 'business' as const, name: '报价专用章', desc: '椭圆章 · 报价文件', mark: '价', badge: '报价', shape: 'ellipse' },
+  { key: 'clean' as const, category: 'general' as const, name: '干净空白章', desc: '重置为清爽基础版', mark: '新', badge: '空白', shape: 'circle' }
 ]
 
 type TemplatePresetKey = typeof templatePresets[number]['key']
+type TemplateCategoryKey = typeof templatePresetCategories[number]['key']
 const activeTemplatePreset = ref<TemplatePresetKey>('contract')
+const activeTemplateCategory = ref<TemplateCategoryKey>('all')
 const isTemplatePickerOpen = ref(false)
 const activeTemplatePresetInfo = computed(() => {
   return templatePresets.find((preset) => preset.key === activeTemplatePreset.value) || templatePresets[0]
+})
+const filteredTemplatePresets = computed(() => {
+  if (activeTemplateCategory.value === 'all') return templatePresets
+  return templatePresets.filter(preset => preset.category === activeTemplateCategory.value)
 })
 
 const getRatioValue = (ratio: 'original' | 'square' | '4:3' | '16:9'): number => {
@@ -988,6 +1016,59 @@ const createPresetConfig = (presetKey: TemplatePresetKey): IDrawStampConfig => {
     return base
   }
 
+  if (presetKey === 'official') {
+    base.title = '公司公章'
+    base.width = 42
+    base.height = 42
+    base.borderWidth = 1.1
+    base.company = { ...commonCompany, fontHeight: 4.1, textDistributionFactor: 3.2 }
+    base.companyList = [base.company]
+    base.stampType = {
+      ...stampTypeBase,
+      stampType: '公章',
+      fontHeight: 4.2,
+      fontFamily: 'SimSun',
+      fontWeight: 'bold',
+      positionX: 0,
+      positionY: -7,
+      fontWidth: 3,
+      color: base.primaryColor
+    }
+    base.stampTypeList = [base.stampType]
+    base.drawStar = { ...base.drawStar, drawStar: true, starDiameter: 11.5, starPositionX: 0, starPositionY: 0, color: base.primaryColor }
+    return base
+  }
+
+  if (presetKey === 'business') {
+    base.title = '业务专用章'
+    base.width = 40
+    base.height = 40
+    base.company = { ...commonCompany, fontHeight: 4, textDistributionFactor: 3.1 }
+    base.companyList = [base.company]
+    base.stampType = {
+      ...stampTypeBase,
+      stampType: '业务专用章',
+      fontHeight: 4.1,
+      fontFamily: 'SimSun',
+      fontWeight: 'bold',
+      positionX: 0,
+      positionY: -7,
+      fontWidth: 3,
+      color: base.primaryColor
+    }
+    base.stampTypeList = [base.stampType]
+    base.stampCode = {
+      ...codeBase,
+      code: '业务 000001',
+      fontHeight: 1.2,
+      borderOffset: 1.25,
+      color: base.primaryColor
+    }
+    base.stampCodeList = [base.stampCode]
+    base.drawStar = { ...base.drawStar, drawStar: true, starDiameter: 10, starPositionX: 0, starPositionY: -0.5, color: base.primaryColor }
+    return base
+  }
+
   if (presetKey === 'finance') {
     base.title = '财务专用章'
     base.width = 46
@@ -1018,6 +1099,80 @@ const createPresetConfig = (presetKey: TemplatePresetKey): IDrawStampConfig => {
       innerCircleLineWidth: 0.28,
       innerCircleLineRadiusX: 14,
       innerCircleLineRadiusY: 9,
+      color: base.primaryColor,
+      shape: 'ellipse'
+    }]
+    base.drawStar = { ...base.drawStar, drawStar: false, color: base.primaryColor }
+    return base
+  }
+
+  if (presetKey === 'receipt') {
+    base.title = '收讫专用章'
+    base.width = 44
+    base.height = 30
+    base.company = { ...commonCompany, fontHeight: 3.6, textDistributionFactor: 4.1 }
+    base.companyList = [base.company]
+    base.stampType = {
+      ...stampTypeBase,
+      stampType: '收讫',
+      fontHeight: 5.2,
+      fontFamily: 'SimSun',
+      fontWeight: 'bold',
+      positionY: -3,
+      color: base.primaryColor
+    }
+    base.stampTypeList = [base.stampType]
+    base.stampCode = {
+      ...codeBase,
+      code: '经办人  日期',
+      fontHeight: 1.2,
+      borderOffset: 1.15,
+      color: base.primaryColor
+    }
+    base.stampCodeList = [base.stampCode]
+    base.innerCircleList = [{
+      ...base.innerCircle,
+      drawInnerCircle: true,
+      innerCircleLineWidth: 0.25,
+      innerCircleLineRadiusX: 12,
+      innerCircleLineRadiusY: 7.2,
+      color: base.primaryColor,
+      shape: 'ellipse'
+    }]
+    base.drawStar = { ...base.drawStar, drawStar: false, color: base.primaryColor }
+    return base
+  }
+
+  if (presetKey === 'quotation') {
+    base.title = '报价专用章'
+    base.width = 46
+    base.height = 30
+    base.company = { ...commonCompany, fontHeight: 3.7, textDistributionFactor: 3.9 }
+    base.companyList = [base.company]
+    base.stampType = {
+      ...stampTypeBase,
+      stampType: '报价专用章',
+      fontHeight: 4.2,
+      fontFamily: 'SimSun',
+      fontWeight: 'bold',
+      positionY: -4,
+      color: base.primaryColor
+    }
+    base.stampTypeList = [base.stampType]
+    base.taxNumber = {
+      ...base.taxNumber,
+      code: '报价有效期 7 日',
+      fontHeight: 1.8,
+      positionY: 7.4,
+      totalWidth: 26,
+      color: base.primaryColor
+    }
+    base.innerCircleList = [{
+      ...base.innerCircle,
+      drawInnerCircle: true,
+      innerCircleLineWidth: 0.25,
+      innerCircleLineRadiusX: 13,
+      innerCircleLineRadiusY: 8.2,
       color: base.primaryColor,
       shape: 'ellipse'
     }]
@@ -2290,11 +2445,57 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   z-index: 20;
+  max-height: min(410px, calc(100vh - 300px));
+  overflow-y: auto;
   padding: 6px;
   border: 1px solid #dbe2ec;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.98);
   box-shadow: 0 16px 34px rgba(37, 48, 68, 0.16);
+}
+
+.template-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.template-menu::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #d7dee8;
+}
+
+.template-category-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  padding: 2px;
+  margin-bottom: 6px;
+  border: 1px solid #edf1f6;
+  border-radius: 7px;
+  background: #f6f8fb;
+}
+
+.template-category-tabs button {
+  min-width: 0;
+  min-height: 26px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #6c7789;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.template-category-tabs button:hover,
+.template-category-tabs button.active {
+  background: #ffffff;
+  color: #bd2431;
+  box-shadow: 0 1px 5px rgba(37, 48, 68, 0.08);
 }
 
 .template-option {
@@ -2320,8 +2521,7 @@ onUnmounted(() => {
   height: 31px;
 }
 
-.template-option.preset-finance .preset-stamp,
-.template-option.preset-invoice .preset-stamp {
+.template-option.preset-ellipse .preset-stamp {
   width: 35px;
   height: 25px;
 }
@@ -2377,20 +2577,17 @@ onUnmounted(() => {
   line-height: 1;
 }
 
-.preset-finance .preset-stamp,
-.preset-invoice .preset-stamp {
+.preset-ellipse .preset-stamp {
   width: 42px;
   height: 30px;
 }
 
-.preset-finance .preset-ring,
-.preset-invoice .preset-ring {
+.preset-ellipse .preset-ring {
   inset: 2px;
   border-radius: 999px / 72%;
 }
 
-.preset-finance .preset-star,
-.preset-invoice .preset-star {
+.preset-ellipse .preset-star {
   display: none;
 }
 
