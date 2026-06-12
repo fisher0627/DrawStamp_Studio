@@ -212,7 +212,21 @@
           <p class="toolbar-kicker">DrawStamp Studio</p>
           <h1>电子印章工作台</h1>
         </div>
-        <span class="toolbar-status">本地编辑</span>
+        <div class="toolbar-status-group" aria-label="本地草稿状态">
+          <span class="toolbar-status">本地编辑</span>
+          <span class="toolbar-draft-status" :class="draftStatusClass">
+            {{ draftStatusLabel }}
+          </span>
+          <button
+            v-if="hasLocalDraft"
+            type="button"
+            class="toolbar-draft-clear"
+            @click="clearLocalDraft"
+            title="清除浏览器本地保存的草稿"
+          >
+            清除
+          </button>
+        </div>
       </div>
       <div class="toolbar-actions">
         <button class="toolbar-btn compact" type="button" @click="openExtractorDialog" title="从图片提取印章">
@@ -499,9 +513,13 @@ const handleElementListRefresh = () => {
 const stampCanvas = ref<any | null>(null)
 const templateFileInput = ref<HTMLInputElement | null>(null)
 const MM_PER_PIXEL = 10 // 毫米换算像素
+const DRAFT_STORAGE_KEY = 'drawstamp-studio:draft:v1'
+const DRAFT_SAVE_DELAY = 500
 // 绘制工具
 let drawStampUtils: DrawStampUtils
 let exportPreviewRequestId = 0
+let draftSaveTimer: number | undefined
+let suppressDraftSave = false
 const isDraggable = ref(true) // 是否开启拖动
 const showFormatDialog = ref(false)
 const showExtractorDialog = ref(false)
@@ -521,6 +539,9 @@ const selectedRatio = ref<'original' | 'square' | '4:3' | '16:9' | 'custom'>('or
 const viewScalePercent = ref(100)
 const canvasViewRevision = ref(0)
 const canvasBackgroundMode = ref<'grid' | 'paper' | 'checker'>('grid')
+const draftSavedAt = ref<number | null>(null)
+const draftSaveState = ref<'idle' | 'saved' | 'saving' | 'failed'>('idle')
+const hasLocalDraft = ref(false)
 
 // 导出模板元信息弹窗状态
 const showTemplateMetaDialog = ref(false)
@@ -557,6 +578,26 @@ const exportBackgroundLabel = computed(() => {
   }
   return `JPEG 质量 ${jpegQuality.value}%`
 })
+
+const draftStatusLabel = computed(() => {
+  if (draftSaveState.value === 'saving') return '草稿保存中'
+  if (draftSaveState.value === 'failed') return '草稿未保存'
+  if (!draftSavedAt.value) return hasLocalDraft.value ? '已恢复草稿' : '自动草稿'
+
+  const savedDate = new Date(draftSavedAt.value)
+  const time = savedDate.toLocaleTimeString('zh-CN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  })
+  return `草稿已保存 ${time}`
+})
+
+const draftStatusClass = computed(() => ({
+  saving: draftSaveState.value === 'saving',
+  saved: draftSaveState.value === 'saved',
+  failed: draftSaveState.value === 'failed'
+}))
 
 const canvasMeta = computed(() => {
   const config = stampStore.state.config
@@ -990,6 +1031,87 @@ const updateViewState = () => {
   canvasViewRevision.value += 1
 }
 
+type LocalDraftPayload = {
+  version: 1
+  savedAt: number
+  config: IDrawStampConfig
+}
+
+const cloneConfig = (config: IDrawStampConfig): IDrawStampConfig => {
+  return JSON.parse(JSON.stringify(config)) as IDrawStampConfig
+}
+
+const readLocalDraft = (): LocalDraftPayload | null => {
+  try {
+    const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as LocalDraftPayload
+    if (parsed?.version !== 1 || !parsed.config) return null
+    return parsed
+  } catch (error) {
+    console.warn('读取本地草稿失败:', error)
+    return null
+  }
+}
+
+const saveLocalDraftNow = (config: IDrawStampConfig | null) => {
+  if (!config || suppressDraftSave) return
+
+  draftSaveState.value = 'saving'
+  try {
+    const payload: LocalDraftPayload = {
+      version: 1,
+      savedAt: Date.now(),
+      config: cloneConfig(config)
+    }
+    window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload))
+    draftSavedAt.value = payload.savedAt
+    draftSaveState.value = 'saved'
+    hasLocalDraft.value = true
+  } catch (error) {
+    console.warn('保存本地草稿失败:', error)
+    draftSaveState.value = 'failed'
+  }
+}
+
+const scheduleLocalDraftSave = (config: IDrawStampConfig | null) => {
+  if (!config || suppressDraftSave) return
+  if (draftSaveTimer) {
+    window.clearTimeout(draftSaveTimer)
+  }
+  draftSaveState.value = 'saving'
+  draftSaveTimer = window.setTimeout(() => {
+    saveLocalDraftNow(config)
+  }, DRAFT_SAVE_DELAY)
+}
+
+const clearLocalDraft = () => {
+  suppressDraftSave = true
+  if (draftSaveTimer) {
+    window.clearTimeout(draftSaveTimer)
+    draftSaveTimer = undefined
+  }
+  try {
+    window.localStorage.removeItem(DRAFT_STORAGE_KEY)
+  } catch (error) {
+    console.warn('清除本地草稿失败:', error)
+  }
+  hasLocalDraft.value = false
+  draftSavedAt.value = null
+  draftSaveState.value = 'idle'
+  window.setTimeout(() => {
+    suppressDraftSave = false
+  }, DRAFT_SAVE_DELAY)
+}
+
+const handleBeforeUnload = () => {
+  if (draftSaveTimer) {
+    window.clearTimeout(draftSaveTimer)
+    draftSaveTimer = undefined
+  }
+  saveLocalDraftNow(stampStore.state.config)
+}
+
 const zoomCanvas = (factor: number) => {
   if (!drawStampUtils) return
   drawStampUtils.zoomBy(factor)
@@ -1012,18 +1134,29 @@ const resetCanvasView = () => {
 const initDrawStampUtils = () => {
   drawStampUtils = new DrawStampUtils(stampCanvas.value, MM_PER_PIXEL)
   drawStampUtils.setOnConfigChange((config) => {
-    stampStore.setConfig(JSON.parse(JSON.stringify(config)) as IDrawStampConfig)
+    stampStore.setConfig(cloneConfig(config))
     syncConfigToParent()
     updateViewState()
   })
 
   // 如果父组件传入了模板配置，优先使用该配置初始化
   if (props.modelValue) {
-    const initialConfig = JSON.parse(JSON.stringify(props.modelValue)) as IDrawStampConfig
+    const initialConfig = cloneConfig(props.modelValue)
     drawStampUtils.setDrawConfigs(initialConfig)
     stampStore.setConfig(initialConfig)
   } else {
-    stampStore.setConfig(drawStampUtils.getDrawConfigs())
+    const draft = readLocalDraft()
+    if (draft) {
+      const draftConfig = cloneConfig(draft.config)
+      drawStampUtils.setDrawConfigs(draftConfig)
+      stampStore.setConfig(draftConfig)
+      draftSavedAt.value = draft.savedAt
+      draftSaveState.value = 'saved'
+      hasLocalDraft.value = true
+    } else {
+      stampStore.setConfig(drawStampUtils.getDrawConfigs())
+      hasLocalDraft.value = false
+    }
   }
 }
 
@@ -1476,6 +1609,14 @@ watch([selectedFormat, jpegQuality, useWhitePngBackground], () => {
   }
 })
 
+watch(
+  () => stampStore.state.config,
+  (config) => {
+    scheduleLocalDraftSave(config)
+  },
+  { deep: true }
+)
+
 // 在组件挂载时初始化
 onMounted(async () => {
   initDrawStampUtils()
@@ -1501,12 +1642,15 @@ onMounted(async () => {
   await nextTick()
   handleSelectElement('basic-settings', 'basic', 0)
 
+  window.addEventListener('beforeunload', handleBeforeUnload)
   window.addEventListener('mousemove', handleMouseMove)
   drawStampUtils?.canvas?.addEventListener('click', handleCanvasClick)
 })
 
 // 在组件卸载时移除事件监听
 onUnmounted(() => {
+  handleBeforeUnload()
+  window.removeEventListener('beforeunload', handleBeforeUnload)
   window.removeEventListener('mousemove', handleMouseMove)
   drawStampUtils?.canvas?.removeEventListener('click', handleCanvasClick)
 })
@@ -1547,6 +1691,13 @@ onUnmounted(() => {
   text-align: left;
 }
 
+.toolbar-status-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
 .toolbar-brand h1,
 .toolbar-kicker {
   margin: 0;
@@ -1574,6 +1725,49 @@ onUnmounted(() => {
   font-size: 12px;
   padding: 4px 9px;
   white-space: nowrap;
+}
+
+.toolbar-draft-status {
+  border: 1px solid #e2e7ef;
+  border-radius: 999px;
+  color: #667386;
+  background: #ffffff;
+  font-size: 12px;
+  line-height: 1.2;
+  padding: 4px 9px;
+  white-space: nowrap;
+}
+
+.toolbar-draft-status.saving {
+  color: #7c5b1b;
+  background: #fff8e8;
+  border-color: #f0dbac;
+}
+
+.toolbar-draft-status.saved {
+  color: #32714b;
+  background: #f0fbf5;
+  border-color: #c9ead8;
+}
+
+.toolbar-draft-status.failed {
+  color: #a12a34;
+  background: #fff3f4;
+  border-color: #efc4ca;
+}
+
+.toolbar-draft-clear {
+  border: 0;
+  background: transparent;
+  color: #8a95a5;
+  font-size: 12px;
+  line-height: 1.2;
+  padding: 4px 3px;
+  cursor: pointer;
+}
+
+.toolbar-draft-clear:hover {
+  color: #bd2431;
 }
 
 .toolbar-actions {
