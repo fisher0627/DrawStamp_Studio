@@ -2,29 +2,31 @@
   "name": "drawstamputils",
   "private": false,
   "version": "0.2.5",
-  "description": "drawstamputils, stamp maker, manual aging stamp",
+  "description": "DrawStamp Studio - online electronic stamp generator and editor",
   "keywords": [
-    "stamp.js",
-    "drawStampUtils.js",
     "stamp",
     "drawstamp",
+    "drawstamp-studio",
     "印章制作",
     "电子印章",
     "stamp maker",
+    "stamp generator",
     "digital seal",
     "印章生成",
     "电子印章生成",
     "印章生成器",
-    "电子印章生成器"
+    "电子印章生成器",
+    "图片提取印章",
+    "透明PNG"
   ],
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/xxss0903/drawstamputils"
+    "url": "https://github.com/fisher0627/drawstamputils.git"
   },
   "license": "Apache-2.0",
-  "homepage": "https://github.com/xxss0903/drawstamputils",
-  "author": "xxss0903",
+  "homepage": "https://wosp.cc.cd/",
+  "author": "fisher0627",
   "main": "src/DrawStampUtils.ts",
   "scripts": {
     "dev": "vite",

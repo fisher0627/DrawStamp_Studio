@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="DrawStamp Studio">
+  <rect width="64" height="64" rx="16" fill="#fff5f6"/>
+  <circle cx="32" cy="32" r="21" fill="none" stroke="#c91523" stroke-width="4"/>
+  <path fill="#c91523" d="m32 15 4.4 9 9.9 1.4-7.1 6.9 1.7 9.8-8.9-4.7-8.9 4.7 1.7-9.8-7.1-6.9 9.9-1.4L32 15Z"/>
+  <path fill="none" stroke="#c91523" stroke-linecap="round" stroke-width="3" d="M20 47h24"/>
+</svg>

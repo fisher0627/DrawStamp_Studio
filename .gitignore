@@ -10,6 +10,7 @@ yarn-error.log*
 
 # Build output
 build/
+dist/
 
 # Dependency directories
 jspm_packages/
@@ -36,4 +37,3 @@ jspm_packages/
 
 .vscode
 .idea
-

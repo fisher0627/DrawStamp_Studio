@@ -1,10 +1,28 @@
 # DrawStamp Studio
 
-电子印章工作台，一个基于 Vue 3 + Vite 的前端印章生成与编辑工具。
+在线电子印章生成器，一个基于 Vue 3 + Vite 的前端印章生成与编辑工具。
+
+[![Live Demo](https://img.shields.io/badge/Live-Demo-c91523?style=for-the-badge)](https://wosp.cc.cd/)
+[![Vue 3](https://img.shields.io/badge/Vue-3-42b883?style=for-the-badge&logo=vue.js&logoColor=white)](https://vuejs.org/)
+[![Vite](https://img.shields.io/badge/Vite-5-646cff?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![License](https://img.shields.io/badge/License-Apache--2.0-334155?style=for-the-badge)](LICENSE)
 
 当前项目已经从单纯的印章绘制工具，整理成一个可以直接使用的在线编辑器：支持常用模板、画布编辑、字体选择、图片提取印章、模板导入导出，以及 PNG 图片下载。所有核心处理都在浏览器本地完成，不依赖后端接口。
 
 在线访问：[https://wosp.cc.cd/](https://wosp.cc.cd/)
+
+GitHub 仓库：[https://github.com/fisher0627/drawstamputils](https://github.com/fisher0627/drawstamputils)
+
+## 项目定位
+
+DrawStamp Studio 更适合这些场景：
+
+- 需要快速生成圆章、椭圆章、合同专用章、财务专用章或发票专用章图片。
+- 需要把扫描件或照片里的红色印章提取为透明 PNG。
+- 需要在浏览器里完成印章排版、预览、导出，不想安装桌面软件。
+- 需要本地处理图片，避免把公司名称、票据截图、合同截图上传到第三方服务器。
+
+关键词：电子印章、在线印章、印章生成器、电子印章生成器、图片提取印章、透明 PNG 印章、stamp generator、digital seal。
 
 ## 安全说明
 
