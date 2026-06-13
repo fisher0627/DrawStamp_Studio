@@ -1189,6 +1189,7 @@ export class DrawStampUtils {
             this.drawStampConfigs.ruler.showSideRuler = originalRuler.showSideRuler
             this.drawStampConfigs.ruler.showFullRuler = originalRuler.showFullRuler
             this.drawStampConfigs.ruler.showCurrentPositionText = originalRuler.showCurrentPositionText
+            this.normalizeWorkspaceRuler()
             this.refreshStamp()
         }
         this.scale = 1
@@ -1370,6 +1371,7 @@ export class DrawStampUtils {
                 this.drawStampConfigs.ruler.showSideRuler = originalRuler.showSideRuler
                 this.drawStampConfigs.ruler.showFullRuler = originalRuler.showFullRuler
                 this.drawStampConfigs.ruler.showCurrentPositionText = originalRuler.showCurrentPositionText
+                this.normalizeWorkspaceRuler()
                 this.refreshStamp()
             }
 
