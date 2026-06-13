@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
   <title id="title">DrawStamp Studio 社交预览图</title>
-  <desc id="desc">在线电子印章生成器，支持图片提取印章、透明 PNG 和 SVG 导出。</desc>
+  <desc id="desc">在线电子印章工作台，支持印章生成、图片提取、画布编辑和多格式导出。</desc>
   <defs>
     <clipPath id="screenClip">
       <rect x="585" y="84" width="610" height="448" rx="18"/>
@@ -37,7 +37,7 @@
   </g>
 
   <text x="88" y="229" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="24" font-weight="700" letter-spacing="1" fill="#64748b">DRAWSTAMP STUDIO</text>
-  <text x="88" y="289" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="50" font-weight="850" fill="#111827">在线电子印章生成器</text>
+  <text x="88" y="289" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="50" font-weight="850" fill="#111827">在线电子印章工作台</text>
   <text x="88" y="345" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="30" font-weight="650" fill="#334155">生成、提取、编辑、导出</text>
   <text x="88" y="396" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="22" font-weight="500" fill="#64748b">本地处理 · 透明 PNG / SVG</text>
 

@@ -1,24 +1,29 @@
-# DrawStamp Studio
+# DrawStamp Studio - 在线电子印章工作台
 
-在线电子印章生成器，一个基于 Vue 3 + Vite 的前端印章生成与编辑工具。
+一个可以直接在线使用的电子印章工作台，支持印章生成、图片提取、画布编辑、模板管理和多格式导出。核心处理都在浏览器本地完成，不依赖后端接口。
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-FF0015?style=for-the-badge)](https://wosp.cc.cd/)
-[![CI](https://img.shields.io/github/actions/workflow/status/fisher0627/drawstamputils/deploy.yml?branch=main&label=CI&style=for-the-badge)](https://github.com/fisher0627/drawstamputils/actions)
+[![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://wosp.cc.cd/)
 [![Vue 3](https://img.shields.io/badge/Vue-3-42b883?style=for-the-badge&logo=vue.js&logoColor=white)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5-646cff?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-334155?style=for-the-badge)](LICENSE)
 
-当前项目已经从单纯的印章绘制工具，整理成一个可以直接使用的在线编辑器：支持常用模板、画布编辑、字体选择、图片提取印章、本地自动草稿、模板导入导出，以及 PNG / SVG / JPEG 多格式下载。所有核心处理都在浏览器本地完成，不依赖后端接口。
+## 官方入口
 
-在线访问：[https://wosp.cc.cd/](https://wosp.cc.cd/)
+| 入口 | 地址 |
+| --- | --- |
+| 在线使用 | [https://wosp.cc.cd/](https://wosp.cc.cd/) |
+| GitHub 仓库 | [https://github.com/fisher0627/drawstamputils](https://github.com/fisher0627/drawstamputils) |
+| 问题反馈 | [GitHub Issues](https://github.com/fisher0627/drawstamputils/issues) |
 
-GitHub 仓库：[https://github.com/fisher0627/drawstamputils](https://github.com/fisher0627/drawstamputils)
+## 项目说明
+
+DrawStamp Studio 已经从单纯的印章绘制工具，整理成一个完整的在线编辑器：支持常用模板、专业画布、字体选择、图片提取印章、本地自动草稿、模板导入导出，以及 PNG / SVG / JPEG 多格式下载。
 
 相关文档：
 
 - [贡献指南](CONTRIBUTING.md)
 - [版本记录](CHANGELOG.md)
-- [问题反馈](https://github.com/fisher0627/drawstamputils/issues)
 
 ## 项目定位
 
