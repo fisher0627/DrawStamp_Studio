@@ -126,7 +126,6 @@ export class DrawStampUtils {
      * @param intensity
      */
     addManualAgingEffect(x: number, y: number, intensityFactor: number) {
-        console.log('手动做旧   1', x, y, this.drawStampConfigs.agingEffect.agingEffectParams)
         const radius = 1 * this.mmToPixel; // 直径3mm，半径1.5mm
 
         // 考虑印章偏移量
@@ -679,7 +678,7 @@ export class DrawStampUtils {
             const svgElement = doc.documentElement
             if (!svgElement) return null
 
-            const color = svg.color || this.drawStampConfigs.primaryColor || '#d40000'
+            const color = svg.color || this.drawStampConfigs.primaryColor || '#FF0015'
             const style = doc.createElement('style')
             style.textContent = `* { fill: ${color} !important; stroke: ${color} !important; }`
             svgElement.insertBefore(style, svgElement.firstChild)
@@ -1060,7 +1059,6 @@ export class DrawStampUtils {
         height: number,
         forceRefresh: boolean = false
     ) {
-        // console.log("addAgingEffect", "width", width, "height", height, "forceRefresh", this.drawStampConfigs.agingEffect.applyAging)
         if (!this.drawStampConfigs.agingEffect.applyAging) return;
         const imageData = ctx.getImageData(0, 0, width, height);
         const data = imageData.data;

@@ -187,7 +187,7 @@ const emit = defineEmits<{
 }>()
 
 const lineList = computed(() => props.config.lineList || [])
-const defaultColor = computed(() => props.config.primaryColor || '#d40000')
+const defaultColor = computed(() => props.config.primaryColor || '#FF0015')
 const positionRangeX = computed(() => Math.max(10, (props.config.width ?? 40) / 2))
 const positionRangeY = computed(() => Math.max(10, (props.config.height ?? 40) / 2))
 const maxLength = computed(() => {
@@ -622,4 +622,3 @@ label {
   opacity: 0;
 }
 </style>
-

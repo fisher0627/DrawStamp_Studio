@@ -404,7 +404,6 @@ const handleIsCircleDetectChange = (value: boolean) => {
 
 const handleBasicConfigUpdate = (updater: (config: IDrawStampConfig) => void) => {
   stampStore.updateConfig((config) => {
-    console.log("update config company", config.company)
     updater(config)
   })
   restoreDrawConfigs()
@@ -537,7 +536,6 @@ const handleLineConfigUpdate = (updater: (config: IDrawStampConfig) => void) => 
 
   // 在组件挂载时加载字体
   onMounted(async () => {
-    console.log('EditorControls: onMounted drawStampUtils', props.drawStampUtils)
     restoreDrawConfigs()
     drawStamp()
     loadPresetsFromLocalStorage()

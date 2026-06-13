@@ -214,7 +214,7 @@ const emit = defineEmits<{
 }>()
 
 const innerCircleList = computed(() => props.config.innerCircleList || [])
-const primaryColor = computed(() => props.config.primaryColor || '#d40000')
+const primaryColor = computed(() => props.config.primaryColor || '#FF0015')
 const selectedIndex = computed(() => props.selectedIndex ?? -1)
 
 // 跟踪每个项的展开状态
@@ -358,7 +358,7 @@ const addInnerCircle = (shape?: 'ellipse' | 'rectangle' | 'rhombus' | 'triangle'
       dashLength: 2,
       gapLength: 1,
       shape: newShape,
-      color: config.primaryColor || '#d40000',
+      color: config.primaryColor || '#FF0015',
       offsetX: 0,
       offsetY: 0
     })
@@ -669,4 +669,3 @@ label {
   opacity: 0;
 }
 </style>
-

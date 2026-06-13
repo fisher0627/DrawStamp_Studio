@@ -230,7 +230,7 @@ const triggerSvgUpload = () => {
 }
 
 const svgList = computed(() => props.config.svgList || [])
-const primaryColor = computed(() => props.config.primaryColor || '#d40000')
+const primaryColor = computed(() => props.config.primaryColor || '#FF0015')
 const builtinSvgAssets = getSvgAssets()
 const selectedAssetKey = ref(builtinSvgAssets[0]?.key || '')
 
@@ -269,7 +269,7 @@ const createSvgItem = (name: string, content: string, config: IDrawStampConfig):
   id: crypto?.randomUUID ? crypto.randomUUID() : `svg-${Date.now()}`,
   name: name || `SVG ${config.svgList.length + 1}`,
   svgContent: content,
-  color: config.primaryColor || '#d40000',
+  color: config.primaryColor || '#FF0015',
   width: 12,
   height: 12,
   positionX: 0,
@@ -752,4 +752,3 @@ const adjustScale = (index: number, delta: number) => {
   transform: rotate(-90deg);
 }
 </style>
-

@@ -300,7 +300,7 @@ const emit = defineEmits<{
 }>()
 
 const companyList = computed(() => props.config.companyList || [])
-const primaryColor = computed(() => props.config.primaryColor || '#d40000')
+const primaryColor = computed(() => props.config.primaryColor || '#FF0015')
 const fonts = computed(() => props.systemFonts || [])
 const fontWeightOptions = [100, 200, 300, 400, 500, 600, 700, 800, 900]
 const selectedIndex = computed(() => props.selectedIndex ?? -1)
@@ -498,7 +498,7 @@ const addCompany = () => {
         fontFamily: last?.fontFamily || 'SimSun',
         fontHeight: last?.fontHeight || 4.2,
         fontWeight: last?.fontWeight || 'normal',
-        color: config.primaryColor || '#d40000',
+        color: config.primaryColor || '#FF0015',
         shape: currentShape,
         adjustEllipseText: false,
         adjustEllipseTextFactor: 0.5,
@@ -524,7 +524,7 @@ const addCompany = () => {
         fontFamily: last?.fontFamily || 'SimSun',
         fontHeight: last?.fontHeight || 4.2,
         fontWeight: last?.fontWeight || 'normal',
-        color: config.primaryColor || '#d40000',
+        color: config.primaryColor || '#FF0015',
         shape: 'ellipse',
         adjustEllipseText: false,
         adjustEllipseTextFactor: 0.5,

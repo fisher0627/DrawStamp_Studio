@@ -224,7 +224,7 @@ const emit = defineEmits<{
 }>()
 
 const stampTypeList = computed(() => props.config.stampTypeList || [])
-const primaryColor = computed(() => props.config.primaryColor || '#d40000')
+const primaryColor = computed(() => props.config.primaryColor || '#FF0015')
 const selectedIndex = computed(() => props.selectedIndex ?? -1)
 
 // 跟踪每个项的展开状态
@@ -338,7 +338,7 @@ const addStampType = () => {
       fontWidth: 3,
       orientation: 'horizontal',
       rotation: 0,
-      color: config.primaryColor || '#d40000'
+      color: config.primaryColor || '#FF0015'
     })
   })
 }
