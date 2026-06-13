@@ -75,6 +75,7 @@ const emit = defineEmits<{
 }>()
 
 const compactFontOptions = [
+  'FZXiaoBiaoSong-B05S',
   'STLiti',
   'LiSu',
   'SimLi',

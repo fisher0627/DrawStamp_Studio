@@ -15,7 +15,15 @@ const fontAliases: Record<string, string> = {
   '华文仿宋': 'STFangsong',
   '华文行楷': 'STXingkai',
   '华文新魏': 'STXinwei',
-  'ST Liti': 'STLiti'
+  'ST Liti': 'STLiti',
+  '方正小标宋': 'FZXiaoBiaoSong-B05S',
+  '方正小标宋体': 'FZXiaoBiaoSong-B05S',
+  '方正小标宋简': 'FZXiaoBiaoSong-B05S',
+  '方正小标宋简体': 'FZXiaoBiaoSong-B05S',
+  '反正小标宋': 'FZXiaoBiaoSong-B05S',
+  '反正小标宋体': 'FZXiaoBiaoSong-B05S',
+  '小标宋': 'FZXiaoBiaoSong-B05S',
+  'FZXBSJW--GB1-0': 'FZXiaoBiaoSong-B05S'
 }
 
 const fontFallbacks: Record<string, string[]> = {
@@ -32,7 +40,8 @@ const fontFallbacks: Record<string, string[]> = {
   'Kaiti SC': ['Kaiti SC', 'STKaiti', 'KaiTi', '楷体', 'serif'],
   'Heiti SC': ['Heiti SC', 'STHeiti', 'SimHei', '黑体', 'sans-serif'],
   'Microsoft YaHei': ['Microsoft YaHei', '微软雅黑', 'PingFang SC', 'sans-serif'],
-  'PingFang SC': ['PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'sans-serif']
+  'PingFang SC': ['PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'sans-serif'],
+  'FZXiaoBiaoSong-B05S': ['FZXiaoBiaoSong-B05S', 'FZXBSJW--GB1-0', '方正小标宋简体', '方正小标宋体', '方正小标宋简', 'SimSun', 'Songti SC', 'serif']
 }
 
 export function getCanonicalFontName(fontName: string): string {
@@ -70,6 +79,7 @@ export async function ensureStampFontsLoaded(): Promise<void> {
     await Promise.all([
       document.fonts.load('16px "DrawStamp-STLiti"'),
       document.fonts.load('16px "STLiti"'),
+      document.fonts.load('16px "FZXiaoBiaoSong-B05S"'),
       document.fonts.ready
     ])
   } catch (error) {
@@ -121,6 +131,8 @@ export function getFontDisplayName(fontName: string): string {
     'FZKai-Z03': '方正楷体',
     'FZLiShu-S01': '方正隶书',
     'FZXiaoZhuanTi-S13T': '方正小篆体',
+    'FZXiaoBiaoSong-B05S': '方正小标宋简体',
+    'FZXBSJW--GB1-0': '方正小标宋简体',
     'HYLiShuJ': '汉仪隶书',
     'HYZhongLiShuJ': '汉仪中隶书',
     'HYYanKaiW': '汉仪颜楷',
@@ -192,6 +204,7 @@ export function getRecommendedStampFonts(): string[] {
     'SimSun',
     'Songti SC',
     'STSong',
+    'FZXiaoBiaoSong-B05S',
     'KaiTi',
     'Kaiti SC',
     'STKaiti',
@@ -269,6 +282,8 @@ function getChineseFonts(): string[] {
     'STSong', // 华文宋体
     'STFangsong', // 华文仿宋
     'STZhongsong', // 华文中宋
+    'FZXiaoBiaoSong-B05S', // 方正小标宋简体
+    'FZXBSJW--GB1-0', // 方正小标宋简体 PostScript 名称
     'STXihei', // 华文细黑
     'STHupo', // 华文琥珀
     'STLiti', // 华文隶书
