@@ -198,7 +198,7 @@
 
   <StampExtractor
     v-if="showExtractorDialog"
-    :primary-color="stampStore.state.config?.primaryColor || '#c91523'"
+    :primary-color="stampStore.state.config?.primaryColor || '#FF0015'"
     @close="closeExtractorDialog"
     @add-image="handleExtractedStampImage"
   />
@@ -934,7 +934,7 @@ const createPresetConfig = (presetKey: TemplatePresetKey): IDrawStampConfig => {
   const stampTypeBase = base.stampTypeList?.[0] || base.stampType
   const codeBase = base.stampCodeList?.[0] || base.stampCode
 
-  base.primaryColor = '#c91523'
+  base.primaryColor = '#FF0015'
   base.borderWidth = 1
   base.scale = 1
   base.offsetX = 0

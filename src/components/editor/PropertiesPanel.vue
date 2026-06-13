@@ -202,7 +202,7 @@ const elementCount = computed(() => {
   return counts.reduce((sum, value) => sum + value, 0)
 })
 
-const primaryColor = computed(() => currentConfig.value?.primaryColor || '#c91523')
+const primaryColor = computed(() => currentConfig.value?.primaryColor || '#FF0015')
 const primaryColorLabel = computed(() => {
   const value = primaryColor.value.trim()
   return value.startsWith('#') ? value.toUpperCase() : '自定义色'

@@ -166,7 +166,7 @@ const toggleExpanded = () => {
   emit('update:expanded', !props.expanded)
 }
 
-const primaryColor = computed(() => props.config.primaryColor || '#c91523')
+const primaryColor = computed(() => props.config.primaryColor || '#FF0015')
 const selectedIndex = computed(() => props.selectedIndex ?? -1)
 
 const codeList = computed(() => {
@@ -215,7 +215,7 @@ const createDefaultCode = (config: IDrawStampConfig): ICode => ({
   fontWidth: 1.2,
   textDistributionFactor: 50,
   fontWeight: 'normal',
-  color: config.primaryColor || '#c91523'
+  color: config.primaryColor || '#FF0015'
 })
 
 const ensureCodeList = (config: IDrawStampConfig) => {
