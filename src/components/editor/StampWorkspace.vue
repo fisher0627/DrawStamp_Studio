@@ -436,6 +436,9 @@
           <div class="canvas-status">
             <span>{{ selectedElementLabel }}</span>
             <span>{{ canvasMeta }}</span>
+            <a :href="onlineUrl" target="_blank" rel="noopener noreferrer" title="打开线上版本">
+              v{{ appVersion }}
+            </a>
           </div>
           <div class="export-dock" aria-label="导出设置">
             <span class="export-dock-title">导出</span>
@@ -512,6 +515,8 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const stampStore = useStampStore()
+const appVersion = __APP_VERSION__
+const onlineUrl = 'https://wosp.cc.cd/'
 
 // 控制内部逻辑是否已就绪
 const isDrawStampUtilsReady = ref(false)
@@ -2869,7 +2874,8 @@ onUnmounted(() => {
   white-space: nowrap;
 }
 
-.canvas-status span + span::before {
+.canvas-status span + span::before,
+.canvas-status a::before {
   content: "";
   display: inline-block;
   width: 1px;
@@ -2877,6 +2883,18 @@ onUnmounted(() => {
   margin-right: 14px;
   vertical-align: -2px;
   background: #d9dee7;
+}
+
+.canvas-status a {
+  color: #8a95a5;
+  font-size: 12px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.canvas-status a:hover {
+  color: #bd2431;
 }
 
 .canvas-action-btn {
@@ -3601,21 +3619,27 @@ onUnmounted(() => {
 
 @media (max-width: 900px) {
   .main-workspace {
-    flex-direction: column;
     height: auto;
-    min-height: auto;
+    min-height: calc(100dvh - 20px);
+    overflow: visible;
   }
 
   .stamp-draw-container {
     flex-direction: column;
+    overflow: visible;
   }
 
   .workspace-left {
+    order: 2;
     width: 100%;
     min-width: 0;
-    max-height: 520px;
+    max-height: none;
     border-right: none;
     border-bottom: 1px solid #d9dee7;
+  }
+
+  .workspace-left :deep(.element-list-panel) {
+    max-height: 380px;
   }
 
   .template-library {
@@ -3628,12 +3652,15 @@ onUnmounted(() => {
   }
 
   .canvas-area {
+    order: 1;
     min-height: 520px;
     border-right: none;
+    border-bottom: 1px solid #d9dee7;
   }
 
   .canvas-wrapper {
-    padding: 48px 18px 24px;
+    min-height: 430px;
+    padding: 54px 18px 28px;
   }
 
   .canvas-stage {
@@ -3646,27 +3673,97 @@ onUnmounted(() => {
     height: 100%;
   }
 
-  .canvas-ruler {
-    display: none;
+  .canvas-ruler.horizontal {
+    left: 42px;
+    right: 42px;
+  }
+
+  .canvas-ruler.vertical {
+    top: 50px;
+    bottom: 50px;
+  }
+
+  :deep(.properties-panel) {
+    order: 3;
   }
 }
 
 @media (max-width: 640px) {
-  .top-toolbar,
+  .top-toolbar {
+    min-height: auto;
+    padding: 12px;
+  }
+
+  .toolbar-brand {
+    width: 100%;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .toolbar-status-group {
+    flex-wrap: wrap;
+  }
+
+  .draft-menu {
+    left: auto;
+    right: 0;
+    width: min(270px, calc(100vw - 32px));
+  }
+
+  .draft-menu::before {
+    left: auto;
+    right: 22px;
+  }
+
+  .toolbar-actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .toolbar-btn {
+    justify-content: center;
+    padding-inline: 8px;
+  }
+
   .canvas-header,
   .canvas-footer {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .toolbar-actions,
   .footer-actions {
     width: 100%;
   }
 
-  .toolbar-actions .toolbar-btn,
   .footer-actions .canvas-action-btn {
     flex: 1;
+  }
+
+  .canvas-header {
+    gap: 10px;
+  }
+
+  .canvas-tools {
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 2px;
+  }
+
+  .canvas-action-btn,
+  .zoom-indicator {
+    flex: 0 0 auto;
+  }
+
+  .canvas-wrapper {
+    min-height: 360px;
+    padding: 50px 14px 24px;
+  }
+
+  .canvas-stage {
+    width: min(420px, calc(100vw - 56px));
+    height: min(420px, calc(100vw - 56px));
   }
 
   .canvas-status {
@@ -3677,6 +3774,35 @@ onUnmounted(() => {
 
   .template-current {
     min-height: 66px;
+  }
+
+  .export-dock {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .export-name-mini {
+    flex: 1 1 160px;
+    width: auto;
+  }
+
+  .export-dialog {
+    width: min(100vw - 20px, 920px);
+    max-height: calc(100dvh - 20px);
+    overflow-y: auto;
+  }
+
+  .export-dialog-content {
+    grid-template-columns: 1fr;
+  }
+
+  .export-preview-panel {
+    border-right: 0;
+    border-bottom: 1px solid #e3e8ef;
+  }
+
+  .export-dialog .format-options {
+    grid-template-columns: 1fr;
   }
 }
 </style>
