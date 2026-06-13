@@ -105,6 +105,7 @@ export type IDrawImage = {
   positionX: number
   positionY: number
   keepAspectRatio: boolean
+  fitToStamp?: boolean
   rotation?: number // 旋转角度（度），0-360
 }
 

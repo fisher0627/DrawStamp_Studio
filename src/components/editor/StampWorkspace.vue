@@ -699,18 +699,30 @@ const showSelectionFrame = computed(() => {
 const selectionFrameStyle = computed(() => {
   if (!stampStore.state.config || !drawStampUtils) return {}
   canvasViewRevision.value
-  const frame = drawStampUtils.getStampViewportFrame()
+  const frame = selectedElementType.value === 'image'
+    ? drawStampUtils.getImageViewportFrame(Math.max(selectedElementIndex.value, 0))
+    : drawStampUtils.getStampViewportFrame()
   const canvasEl = stampCanvas.value
   const canvasScaleX = canvasEl ? canvasEl.getBoundingClientRect().width / canvasEl.width : 1
   const canvasScaleY = canvasEl ? canvasEl.getBoundingClientRect().height / canvasEl.height : 1
   const canvasOffsetLeft = canvasEl?.offsetLeft ?? 20
   const canvasOffsetTop = canvasEl?.offsetTop ?? 20
-  const width = Math.max(24, frame.width * canvasScaleX)
-  const height = Math.max(24, frame.height * canvasScaleY)
+  const canvasCssWidth = canvasEl?.getBoundingClientRect().width || 600
+  const canvasCssHeight = canvasEl?.getBoundingClientRect().height || 600
+  const rawLeft = frame.left * canvasScaleX
+  const rawTop = frame.top * canvasScaleY
+  const rawWidth = Math.max(24, frame.width * canvasScaleX)
+  const rawHeight = Math.max(24, frame.height * canvasScaleY)
+  const right = Math.max(0, Math.min(rawLeft + rawWidth, canvasCssWidth))
+  const bottom = Math.max(0, Math.min(rawTop + rawHeight, canvasCssHeight))
+  const width = Math.min(canvasCssWidth, Math.max(24, right - Math.max(0, Math.min(rawLeft, canvasCssWidth))))
+  const height = Math.min(canvasCssHeight, Math.max(24, bottom - Math.max(0, Math.min(rawTop, canvasCssHeight))))
+  const left = Math.max(0, Math.min(rawLeft, canvasCssWidth - width))
+  const top = Math.max(0, Math.min(rawTop, canvasCssHeight - height))
 
   return {
-    left: `${canvasOffsetLeft + frame.left * canvasScaleX}px`,
-    top: `${canvasOffsetTop + frame.top * canvasScaleY}px`,
+    left: `${canvasOffsetLeft + left}px`,
+    top: `${canvasOffsetTop + top}px`,
     width: `${width}px`,
     height: `${height}px`
   }
@@ -1730,26 +1742,14 @@ const handleExtractedStampImage = async (payload: ExtractStampResult) => {
   const currentConfig = drawStampUtils.getDrawConfigs()
   clearGeneratedStampElements(currentConfig)
 
-  const aspectRatio = payload.width / Math.max(payload.height, 1)
-  const isRoundCanvas = Math.abs(Number(currentConfig.width) - Number(currentConfig.height)) <= 2
-  const fillRatio = isRoundCanvas ? 0.78 : 0.74
-  const maxWidth = Math.max(8, currentConfig.width * fillRatio)
-  const maxHeight = Math.max(8, currentConfig.height * fillRatio)
-  let imageWidth = maxWidth
-  let imageHeight = imageWidth / aspectRatio
-
-  if (imageHeight > maxHeight) {
-    imageHeight = maxHeight
-    imageWidth = imageHeight * aspectRatio
-  }
-
   const imageItem: IDrawImage = {
     imageUrl: payload.dataUrl,
-    imageWidth: Number(imageWidth.toFixed(1)),
-    imageHeight: Number(imageHeight.toFixed(1)),
+    imageWidth: Number(currentConfig.width.toFixed(1)),
+    imageHeight: Number(currentConfig.height.toFixed(1)),
     positionX: 0,
     positionY: 0,
     keepAspectRatio: true,
+    fitToStamp: true,
     rotation: 0
   }
 
@@ -1810,6 +1810,11 @@ const confirmSaveTemplate = () => {
 
 // 更新印章绘制，从 PropertiesPanel 组件中调用
 const updateDrawStamp = (newConfig: IDrawStampConfig, refreshSecurityPattern: boolean, refreshOld: boolean, refreshRoughEdge: boolean) => {
+  const fittedImage = newConfig.imageList?.find(image => image.fitToStamp)
+  if (fittedImage) {
+    fittedImage.imageWidth = Number(newConfig.width.toFixed(1))
+    fittedImage.imageHeight = Number(newConfig.height.toFixed(1))
+  }
   drawStampUtils.setDrawConfigs(newConfig)
   drawStampUtils.refreshStamp(refreshSecurityPattern, refreshOld, refreshRoughEdge)
   stampStore.setConfig(newConfig)

@@ -50,6 +50,7 @@ export class DrawStampUtils {
     private drawStampConfigs: IDrawStampConfig
     // 添加图片缓存
     private imageCache: Map<string, ImageBitmap> = new Map();
+    private imageTrimCache: Map<string, { x: number; y: number; width: number; height: number }> = new Map();
     private svgBitmapCache: Map<string, ImageBitmap> = new Map();
     private pendingSvgLoads: Map<string, Promise<void>> = new Map();
     // 绘制内径圆的工具类
@@ -168,9 +169,11 @@ export class DrawStampUtils {
             drawConfigs.svgList = []
         }
         this.drawStampConfigs = drawConfigs
+        this.normalizeWorkspaceRuler()
         // 同步偏移量
         this.stampOffsetX = drawConfigs.offsetX || 0
         this.stampOffsetY = drawConfigs.offsetY || 0
+        this.normalizeStampOffset()
         this.resetSvgCache()
     }
 
@@ -295,6 +298,34 @@ export class DrawStampUtils {
         }
     }
 
+    public getImageViewportFrame(index: number = 0) {
+        const image = this.drawStampConfigs.imageList?.[index]
+        if (!image) {
+            return this.getStampViewportFrame()
+        }
+
+        const stampCenterX = (this.drawStampConfigs.width / 2) * this.mmToPixel + RULER_WIDTH * this.mmToPixel
+        const stampCenterY = (this.drawStampConfigs.height / 2) * this.mmToPixel + RULER_HEIGHT * this.mmToPixel
+        const effectiveOffsetX = (this.drawStampConfigs.offsetX ?? this.stampOffsetX) * this.mmToPixel * this.scale
+        const effectiveOffsetY = (this.drawStampConfigs.offsetY ?? this.stampOffsetY) * this.mmToPixel * this.scale
+        const imageOffsetX = (image.positionX || 0) * this.mmToPixel * this.scale
+        const imageOffsetY = (image.positionY || 0) * this.mmToPixel * this.scale
+        const shouldFitToStamp = image.fitToStamp || this.isStandaloneImageStamp()
+        const frameWidth = shouldFitToStamp ? this.drawStampConfigs.width : image.imageWidth
+        const frameHeight = shouldFitToStamp ? this.drawStampConfigs.height : image.imageHeight
+        const width = Math.max(1, frameWidth * this.mmToPixel * this.scale)
+        const height = Math.max(1, frameHeight * this.mmToPixel * this.scale)
+        const centerX = this.offsetX + stampCenterX + effectiveOffsetX + imageOffsetX
+        const centerY = this.offsetY + stampCenterY + effectiveOffsetY + imageOffsetY
+
+        return {
+            left: centerX - width / 2,
+            top: centerY - height / 2,
+            width,
+            height
+        }
+    }
+
     public setOnConfigChange(callback?: (config: IDrawStampConfig) => void) {
         this.onConfigChange = callback
     }
@@ -334,6 +365,25 @@ export class DrawStampUtils {
             x: Math.min(maxOffsetX, Math.max(minOffsetX, offsetX)),
             y: Math.min(maxOffsetY, Math.max(minOffsetY, offsetY))
         }
+    }
+
+    private normalizeStampOffset() {
+        const clampedOffset = this.clampStampOffset(this.stampOffsetX, this.stampOffsetY)
+        this.stampOffsetX = Math.round(clampedOffset.x * 10) / 10
+        this.stampOffsetY = Math.round(clampedOffset.y * 10) / 10
+        this.drawStampConfigs.offsetX = this.stampOffsetX
+        this.drawStampConfigs.offsetY = this.stampOffsetY
+    }
+
+    private normalizeWorkspaceRuler() {
+        if (!this.drawStampConfigs.ruler) return
+
+        this.drawStampConfigs.ruler.showRuler = true
+        this.drawStampConfigs.ruler.showFullRuler = true
+        this.drawStampConfigs.ruler.showSideRuler = true
+        this.drawStampConfigs.ruler.showDashLine = true
+        this.drawStampConfigs.ruler.showCrossLine = true
+        this.drawStampConfigs.ruler.showCurrentPositionText = true
     }
 
     private onMouseUp = () => {
@@ -413,7 +463,7 @@ export class DrawStampUtils {
                 let img = this.imageCache.get(image.imageUrl);
 
                 if (img) {
-                    this.drawSingleImage(ctx, img, image, centerX, centerY);
+                    this.drawSingleImage(ctx, img, image, centerX, centerY, image.imageUrl);
                 } else {
                     try {
                         // 创建一个新的图片对象
@@ -433,7 +483,7 @@ export class DrawStampUtils {
                         this.imageCache.set(image.imageUrl, bitmap);
 
                         // 绘制图片
-                        this.drawSingleImage(ctx, bitmap, image, centerX, centerY);
+                        this.drawSingleImage(ctx, bitmap, image, centerX, centerY, image.imageUrl);
 
                         requestAnimationFrame(() => {
                             this.refreshStamp();
@@ -452,18 +502,15 @@ export class DrawStampUtils {
         img: ImageBitmap,
         imageConfig: IDrawImage,
         centerX: number,
-        centerY: number
+        centerY: number,
+        imageKey: string
     ) {
-        // 计算绘制尺寸
-        let width = imageConfig.imageWidth * this.mmToPixel;
-        let height = imageConfig.imageHeight * this.mmToPixel;
-
-        if (imageConfig.keepAspectRatio) {
-            // 如果需要保持宽高比，计算缩放比例
-            const scale = Math.min(width / img.width, height / img.height);
-            width = img.width * scale;
-            height = img.height * scale;
-        }
+        const shouldFitToStamp = imageConfig.fitToStamp || this.isStandaloneImageStamp();
+        const renderWidth = shouldFitToStamp ? this.drawStampConfigs.width : imageConfig.imageWidth;
+        const renderHeight = shouldFitToStamp ? this.drawStampConfigs.height : imageConfig.imageHeight;
+        const width = Math.max(1, renderWidth * this.mmToPixel);
+        const height = Math.max(1, renderHeight * this.mmToPixel);
+        const sourceBounds = shouldFitToStamp ? this.getImageTrimBounds(img, imageKey) : null;
 
         // 计算绘制位置（考虑偏移）
         const x = centerX + imageConfig.positionX * this.mmToPixel;
@@ -478,14 +525,115 @@ export class DrawStampUtils {
         if (rotation !== 0) {
             ctx.translate(x, y);
             ctx.rotate(rotation);
-            // 旋转后，绘制位置需要相对于旋转中心（0,0）
-            ctx.drawImage(img, -width / 2, -height / 2, width, height);
+            this.drawImageWithinBounds(ctx, img, sourceBounds, -width / 2, -height / 2, width, height);
         } else {
-            // 没有旋转，直接绘制
-            ctx.drawImage(img, x - width / 2, y - height / 2, width, height);
+            this.drawImageWithinBounds(ctx, img, sourceBounds, x - width / 2, y - height / 2, width, height);
         }
         
         ctx.restore();
+    }
+
+    private drawImageWithinBounds(
+        ctx: CanvasRenderingContext2D,
+        img: ImageBitmap,
+        sourceBounds: { x: number; y: number; width: number; height: number } | null,
+        x: number,
+        y: number,
+        width: number,
+        height: number
+    ) {
+        if (sourceBounds) {
+            ctx.drawImage(
+                img,
+                sourceBounds.x,
+                sourceBounds.y,
+                sourceBounds.width,
+                sourceBounds.height,
+                x,
+                y,
+                width,
+                height
+            );
+            return;
+        }
+
+        ctx.drawImage(img, x, y, width, height);
+    }
+
+    private getImageTrimBounds(img: ImageBitmap, imageKey: string) {
+        const cached = this.imageTrimCache.get(imageKey)
+        if (cached) return cached
+
+        const trimCanvas = document.createElement('canvas')
+        trimCanvas.width = img.width
+        trimCanvas.height = img.height
+        const trimCtx = trimCanvas.getContext('2d', { willReadFrequently: true })
+        if (!trimCtx) return null
+
+        trimCtx.drawImage(img, 0, 0)
+        const data = trimCtx.getImageData(0, 0, img.width, img.height).data
+        const xValues: number[] = []
+        const yValues: number[] = []
+
+        for (let y = 0; y < img.height; y += 1) {
+            for (let x = 0; x < img.width; x += 1) {
+                const alpha = data[(y * img.width + x) * 4 + 3]
+                if (alpha <= 18) continue
+                xValues.push(x)
+                yValues.push(y)
+            }
+        }
+
+        if (xValues.length < 12 || yValues.length < 12) return null
+
+        xValues.sort((a, b) => a - b)
+        yValues.sort((a, b) => a - b)
+
+        const trimRatio = xValues.length > 600 ? 0.006 : 0
+        const minIndex = Math.floor((xValues.length - 1) * trimRatio)
+        const maxIndex = Math.ceil((xValues.length - 1) * (1 - trimRatio))
+        const minX = xValues[minIndex]
+        const maxX = xValues[maxIndex]
+        const minY = yValues[minIndex]
+        const maxY = yValues[maxIndex]
+        const padding = Math.max(2, Math.round(Math.max(maxX - minX, maxY - minY) * 0.025))
+        const x = Math.max(0, minX - padding)
+        const y = Math.max(0, minY - padding)
+        const maxCropX = Math.min(img.width - 1, maxX + padding)
+        const maxCropY = Math.min(img.height - 1, maxY + padding)
+        const bounds = {
+            x,
+            y,
+            width: Math.max(1, maxCropX - x + 1),
+            height: Math.max(1, maxCropY - y + 1)
+        }
+
+        this.imageTrimCache.set(imageKey, bounds)
+        return bounds
+    }
+
+    private isStandaloneImageStamp(): boolean {
+        const config = this.drawStampConfigs
+        return (
+            (config.imageList?.length || 0) === 1 &&
+            !config.outBorder?.drawInnerCircle &&
+            !config.innerCircle?.drawInnerCircle &&
+            !config.outThinCircle?.drawInnerCircle &&
+            (config.innerCircleList?.length || 0) === 0 &&
+            (config.svgList?.length || 0) === 0 &&
+            (config.lineList?.length || 0) === 0 &&
+            !config.drawStar?.drawStar &&
+            !config.securityPattern?.openSecurityPattern &&
+            !config.roughEdge?.drawRoughEdge &&
+            !config.agingEffect?.applyAging &&
+            !config.company?.companyName?.trim() &&
+            (config.companyList?.length || 0) === 0 &&
+            !config.stampType?.stampType?.trim() &&
+            (config.stampTypeList?.length || 0) === 0 &&
+            !config.stampCode?.code?.trim() &&
+            (config.stampCodeList?.length || 0) === 0 &&
+            !config.taxNumber?.code?.trim()
+        )
     }
 
     private shouldClipStampContent(): boolean {
@@ -1016,12 +1164,36 @@ export class DrawStampUtils {
     ) {
         // 图像与边框的间距
         let imagePadding = 1
-        let maxStampSize = Math.max(this.drawStampConfigs.width, this.drawStampConfigs.height)
         let stampWidth = (this.drawStampConfigs.width + imagePadding*2) * this.mmToPixel
         let stampHeight = (this.drawStampConfigs.height + imagePadding*2) * this.mmToPixel
-        // 输出图片的尺寸
-        let outputSize = (maxStampSize + imagePadding) * this.mmToPixel
-        // 首先隐藏虚线
+        const originalView = {
+            scale: this.scale,
+            offsetX: this.offsetX,
+            offsetY: this.offsetY
+        }
+        const originalRuler = {
+            showCrossLine: this.drawStampConfigs.ruler.showCrossLine,
+            showRuler: this.drawStampConfigs.ruler.showRuler,
+            showDashLine: this.drawStampConfigs.ruler.showDashLine,
+            showSideRuler: this.drawStampConfigs.ruler.showSideRuler,
+            showFullRuler: this.drawStampConfigs.ruler.showFullRuler,
+            showCurrentPositionText: this.drawStampConfigs.ruler.showCurrentPositionText
+        }
+        const restoreView = () => {
+            this.scale = originalView.scale
+            this.offsetX = originalView.offsetX
+            this.offsetY = originalView.offsetY
+            this.drawStampConfigs.ruler.showCrossLine = originalRuler.showCrossLine
+            this.drawStampConfigs.ruler.showRuler = originalRuler.showRuler
+            this.drawStampConfigs.ruler.showDashLine = originalRuler.showDashLine
+            this.drawStampConfigs.ruler.showSideRuler = originalRuler.showSideRuler
+            this.drawStampConfigs.ruler.showFullRuler = originalRuler.showFullRuler
+            this.drawStampConfigs.ruler.showCurrentPositionText = originalRuler.showCurrentPositionText
+            this.refreshStamp()
+        }
+        this.scale = 1
+        this.offsetX = 0
+        this.offsetY = 0
         this.drawStampConfigs.ruler.showCrossLine = false
         this.drawStampConfigs.ruler.showRuler = false
         this.drawStampConfigs.ruler.showDashLine = false
@@ -1035,7 +1207,10 @@ export class DrawStampUtils {
             saveCanvas.width = stampWidth
             saveCanvas.height = stampHeight
             const saveCtx = saveCanvas.getContext('2d')
-            if (!saveCtx) return
+            if (!saveCtx) {
+                restoreView()
+                return
+            }
             // 清除画布，使背景透明
             saveCtx.clearRect(0, 0, stampWidth, stampHeight)
             /*
@@ -1141,14 +1316,7 @@ export class DrawStampUtils {
             link.click()
             document.body.removeChild(link)
 
-            // 恢复标尺
-            this.drawStampConfigs.ruler.showCrossLine = true
-            this.drawStampConfigs.ruler.showRuler = true
-            this.drawStampConfigs.ruler.showDashLine = true
-            this.drawStampConfigs.ruler.showSideRuler = true
-            this.drawStampConfigs.ruler.showFullRuler = true
-            this.drawStampConfigs.ruler.showCurrentPositionText = true
-            this.refreshStamp()
+            restoreView()
         }, 50)
     }
 
@@ -1175,18 +1343,39 @@ export class DrawStampUtils {
         return new Promise((resolve, reject) => {
             // 图像与边框的间距
             let imagePadding = 1
-            let maxStampSize = Math.max(this.drawStampConfigs.width, this.drawStampConfigs.height)
             let stampWidth = (this.drawStampConfigs.width + imagePadding*2) * this.mmToPixel
             let stampHeight = (this.drawStampConfigs.height + imagePadding*2) * this.mmToPixel
 
-            // 首先隐藏标尺
-            const originalShowCrossLine = this.drawStampConfigs.ruler.showCrossLine
-            const originalShowRuler = this.drawStampConfigs.ruler.showRuler
-            const originalShowDashLine = this.drawStampConfigs.ruler.showDashLine
-            const originalShowSideRuler = this.drawStampConfigs.ruler.showSideRuler
-            const originalShowFullRuler = this.drawStampConfigs.ruler.showFullRuler
-            const originalShowCurrentPositionText = this.drawStampConfigs.ruler.showCurrentPositionText
+            const originalView = {
+                scale: this.scale,
+                offsetX: this.offsetX,
+                offsetY: this.offsetY
+            }
+            const originalRuler = {
+                showCrossLine: this.drawStampConfigs.ruler.showCrossLine,
+                showRuler: this.drawStampConfigs.ruler.showRuler,
+                showDashLine: this.drawStampConfigs.ruler.showDashLine,
+                showSideRuler: this.drawStampConfigs.ruler.showSideRuler,
+                showFullRuler: this.drawStampConfigs.ruler.showFullRuler,
+                showCurrentPositionText: this.drawStampConfigs.ruler.showCurrentPositionText
+            }
 
+            const restoreView = () => {
+                this.scale = originalView.scale
+                this.offsetX = originalView.offsetX
+                this.offsetY = originalView.offsetY
+                this.drawStampConfigs.ruler.showCrossLine = originalRuler.showCrossLine
+                this.drawStampConfigs.ruler.showRuler = originalRuler.showRuler
+                this.drawStampConfigs.ruler.showDashLine = originalRuler.showDashLine
+                this.drawStampConfigs.ruler.showSideRuler = originalRuler.showSideRuler
+                this.drawStampConfigs.ruler.showFullRuler = originalRuler.showFullRuler
+                this.drawStampConfigs.ruler.showCurrentPositionText = originalRuler.showCurrentPositionText
+                this.refreshStamp()
+            }
+
+            this.scale = 1
+            this.offsetX = 0
+            this.offsetY = 0
             this.drawStampConfigs.ruler.showCrossLine = false
             this.drawStampConfigs.ruler.showRuler = false
             this.drawStampConfigs.ruler.showDashLine = false
@@ -1203,6 +1392,7 @@ export class DrawStampUtils {
                     saveCanvas.height = stampHeight
                     const saveCtx = saveCanvas.getContext('2d')
                     if (!saveCtx) {
+                        restoreView()
                         reject(new Error('无法创建 canvas context'))
                         return
                     }
@@ -1264,26 +1454,10 @@ export class DrawStampUtils {
                         dataURL = outputCanvas.toDataURL('image/png')
                     }
 
-                    // 恢复标尺设置
-                    this.drawStampConfigs.ruler.showCrossLine = originalShowCrossLine
-                    this.drawStampConfigs.ruler.showRuler = originalShowRuler
-                    this.drawStampConfigs.ruler.showDashLine = originalShowDashLine
-                    this.drawStampConfigs.ruler.showSideRuler = originalShowSideRuler
-                    this.drawStampConfigs.ruler.showFullRuler = originalShowFullRuler
-                    this.drawStampConfigs.ruler.showCurrentPositionText = originalShowCurrentPositionText
-                    this.refreshStamp()
-
+                    restoreView()
                     resolve(dataURL)
                 } catch (error) {
-                    // 恢复标尺设置
-                    this.drawStampConfigs.ruler.showCrossLine = originalShowCrossLine
-                    this.drawStampConfigs.ruler.showRuler = originalShowRuler
-                    this.drawStampConfigs.ruler.showDashLine = originalShowDashLine
-                    this.drawStampConfigs.ruler.showSideRuler = originalShowSideRuler
-                    this.drawStampConfigs.ruler.showFullRuler = originalShowFullRuler
-                    this.drawStampConfigs.ruler.showCurrentPositionText = originalShowCurrentPositionText
-                    this.refreshStamp()
-
+                    restoreView()
                     reject(error)
                 }
             }, 50)

@@ -47,7 +47,7 @@
 
             <div class="control-row">
               <label>
-                <span>识别强度</span>
+                <span>保留范围</span>
                 <strong>{{ threshold }}</strong>
               </label>
               <input v-model.number="threshold" type="range" min="0" max="100" step="1" @input="scheduleProcess" />
@@ -55,7 +55,7 @@
 
             <div class="control-row">
               <label>
-                <span>降噪</span>
+                <span>杂点清理</span>
                 <strong>{{ cleanup }}</strong>
               </label>
               <input v-model.number="cleanup" type="range" min="0" max="4" step="1" @input="scheduleProcess" />
@@ -71,6 +71,10 @@
             <label>
               <input v-model="transparentBackground" type="checkbox" @change="scheduleProcess" />
               <span>透明背景</span>
+            </label>
+            <label>
+              <input v-model="edgeEnhance" type="checkbox" @change="scheduleProcess" />
+              <span>边缘增强</span>
             </label>
             <label>
               <input v-model="preserveShading" type="checkbox" @change="scheduleProcess" />
@@ -129,12 +133,13 @@ const sourceHeight = ref(0)
 const result = ref<ExtractStampResult | null>(null)
 const errorMessage = ref('')
 const isProcessing = ref(false)
-const threshold = ref(36)
-const cleanup = ref(1)
+const threshold = ref(68)
+const cleanup = ref(2)
 const DEFAULT_STAMP_RED = '#FF0015'
 const targetColor = ref(DEFAULT_STAMP_RED)
 const transparentBackground = ref(true)
 const preserveShading = ref(true)
+const edgeEnhance = ref(true)
 const isDraggingOver = ref(false)
 let processTimer = 0
 
@@ -159,7 +164,7 @@ const statusText = computed(() => {
 })
 
 const helperText = computed(() => {
-  if (errorMessage.value) return '如果漏章，降低识别强度；如果背景杂点多，提高识别强度或降噪。'
+  if (errorMessage.value) return '如果漏章，提高保留范围；如果背景杂点多，提高杂点清理。'
   return '确认后会清空默认章面，只保留提取结果；右侧仍可继续调整尺寸、位置和旋转。'
 })
 
@@ -191,7 +196,8 @@ const process = async () => {
       cleanup: cleanup.value,
       targetColor: targetColor.value,
       transparentBackground: transparentBackground.value,
-      preserveShading: preserveShading.value
+      preserveShading: preserveShading.value,
+      edgeEnhance: edgeEnhance.value
     })
   } catch (error) {
     result.value = null
@@ -606,7 +612,7 @@ const addToCanvas = () => {
 
 .toggle-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -701,6 +707,10 @@ const addToCanvas = () => {
 
   .extractor-footer div {
     justify-content: flex-end;
+  }
+
+  .toggle-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

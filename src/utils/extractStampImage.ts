@@ -4,6 +4,7 @@ export type ExtractStampOptions = {
   targetColor: string
   transparentBackground: boolean
   preserveShading: boolean
+  edgeEnhance: boolean
 }
 
 export type ExtractStampResult = {
@@ -50,9 +51,22 @@ const getHue = (r: number, g: number, b: number) => {
   return (hue * 60 + 360) % 360
 }
 
+const countMaskPixels = (mask: Uint8Array) => {
+  let count = 0
+  for (let index = 0; index < mask.length; index += 1) {
+    count += mask[index]
+  }
+  return count
+}
+
 const createMask = (data: Uint8ClampedArray, width: number, height: number, threshold: number) => {
   const mask = new Uint8Array(width * height)
-  const sensitivity = 18 + threshold * 0.95
+  const keepRange = clamp(threshold, 0, 100) / 100
+  const strictness = 1 - keepRange
+  const minDominance = 14 + strictness * 68
+  const minSaturation = 0.1 + strictness * 0.18
+  const minRed = 46 + strictness * 42
+  const hueTolerance = 30 + keepRange * 16
   let redPixels = 0
 
   for (let index = 0; index < width * height; index += 1) {
@@ -65,10 +79,11 @@ const createMask = (data: Uint8ClampedArray, width: number, height: number, thre
     const min = Math.min(r, g, b)
     const saturation = max === 0 ? 0 : (max - min) / max
     const hue = getHue(r, g, b)
-    const redHue = hue <= 30 || hue >= 335
+    const redHue = hue <= hueTolerance || hue >= 360 - hueTolerance * 0.82
     const redDominance = r - Math.max(g, b)
-    const warmRed = r > g * 1.18 && r > b * 1.18
-    const isRed = a > 0 && r > 72 && saturation > 0.18 && redDominance > sensitivity && (redHue || warmRed)
+    const warmRed = r > g * (1.08 + strictness * 0.2) && r > b * (1.08 + strictness * 0.2)
+    const darkStampRed = r > 58 && redDominance > minDominance * 0.66 && saturation > minSaturation * 0.82
+    const isRed = a > 0 && r > minRed && saturation > minSaturation && redDominance > minDominance && (redHue || warmRed || darkStampRed)
 
     if (isRed) {
       mask[index] = 1
@@ -79,11 +94,8 @@ const createMask = (data: Uint8ClampedArray, width: number, height: number, thre
   return { mask, redPixels }
 }
 
-const cleanMask = (source: Uint8Array, width: number, height: number, level: number) => {
-  if (level <= 0) return source
-
+const smoothMask = (source: Uint8Array, width: number, height: number, iterations: number) => {
   let current = source
-  const iterations = clamp(Math.round(level), 1, 4)
 
   for (let pass = 0; pass < iterations; pass += 1) {
     const next = new Uint8Array(current)
@@ -114,30 +126,131 @@ const cleanMask = (source: Uint8Array, width: number, height: number, level: num
   return current
 }
 
+const removeSmallComponents = (source: Uint8Array, width: number, height: number, level: number) => {
+  if (level <= 0) return source
+
+  const current = new Uint8Array(source)
+  const visited = new Uint8Array(width * height)
+  const minArea = [0, 3, 7, 13, 22][clamp(Math.round(level), 0, 4)] || 3
+  const queue: number[] = []
+  const component: number[] = []
+
+  for (let index = 0; index < current.length; index += 1) {
+    if (!current[index] || visited[index]) continue
+
+    queue.length = 0
+    component.length = 0
+    queue.push(index)
+    visited[index] = 1
+
+    for (let cursor = 0; cursor < queue.length; cursor += 1) {
+      const point = queue[cursor]
+      component.push(point)
+      const x = point % width
+      const y = Math.floor(point / width)
+
+      for (let dy = -1; dy <= 1; dy += 1) {
+        for (let dx = -1; dx <= 1; dx += 1) {
+          if (dx === 0 && dy === 0) continue
+          const nx = x + dx
+          const ny = y + dy
+          if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue
+          const neighbor = ny * width + nx
+          if (!current[neighbor] || visited[neighbor]) continue
+          visited[neighbor] = 1
+          queue.push(neighbor)
+        }
+      }
+    }
+
+    if (component.length < minArea) {
+      component.forEach(point => {
+        current[point] = 0
+      })
+    }
+  }
+
+  return current
+}
+
+const enhanceEdges = (source: Uint8Array, width: number, height: number) => {
+  const next = new Uint8Array(source)
+
+  for (let y = 1; y < height - 1; y += 1) {
+    for (let x = 1; x < width - 1; x += 1) {
+      const index = y * width + x
+      let neighbors = 0
+
+      for (let dy = -1; dy <= 1; dy += 1) {
+        for (let dx = -1; dx <= 1; dx += 1) {
+          if (dx === 0 && dy === 0) continue
+          neighbors += source[(y + dy) * width + x + dx]
+        }
+      }
+
+      if (!source[index] && neighbors >= 5) {
+        next[index] = 1
+      } else if (source[index] && neighbors === 0) {
+        next[index] = 0
+      }
+    }
+  }
+
+  return next
+}
+
+const cleanMask = (source: Uint8Array, width: number, height: number, level: number, edgeEnhance: boolean) => {
+  let current = source
+  const iterations = clamp(Math.round(level), 0, 4)
+
+  if (iterations > 0) {
+    current = smoothMask(current, width, height, Math.min(iterations, 2))
+    current = removeSmallComponents(current, width, height, iterations)
+  }
+
+  if (edgeEnhance) {
+    current = enhanceEdges(current, width, height)
+  }
+
+  return current
+}
+
 const getBounds = (mask: Uint8Array, width: number, height: number) => {
-  let minX = width
-  let minY = height
-  let maxX = -1
-  let maxY = -1
+  const xValues: number[] = []
+  const yValues: number[] = []
 
   for (let y = 0; y < height; y += 1) {
     for (let x = 0; x < width; x += 1) {
       if (!mask[y * width + x]) continue
-      minX = Math.min(minX, x)
-      minY = Math.min(minY, y)
-      maxX = Math.max(maxX, x)
-      maxY = Math.max(maxY, y)
+      xValues.push(x)
+      yValues.push(y)
     }
   }
 
-  if (maxX < minX || maxY < minY) return null
+  if (xValues.length === 0 || yValues.length === 0) return null
+
+  xValues.sort((a, b) => a - b)
+  yValues.sort((a, b) => a - b)
+
+  const outlierRatio = xValues.length > 600 ? 0.006 : 0
+  const minIndex = Math.floor((xValues.length - 1) * outlierRatio)
+  const maxIndex = Math.ceil((xValues.length - 1) * (1 - outlierRatio))
+  const minX = xValues[minIndex]
+  const maxX = xValues[maxIndex]
+  const minY = yValues[minIndex]
+  const maxY = yValues[maxIndex]
 
   const padding = 12
+  const cropX = clamp(minX - padding, 0, width - 1)
+  const cropY = clamp(minY - padding, 0, height - 1)
+  const cropMaxX = clamp(maxX + padding, cropX, width - 1)
+  const cropMaxY = clamp(maxY + padding, cropY, height - 1)
+
   return {
-    x: clamp(minX - padding, 0, width - 1),
-    y: clamp(minY - padding, 0, height - 1),
-    width: clamp(maxX - minX + padding * 2, 1, width),
-    height: clamp(maxY - minY + padding * 2, 1, height)
+    x: cropX,
+    y: cropY,
+    width: cropMaxX - cropX + 1,
+    height: cropMaxY - cropY + 1
   }
 }
 
@@ -161,10 +274,11 @@ export async function extractStampFromFile(file: File, options: ExtractStampOpti
 
   const imageData = sourceCtx.getImageData(0, 0, width, height)
   const { mask: rawMask, redPixels } = createMask(imageData.data, width, height, options.threshold)
-  const mask = cleanMask(rawMask, width, height, options.cleanup)
+  const mask = cleanMask(rawMask, width, height, options.cleanup, options.edgeEnhance)
+  const finalPixels = countMaskPixels(mask)
   const bounds = getBounds(mask, width, height)
 
-  if (!bounds || redPixels < 20) {
+  if (!bounds || finalPixels < 20) {
     throw new Error('未识别到明显的红色印章区域')
   }
 
@@ -216,7 +330,7 @@ export async function extractStampFromFile(file: File, options: ExtractStampOpti
     dataUrl: outputCanvas.toDataURL('image/png'),
     width: bounds.width,
     height: bounds.height,
-    redPixels,
+    redPixels: finalPixels || redPixels,
     totalPixels: width * height
   }
 }
