@@ -1,0 +1,19 @@
+{
+  "name": "DrawStamp Studio 在线电子印章生成器",
+  "short_name": "DrawStamp",
+  "description": "在线生成和编辑电子印章，支持图片提取、透明 PNG、SVG 和 JPEG 导出。",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#ff0015",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
