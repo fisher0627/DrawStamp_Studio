@@ -338,6 +338,16 @@ const emit = defineEmits<{
 
 const activeTab = ref<'all' | 'text' | 'figure' | 'effect'>('all')
 const selectedElement = ref<string>('')
+const indexedElementTypes = new Set([
+  'company',
+  'stampType',
+  'code',
+  'taxNumber',
+  'circle',
+  'image',
+  'line',
+  'svg'
+])
 
 const tabs = computed(() => [
   { key: 'all' as const, label: t('elementList.tabs.all') },
@@ -412,9 +422,31 @@ const clearSelection = () => {
   selectedElement.value = ''
 }
 
+const buildElementId = (elementType: string, index: number) => {
+  const elementIdMap: Record<string, string> = {
+    star: 'star',
+    aging: 'aging',
+    roughEdge: 'roughEdge',
+    security: 'security',
+    circle: `circle-${index}`
+  }
+  return elementIdMap[elementType] || `${elementType}-${index}`
+}
+
+const shouldClearSelectionAfterDelete = (elementType: string, index: number) => {
+  if (!selectedElement.value) return false
+
+  const deletedElementId = buildElementId(elementType, index)
+
+  return selectedElement.value === deletedElementId ||
+    (indexedElementTypes.has(elementType) && selectedElement.value.startsWith(`${elementType}-`))
+}
+
 // 删除元素
 const deleteElement = (elementType: string, index: number) => {
   if (confirm(t('elementList.confirm.deleteElement'))) {
+    const shouldClearSelection = shouldClearSelectionAfterDelete(elementType, index)
+
     stampStore.updateConfig((config) => {
       if (elementType === 'company' && config.companyList) {
         config.companyList.splice(index, 1)
@@ -473,6 +505,11 @@ const deleteElement = (elementType: string, index: number) => {
         }
       }
     })
+
+    if (shouldClearSelection) {
+      clearSelection()
+      emit('selectElement', '', '', -1)
+    }
 
     emit('updateConfig')
     emit('refresh')
