@@ -66,15 +66,15 @@ export type ICode = {
 }
 
 export type ITaxNumber = {
-    code: string // 税号
-    compression: number // 税号压缩比例
-    fontHeight: number // 税号字体大小
+    code: string // 中间文字内容
+    compression: number // 中间文字压缩比例
+    fontHeight: number // 中间文字字体大小
     fontFamily: string // 编码字体
     fontWidth: number // 编码字体宽度
     letterSpacing: number // 编码字符间距
     positionY: number // 编码文字位置
     totalWidth: number // 编码文字总宽度
-    fontWeight: string | number // 税号字体粗细
+    fontWeight: string | number // 中间文字字体粗细
     color?: string // 颜色
 }
 
@@ -218,7 +218,8 @@ export type IDrawStampConfig = {
     company: ICompany // 公司
     stampCode: ICode // 印章编码（兼容旧结构，通常与 stampCodeList[0] 同步）
     stampCodeList?: ICode[] // 印章编码列表，可配置多条编码
-    taxNumber: ITaxNumber // 税号
+    taxNumber: ITaxNumber // 中间文字（兼容旧结构，通常与 taxNumberList[0] 同步）
+    taxNumberList?: ITaxNumber[] // 中间文字列表，可配置多条内容
     stampType: IStampType // 印章类型
     width: number // 印章宽度
     height: number // 印章高度

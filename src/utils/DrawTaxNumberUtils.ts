@@ -30,7 +30,7 @@ export class DrawTaxNumberUtils {
         this.textPaths = []
     }
 
-    // 绘制税号
+    // 绘制中间文字
     drawTaxNumber(
         ctx: CanvasRenderingContext2D,
         taxNumber: ITaxNumber,

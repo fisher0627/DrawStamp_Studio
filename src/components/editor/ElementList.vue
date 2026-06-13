@@ -71,17 +71,19 @@
             >×</button>
           </div>
         </div>
-        <div class="element-item"
-             v-if="taxNumber.code"
-             :class="{ active: selectedElement === 'taxNumber' }"
-             @click.stop="selectElement('taxNumber', 'taxNumber', 0)">
-          <span class="element-icon">税</span>
+        <div
+          class="element-item"
+          v-for="(item, index) in taxNumberList"
+          :key="`taxNumber-${index}`"
+          :class="{ active: selectedElement === `taxNumber-${index}` }"
+          @click.stop="selectElement(`taxNumber-${index}`, 'taxNumber', index)"
+        >
+          <span class="element-icon">中</span>
           <span class="element-name">
-            {{ taxNumber.code || t('elementList.elements.taxNumber') + '（' + t('elementList.status.notSet') + '）' }}
+            {{ item.code || t('elementList.elements.taxNumber') + ' ' + (index + 1) }}
           </span>
-<!--          <span class="element-type">税号</span>-->
           <div class="element-actions show-always" @click.stop>
-            <button class="action-btn delete-btn" @click="deleteElement('taxNumber', 0)" title="删除">×</button>
+            <button class="action-btn delete-btn" @click="deleteElement('taxNumber', index)" title="删除">×</button>
           </div>
         </div>
         <div class="element-item"
@@ -207,13 +209,16 @@
             {{ code.code || t('elementList.elements.code') + ' ' + (index + 1) }}
           </span>
         </div>
-        <div class="element-item"
-             v-if="taxNumber.code"
-             :class="{ active: selectedElement === 'taxNumber' }"
-             @click.stop="selectElement('taxNumber', 'taxNumber', 0)">
-          <span class="element-icon">税</span>
+        <div
+          class="element-item"
+          v-for="(item, index) in taxNumberList"
+          :key="`taxNumber-text-${index}`"
+          :class="{ active: selectedElement === `taxNumber-${index}` }"
+          @click.stop="selectElement(`taxNumber-${index}`, 'taxNumber', index)"
+        >
+          <span class="element-icon">中</span>
           <span class="element-name">
-            {{ taxNumber.code || t('elementList.elements.taxNumber') + '（' + t('elementList.status.notSet') + '）' }}
+            {{ item.code || t('elementList.elements.taxNumber') + ' ' + (index + 1) }}
           </span>
         </div>
         <p v-if="textElementCount === 0" class="empty-state">暂无文字元素</p>
@@ -357,7 +362,11 @@ const stampCodeList = computed(() => {
   if (cfg.stampCodeList && cfg.stampCodeList.length > 0) return cfg.stampCodeList
   return cfg.stampCode ? [cfg.stampCode] : []
 })
-const taxNumber = computed(() => config.value.taxNumber || { code: '' })
+const taxNumberList = computed(() => {
+  const cfg = config.value
+  if (cfg.taxNumberList && cfg.taxNumberList.length > 0) return cfg.taxNumberList
+  return cfg.taxNumber?.code ? [cfg.taxNumber] : []
+})
 const drawStar = computed(() => config.value.drawStar || { drawStar: false })
 const innerCircleList = computed(() => config.value.innerCircleList || [])
 const lineList = computed(() => config.value.lineList || [])
@@ -373,7 +382,7 @@ const textElementCount = computed(() =>
   companyList.value.length +
   stampTypeList.value.length +
   stampCodeList.value.length +
-  (taxNumber.value.code ? 1 : 0)
+  taxNumberList.value.length
 )
 const figureElementCount = computed(() =>
   (drawStar.value.drawStar ? 1 : 0) +
@@ -428,8 +437,13 @@ const deleteElement = (elementType: string, index: number) => {
           selectedElement.value = ''
         }
       } else if (elementType === 'taxNumber') {
-        config.taxNumber.code = ''
-        if (selectedElement.value === 'taxNumber') {
+        if (config.taxNumberList) {
+          config.taxNumberList.splice(index, 1)
+        } else if (index === 0) {
+          config.taxNumber.code = ''
+        }
+        config.taxNumber = (config.taxNumberList && config.taxNumberList[0]) || config.taxNumber
+        if (selectedElement.value === `taxNumber-${index}`) {
           selectedElement.value = ''
         }
       } else if (elementType === 'star' && config.drawStar) {

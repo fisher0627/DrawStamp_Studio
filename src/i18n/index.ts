@@ -264,8 +264,8 @@ const messages: Record<string, any> = {
         margin: '边距 (mm)'
       },
       taxNumber: {
-        title: '中间数字设置',
-        number: '数字',
+        title: '中间文字设置',
+        number: '内容',
         font: '字体',
         fontSize: '字体大小 (mm)',
         fontWeight: '字体粗细',
@@ -349,7 +349,7 @@ const messages: Record<string, any> = {
         companyName: '公司名称',
         stampType: '印章类型',
         code: '编码',
-        taxNumber: '税号',
+        taxNumber: '中间文字',
         star: '五角星',
         innerCircle: '内圈',
         image: '图片',
@@ -465,7 +465,7 @@ const messages: Record<string, any> = {
           },
           step2: {
             title: '添加文本和内容',
-            description: '输入公司名称、印章类型、编码、税号等信息'
+            description: '输入公司名称、印章类型、编码、中间文字等信息'
           },
           step3: {
             title: '自定义设计',
@@ -553,7 +553,7 @@ const messages: Record<string, any> = {
       features: {
         title: '主要功能',
         items: {
-          customDesign: '自定义设计：支持多种印章样式和元素的自定义，包括公司名称、印章类型、编码、税号等',
+          customDesign: '自定义设计：支持多种印章样式和元素的自定义，包括公司名称、印章类型、编码、中间文字等',
           templateSystem: '模板系统：提供多种预设模板，快速创建专业印章',
           advancedEffects: '高级效果：支持防伪纹路、做旧效果、毛边效果等多种视觉效果',
           localProcessing: '本地处理：所有处理都在您的浏览器本地完成，保护您的隐私和数据安全',
@@ -1027,8 +1027,8 @@ const messages: Record<string, any> = {
         margin: 'Margin (mm)'
       },
       taxNumber: {
-        title: 'Center Number Settings',
-        number: 'Tax Number',
+        title: 'Center Text Settings',
+        number: 'Content',
         font: 'Font',
         fontSize: 'Font Size (mm)',
         fontWeight: 'Font Weight',
@@ -1154,7 +1154,7 @@ const messages: Record<string, any> = {
         companyName: 'Company Name',
         stampType: 'Stamp Type',
         code: 'Code',
-        taxNumber: 'Tax Number',
+        taxNumber: 'Center Text',
         star: 'Star',
         innerCircle: 'Inner Circle',
         image: 'Image',
@@ -1724,8 +1724,8 @@ const messages: Record<string, any> = {
         margin: 'マージン (mm)'
       },
       taxNumber: {
-        title: '中央数字設定',
-        number: '税番号',
+        title: '中央テキスト設定',
+        number: '内容',
         font: 'フォント',
         fontSize: 'サイズ (mm)',
         fontWeight: '太さ',
@@ -1907,7 +1907,7 @@ const messages: Record<string, any> = {
         companyName: '会社名',
         stampType: '印章タイプ',
         code: 'コード',
-        taxNumber: '税番号',
+        taxNumber: '中央テキスト',
         star: '星形',
         innerCircle: '内側の円',
         image: '画像',

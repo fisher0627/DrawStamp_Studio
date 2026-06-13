@@ -683,7 +683,7 @@ const selectedElementLabel = computed(() => {
     company: '公司文字',
     stampType: '印章类型',
     code: '编码',
-    taxNumber: '税号',
+    taxNumber: '中间文字',
     star: '中心图形',
     circle: '内圆',
     image: '图片',
@@ -765,7 +765,7 @@ const templatePresets = [
   { key: 'contract' as const, category: 'general' as const, name: '合同专用章', desc: '圆章 · 公司名 · 五角星', mark: '合', badge: '常用', shape: 'circle' },
   { key: 'official' as const, category: 'general' as const, name: '公司公章', desc: '圆章 · 标准公章布局', mark: '公', badge: '标准', shape: 'circle' },
   { key: 'finance' as const, category: 'finance' as const, name: '财务专用章', desc: '椭圆章 · 内圈 · 编码', mark: '财', badge: '财务', shape: 'ellipse' },
-  { key: 'invoice' as const, category: 'finance' as const, name: '发票专用章', desc: '椭圆章 · 税号 · 编码', mark: '票', badge: '税务', shape: 'ellipse' },
+  { key: 'invoice' as const, category: 'finance' as const, name: '发票专用章', desc: '椭圆章 · 中间文字 · 编码', mark: '票', badge: '税务', shape: 'ellipse' },
   { key: 'receipt' as const, category: 'finance' as const, name: '收讫专用章', desc: '椭圆章 · 收款确认', mark: '收', badge: '收款', shape: 'ellipse' },
   { key: 'business' as const, category: 'business' as const, name: '业务专用章', desc: '圆章 · 业务办理', mark: '业', badge: '业务', shape: 'circle' },
   { key: 'quotation' as const, category: 'business' as const, name: '报价专用章', desc: '椭圆章 · 报价文件', mark: '价', badge: '报价', shape: 'ellipse' },
@@ -971,6 +971,7 @@ const createPresetConfig = (presetKey: TemplatePresetKey): IDrawStampConfig => {
   base.innerCircleList = []
   base.openManualAging = false
   base.taxNumber.code = ''
+  base.taxNumberList = []
   base.stampCode = { ...codeBase, code: '', color: base.primaryColor }
   base.stampCodeList = []
 
@@ -1184,6 +1185,7 @@ const createPresetConfig = (presetKey: TemplatePresetKey): IDrawStampConfig => {
       totalWidth: 26,
       color: base.primaryColor
     }
+    base.taxNumberList = [base.taxNumber]
     base.innerCircleList = [{
       ...base.innerCircle,
       drawInnerCircle: true,
@@ -1214,12 +1216,13 @@ const createPresetConfig = (presetKey: TemplatePresetKey): IDrawStampConfig => {
   base.stampTypeList = [base.stampType]
   base.taxNumber = {
     ...base.taxNumber,
-    code: '税号 000000000000000000',
+    code: '中间编号 000000000000000000',
     fontHeight: 2,
     positionY: 8,
     totalWidth: 32,
     color: base.primaryColor
   }
+  base.taxNumberList = [base.taxNumber]
   base.stampCode = {
     ...codeBase,
     code: '发票专用',
@@ -1619,6 +1622,7 @@ const resetStamp = () => {
   blankConfig.stampCode.code = ''
   blankConfig.stampCodeList = []
   blankConfig.taxNumber.code = ''
+  blankConfig.taxNumberList = []
   blankConfig.imageList = []
   blankConfig.lineList = []
   blankConfig.innerCircleList = []
@@ -1716,6 +1720,7 @@ const clearGeneratedStampElements = (config: IDrawStampConfig) => {
   config.stampCode.code = ''
   config.stampCodeList = []
   config.taxNumber.code = ''
+  config.taxNumberList = []
   config.imageList = []
   config.lineList = []
   config.innerCircleList = []

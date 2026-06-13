@@ -46,6 +46,7 @@
           :expanded="expandedGroups.taxNumber"
           :config="getDrawConfigs()"
           :system-fonts="systemFonts"
+          :selected-index="props.selectedElementType === 'taxNumber' ? props.selectedElementIndex ?? -1 : -1"
           @update:expanded="value => handleGroupExpandedChange('taxNumber', value)"
           @update-config="handleTaxNumberConfigUpdate"
         />
@@ -308,7 +309,7 @@ const handleIsCircleDetectChange = (value: boolean) => {
     company.adjustEllipseText = adjustEllipseText.value
     company.adjustEllipseTextFactor = adjustEllipseTextFactor.value
 
-    // 税号和印章编码已在组件中直接更新到 config
+    // 中间文字和印章编码已在组件中直接更新到 config
 
     // 印章类型
     const stampType: IStampType = drawConfigs.stampType
@@ -364,7 +365,7 @@ const handleIsCircleDetectChange = (value: boolean) => {
     companyNameCompression.value = drawConfigs.company.compression
     textDistributionFactor.value = drawConfigs.company.textDistributionFactor
     textMarginMM.value = drawConfigs.company.borderOffset
-    // 印章编码和税号现在从 config 中直接读取，不需要单独的 ref
+    // 印章编码和中间文字现在从 config 中直接读取，不需要单独的 ref
 
     // 印章类型
     const stampTypeConfig: IStampType = drawConfigs.stampType
@@ -850,9 +851,9 @@ const expandOnlyGroup = (groupName: GroupKey) => {
     })
   }
 
-  // 添加滚动到税号的方法
+  // 添加滚动到中间文字的方法
   const scrollToTaxNumber = () => {
-    // 展开税号设置组
+    // 展开中间文字设置组
     expandedGroups.taxNumber = true
 
     // 等待 DOM 更新后滚动

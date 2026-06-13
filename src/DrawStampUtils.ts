@@ -632,7 +632,8 @@ export class DrawStampUtils {
             (config.stampTypeList?.length || 0) === 0 &&
             !config.stampCode?.code?.trim() &&
             (config.stampCodeList?.length || 0) === 0 &&
-            !config.taxNumber?.code?.trim()
+            !config.taxNumber?.code?.trim() &&
+            !(config.taxNumberList || []).some((item) => item.code?.trim())
         )
     }
 
@@ -656,7 +657,8 @@ export class DrawStampUtils {
             (config.stampTypeList?.length || 0) === 0 &&
             !config.stampCode?.code?.trim() &&
             (config.stampCodeList?.length || 0) === 0 &&
-            !config.taxNumber?.code?.trim()
+            !config.taxNumber?.code?.trim() &&
+            !(config.taxNumberList || []).some((item) => item.code?.trim())
 
         return !hasOnlyExtractedImage
     }
@@ -943,7 +945,7 @@ export class DrawStampUtils {
     }
 
     /**
-     * 绘制税号
+     * 绘制中间文字
      * @param ctx 画布上下文
      * @param centerX 圆心x坐标
      * @param centerY 圆心y坐标
@@ -968,10 +970,10 @@ export class DrawStampUtils {
 
         const characters = taxNumber.code.split('')
         const charCount = characters.length
-        const letterSpacing = this.drawStampConfigs.taxNumber.letterSpacing * this.mmToPixel
+        const letterSpacing = taxNumber.letterSpacing * this.mmToPixel
 
         // 计算压缩后的总宽度
-        const compressedTotalWidth = totalWidth * this.drawStampConfigs.taxNumber.compression
+        const compressedTotalWidth = totalWidth * taxNumber.compression
 
         // 计算单个字符的宽度（考虑压缩）
         const charWidth = (compressedTotalWidth - (charCount - 1) * letterSpacing) / charCount
@@ -987,7 +989,7 @@ export class DrawStampUtils {
             const x = startX + index * (charWidth + letterSpacing)
             ctx.save()
             ctx.translate(x, adjustedCenterY)
-            ctx.scale(this.drawStampConfigs.taxNumber.compression, 1.35)
+            ctx.scale(taxNumber.compression, 1.35)
             ctx.fillText(char, 0, 0)
             ctx.restore()
         })
@@ -1823,8 +1825,16 @@ export class DrawStampUtils {
             const codeColor = code.color || this.drawStampConfigs.primaryColor
             this.drawCodeUtils.drawCode(offscreenCtx, code, centerX, centerY, radiusX, radiusY, codeColor)
         }
-        // 绘制税号文字内容，边框的圆形文字
-        this.drawTaxNumberUtils.drawTaxNumber(offscreenCtx, this.drawStampConfigs.taxNumber, centerX, centerY, this.drawStampConfigs.primaryColor)
+        // 绘制中间文字内容（兼容旧的 taxNumber 单项结构）
+        const centerTexts: ITaxNumber[] = (this.drawStampConfigs.taxNumberList && this.drawStampConfigs.taxNumberList.length > 0)
+            ? this.drawStampConfigs.taxNumberList
+            : this.drawStampConfigs.taxNumber
+                ? [this.drawStampConfigs.taxNumber]
+                : []
+
+        for (const item of centerTexts) {
+            this.drawTaxNumberUtils.drawTaxNumber(offscreenCtx, item, centerX, centerY, item.color || this.drawStampConfigs.primaryColor)
+        }
     // 绘制自定义线条
     if (this.drawStampConfigs.lineList && this.drawStampConfigs.lineList.length > 0) {
         this.drawLines(offscreenCtx, this.drawStampConfigs.lineList, centerX, centerY)

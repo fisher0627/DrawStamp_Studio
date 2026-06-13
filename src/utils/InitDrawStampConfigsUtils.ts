@@ -92,6 +92,7 @@ export class InitDrawStampConfigsUtils {
     }
     // 印章编码列表（支持多条编码），默认将单个 stampCode 作为第一条
     private stampCodeList: ICode[] = [this.stampCode]
+    private taxNumberList: ITaxNumber[] = [this.taxNumber]
     // 做旧效果
     private agingEffect: IAgingEffect = {
         applyAging: false,
@@ -199,6 +200,7 @@ export class InitDrawStampConfigsUtils {
         refreshSecurityPattern: false,
         refreshOld: false,
         taxNumber: this.taxNumber,
+        taxNumberList: this.taxNumberList,
         agingEffect: this.agingEffect,
         innerCircle: this.innerCircle,
         outThinCircle: this.outThinCircle,
