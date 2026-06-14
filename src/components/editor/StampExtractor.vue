@@ -113,7 +113,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onUnmounted, ref, watch } from 'vue'
 import { extractStampFromFile, type ExtractStampResult } from '../../utils/extractStampImage'
 import { DEFAULT_STAMP_RED } from '../../Constants'
 
@@ -142,6 +142,7 @@ const preserveShading = ref(true)
 const edgeEnhance = ref(true)
 const isDraggingOver = ref(false)
 let processTimer = 0
+let isDisposed = false
 
 const sourceSize = computed(() => (
   sourceWidth.value && sourceHeight.value ? `${sourceWidth.value} x ${sourceHeight.value}px` : ''
@@ -177,21 +178,29 @@ watch(
   }
 )
 
-const close = () => {
+const cleanupResources = () => {
+  isDisposed = true
+  window.clearTimeout(processTimer)
+  processTimer = 0
   if (sourceUrl.value) {
     URL.revokeObjectURL(sourceUrl.value)
+    sourceUrl.value = ''
   }
+}
+
+const close = () => {
+  cleanupResources()
   emit('close')
 }
 
 const process = async () => {
-  if (!selectedFile.value) return
+  if (!selectedFile.value || isDisposed) return
 
   isProcessing.value = true
   errorMessage.value = ''
 
   try {
-    result.value = await extractStampFromFile(selectedFile.value, {
+    const nextResult = await extractStampFromFile(selectedFile.value, {
       threshold: threshold.value,
       cleanup: cleanup.value,
       targetColor: targetColor.value,
@@ -199,15 +208,21 @@ const process = async () => {
       preserveShading: preserveShading.value,
       edgeEnhance: edgeEnhance.value
     })
+    if (isDisposed) return
+    result.value = nextResult
   } catch (error) {
+    if (isDisposed) return
     result.value = null
     errorMessage.value = error instanceof Error ? error.message : '提取失败，请换一张更清晰的图片'
   } finally {
-    isProcessing.value = false
+    if (!isDisposed) {
+      isProcessing.value = false
+    }
   }
 }
 
 const scheduleProcess = () => {
+  if (isDisposed) return
   window.clearTimeout(processTimer)
   processTimer = window.setTimeout(() => {
     void process()
@@ -299,6 +314,8 @@ const addToCanvas = () => {
   emit('add-image', result.value)
   close()
 }
+
+onUnmounted(cleanupResources)
 </script>
 
 <style scoped>
