@@ -1287,8 +1287,12 @@ const cloneConfig = (config: IDrawStampConfig): IDrawStampConfig => {
 const buildDraftSummary = (config: IDrawStampConfig) => {
   const width = Math.round(Number(config.width) || 0)
   const height = Math.round(Number(config.height) || 0)
-  const companyName = config.company?.name?.trim()
-  const stampType = config.stampType?.name?.trim()
+  const companyName =
+    config.companyList?.find(item => item.companyName?.trim())?.companyName?.trim() ||
+    config.company?.companyName?.trim()
+  const stampType =
+    config.stampTypeList?.find(item => item.stampType?.trim())?.stampType?.trim() ||
+    config.stampType?.stampType?.trim()
   const title = companyName || stampType || '未命名印章'
   return `${title} · ${width} x ${height} mm`
 }
