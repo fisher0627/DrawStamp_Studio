@@ -199,6 +199,7 @@
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { IDrawStampConfig, IInnerCircle } from '../../../DrawStampTypes'
+import { DEFAULT_STAMP_RED } from '../../../Constants'
 
 const { t } = useI18n()
 
@@ -214,7 +215,7 @@ const emit = defineEmits<{
 }>()
 
 const innerCircleList = computed(() => props.config.innerCircleList || [])
-const primaryColor = computed(() => props.config.primaryColor || '#FF0015')
+const primaryColor = computed(() => props.config.primaryColor || DEFAULT_STAMP_RED)
 const selectedIndex = computed(() => props.selectedIndex ?? -1)
 
 // 跟踪每个项的展开状态
@@ -358,7 +359,7 @@ const addInnerCircle = (shape?: 'ellipse' | 'rectangle' | 'rhombus' | 'triangle'
       dashLength: 2,
       gapLength: 1,
       shape: newShape,
-      color: config.primaryColor || '#FF0015',
+      color: config.primaryColor || DEFAULT_STAMP_RED,
       offsetX: 0,
       offsetY: 0
     })

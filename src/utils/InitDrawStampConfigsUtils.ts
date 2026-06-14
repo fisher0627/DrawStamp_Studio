@@ -1,9 +1,10 @@
 import { IAgingEffect, ICode, ICompany, IDrawImage, IDrawStampConfig, IDrawStar, IInnerCircle, ILineConfig, IRoughEdge, ISecurityPattern, IShowRuler, ISvgShape, IStampType, ITaxNumber } from "../DrawStampTypes";
+import { DEFAULT_STAMP_RED } from "../Constants";
 
 export class InitDrawStampConfigsUtils {
 
     // 默认主色
-    private primaryColor: string = '#FF0015'
+    private primaryColor: string = DEFAULT_STAMP_RED
 
     private ruler: IShowRuler = {
         showRuler: true,

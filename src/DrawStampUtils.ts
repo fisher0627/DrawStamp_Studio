@@ -21,6 +21,7 @@ import { DrawCodeUtils } from './utils/DrawCodeUtils'
 import { DrawStampTypeUtils } from './utils/DrawStampTypeUtils'
 import { DrawTaxNumberUtils } from './utils/DrawTaxNumberUtils'
 import { getCanvasFontString } from './utils/fontUtils'
+import { DEFAULT_STAMP_RED } from './Constants'
 // 标尺宽度
 const RULER_WIDTH = 8
 // 标尺高度
@@ -678,7 +679,7 @@ export class DrawStampUtils {
             const svgElement = doc.documentElement
             if (!svgElement) return null
 
-            const color = svg.color || this.drawStampConfigs.primaryColor || '#FF0015'
+            const color = svg.color || this.drawStampConfigs.primaryColor || DEFAULT_STAMP_RED
             const style = doc.createElement('style')
             style.textContent = `* { fill: ${color} !important; stroke: ${color} !important; }`
             svgElement.insertBefore(style, svgElement.firstChild)

@@ -198,7 +198,7 @@
 
   <StampExtractor
     v-if="showExtractorDialog"
-    :primary-color="stampStore.state.config?.primaryColor || '#FF0015'"
+    :primary-color="stampStore.state.config?.primaryColor || DEFAULT_STAMP_RED"
     @close="closeExtractorDialog"
     @add-image="handleExtractedStampImage"
   />
@@ -502,6 +502,7 @@ import PropertiesPanel from './PropertiesPanel.vue'
 import StampExtractor from './StampExtractor.vue'
 import { useStampStore } from '../../stores/stampStore'
 import type { ExtractStampResult } from '../../utils/extractStampImage'
+import { DEFAULT_STAMP_RED } from '../../Constants'
 
 const props = defineProps<{
   /** 传入的印章模板配置，用于初始化或联动 */
@@ -951,7 +952,7 @@ const createPresetConfig = (presetKey: TemplatePresetKey): IDrawStampConfig => {
   const stampTypeBase = base.stampTypeList?.[0] || base.stampType
   const codeBase = base.stampCodeList?.[0] || base.stampCode
 
-  base.primaryColor = '#FF0015'
+  base.primaryColor = DEFAULT_STAMP_RED
   base.borderWidth = 1
   base.scale = 1
   base.offsetX = 0

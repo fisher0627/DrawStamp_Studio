@@ -147,6 +147,7 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { IDrawStampConfig, ICode } from '../../../DrawStampTypes'
 import FontPicker from '../controls/FontPicker.vue'
+import { DEFAULT_STAMP_RED } from '../../../Constants'
 
 const { t } = useI18n()
 
@@ -166,7 +167,7 @@ const toggleExpanded = () => {
   emit('update:expanded', !props.expanded)
 }
 
-const primaryColor = computed(() => props.config.primaryColor || '#FF0015')
+const primaryColor = computed(() => props.config.primaryColor || DEFAULT_STAMP_RED)
 const selectedIndex = computed(() => props.selectedIndex ?? -1)
 
 const codeList = computed(() => {
@@ -215,7 +216,7 @@ const createDefaultCode = (config: IDrawStampConfig): ICode => ({
   fontWidth: 1.2,
   textDistributionFactor: 50,
   fontWeight: 'normal',
-  color: config.primaryColor || '#FF0015'
+  color: config.primaryColor || DEFAULT_STAMP_RED
 })
 
 const ensureCodeList = (config: IDrawStampConfig) => {

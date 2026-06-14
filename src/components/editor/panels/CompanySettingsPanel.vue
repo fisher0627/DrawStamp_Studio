@@ -284,6 +284,7 @@ import { useI18n } from 'vue-i18n'
 import type { ICompany, IDrawStampConfig } from '../../../DrawStampTypes'
 import FontPicker from '../controls/FontPicker.vue'
 import icItalicPng from "../../../assets/icons/ic_italic.png";
+import { DEFAULT_STAMP_RED } from '../../../Constants'
 
 const { t } = useI18n()
 
@@ -300,7 +301,7 @@ const emit = defineEmits<{
 }>()
 
 const companyList = computed(() => props.config.companyList || [])
-const primaryColor = computed(() => props.config.primaryColor || '#FF0015')
+const primaryColor = computed(() => props.config.primaryColor || DEFAULT_STAMP_RED)
 const fonts = computed(() => props.systemFonts || [])
 const fontWeightOptions = [100, 200, 300, 400, 500, 600, 700, 800, 900]
 const selectedIndex = computed(() => props.selectedIndex ?? -1)
@@ -498,7 +499,7 @@ const addCompany = () => {
         fontFamily: last?.fontFamily || 'SimSun',
         fontHeight: last?.fontHeight || 4.2,
         fontWeight: last?.fontWeight || 'normal',
-        color: config.primaryColor || '#FF0015',
+        color: config.primaryColor || DEFAULT_STAMP_RED,
         shape: currentShape,
         adjustEllipseText: false,
         adjustEllipseTextFactor: 0.5,
@@ -524,7 +525,7 @@ const addCompany = () => {
         fontFamily: last?.fontFamily || 'SimSun',
         fontHeight: last?.fontHeight || 4.2,
         fontWeight: last?.fontWeight || 'normal',
-        color: config.primaryColor || '#FF0015',
+        color: config.primaryColor || DEFAULT_STAMP_RED,
         shape: 'ellipse',
         adjustEllipseText: false,
         adjustEllipseTextFactor: 0.5,

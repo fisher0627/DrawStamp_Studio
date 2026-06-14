@@ -143,6 +143,7 @@ import AgingEffectSettingsPanel from './components/editor/panels/AgingEffectSett
 import InnerCircleSettingsPanel from './components/editor/panels/InnerCircleSettingsPanel.vue'
 import LineSettingsPanel from './components/editor/panels/LineSettingsPanel.vue'
 import SvgSettingsPanel from './components/editor/panels/SvgSettingsPanel.vue'
+import { DEFAULT_STAMP_RED } from './Constants'
 
   const { t } = useI18n()
 
@@ -231,7 +232,7 @@ const getDrawConfigs = (): IDrawStampConfig => {
   // 圆形边框宽度（毫米）
   const circleBorderWidth = ref(1)
   // 主题颜色
-  const primaryColor = ref('#FF0015')
+  const primaryColor = ref(DEFAULT_STAMP_RED)
   // 做旧效果、防伪纹路、毛边效果、内圈圆设置现在从 config 中直接读取，不需要单独的 ref
   // 文字分布因子，控制公司名称文字在椭圆上的分布范围
   const textDistributionFactor = ref(3)

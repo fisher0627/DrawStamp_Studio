@@ -115,6 +115,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { extractStampFromFile, type ExtractStampResult } from '../../utils/extractStampImage'
+import { DEFAULT_STAMP_RED } from '../../Constants'
 
 const props = defineProps<{
   primaryColor: string
@@ -135,7 +136,6 @@ const errorMessage = ref('')
 const isProcessing = ref(false)
 const threshold = ref(68)
 const cleanup = ref(2)
-const DEFAULT_STAMP_RED = '#FF0015'
 const targetColor = ref(DEFAULT_STAMP_RED)
 const transparentBackground = ref(true)
 const preserveShading = ref(true)

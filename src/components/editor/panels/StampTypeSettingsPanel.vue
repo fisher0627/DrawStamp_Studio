@@ -208,6 +208,7 @@ import { useI18n } from 'vue-i18n'
 import type { IDrawStampConfig, IStampType } from '../../../DrawStampTypes'
 import FontPicker from '../controls/FontPicker.vue'
 import icItalicPng from '../../../assets/icons/ic_italic.png'
+import { DEFAULT_STAMP_RED } from '../../../Constants'
 
 const { t } = useI18n()
 
@@ -224,7 +225,7 @@ const emit = defineEmits<{
 }>()
 
 const stampTypeList = computed(() => props.config.stampTypeList || [])
-const primaryColor = computed(() => props.config.primaryColor || '#FF0015')
+const primaryColor = computed(() => props.config.primaryColor || DEFAULT_STAMP_RED)
 const selectedIndex = computed(() => props.selectedIndex ?? -1)
 
 // 跟踪每个项的展开状态
@@ -338,7 +339,7 @@ const addStampType = () => {
       fontWidth: 3,
       orientation: 'horizontal',
       rotation: 0,
-      color: config.primaryColor || '#FF0015'
+      color: config.primaryColor || DEFAULT_STAMP_RED
     })
   })
 }

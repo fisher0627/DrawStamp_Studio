@@ -141,6 +141,7 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { IDrawStampConfig, ITaxNumber } from '../../../DrawStampTypes'
 import FontPicker from '../controls/FontPicker.vue'
+import { DEFAULT_STAMP_RED } from '../../../Constants'
 
 const { t } = useI18n()
 
@@ -191,7 +192,7 @@ const createDefaultTaxNumber = (config: IDrawStampConfig): ITaxNumber => ({
   positionY: 0,
   totalWidth: 26,
   fontWeight: 'normal',
-  color: config.primaryColor || '#FF0015'
+  color: config.primaryColor || DEFAULT_STAMP_RED
 })
 
 const ensureTaxNumberList = (config: IDrawStampConfig) => {

@@ -191,6 +191,7 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { IDrawStampConfig, ISvgShape } from '../../../DrawStampTypes'
 import { getSvgAssets } from '../../../utils/svgAssets'
+import { DEFAULT_STAMP_RED } from '../../../Constants'
 
 const { t } = useI18n()
 
@@ -230,7 +231,7 @@ const triggerSvgUpload = () => {
 }
 
 const svgList = computed(() => props.config.svgList || [])
-const primaryColor = computed(() => props.config.primaryColor || '#FF0015')
+const primaryColor = computed(() => props.config.primaryColor || DEFAULT_STAMP_RED)
 const builtinSvgAssets = getSvgAssets()
 const selectedAssetKey = ref(builtinSvgAssets[0]?.key || '')
 
@@ -269,7 +270,7 @@ const createSvgItem = (name: string, content: string, config: IDrawStampConfig):
   id: crypto?.randomUUID ? crypto.randomUUID() : `svg-${Date.now()}`,
   name: name || `SVG ${config.svgList.length + 1}`,
   svgContent: content,
-  color: config.primaryColor || '#FF0015',
+  color: config.primaryColor || DEFAULT_STAMP_RED,
   width: 12,
   height: 12,
   positionX: 0,

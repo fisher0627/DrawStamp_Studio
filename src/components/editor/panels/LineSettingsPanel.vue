@@ -172,6 +172,7 @@
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { IDrawStampConfig, ILineConfig, LineStyle } from '../../../DrawStampTypes'
+import { DEFAULT_STAMP_RED } from '../../../Constants'
 
 const { t } = useI18n()
 
@@ -187,7 +188,7 @@ const emit = defineEmits<{
 }>()
 
 const lineList = computed(() => props.config.lineList || [])
-const defaultColor = computed(() => props.config.primaryColor || '#FF0015')
+const defaultColor = computed(() => props.config.primaryColor || DEFAULT_STAMP_RED)
 const positionRangeX = computed(() => Math.max(10, (props.config.width ?? 40) / 2))
 const positionRangeY = computed(() => Math.max(10, (props.config.height ?? 40) / 2))
 const maxLength = computed(() => {

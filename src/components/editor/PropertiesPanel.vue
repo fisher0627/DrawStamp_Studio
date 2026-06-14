@@ -80,6 +80,7 @@ import { useI18n } from 'vue-i18n'
 import EditorControls from '../../EditorControls.vue'
 import { IDrawStampConfig } from '../../DrawStampTypes'
 import { useStampStore } from '../../stores/stampStore'
+import { DEFAULT_STAMP_RED } from '../../Constants'
 
 const { t } = useI18n()
 
@@ -202,7 +203,7 @@ const elementCount = computed(() => {
   return counts.reduce((sum, value) => sum + value, 0)
 })
 
-const primaryColor = computed(() => currentConfig.value?.primaryColor || '#FF0015')
+const primaryColor = computed(() => currentConfig.value?.primaryColor || DEFAULT_STAMP_RED)
 const primaryColorLabel = computed(() => {
   const value = primaryColor.value.trim()
   return value.startsWith('#') ? value.toUpperCase() : '自定义色'
