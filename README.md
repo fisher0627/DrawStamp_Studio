@@ -4,6 +4,7 @@
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-FF0015?style=for-the-badge)](https://wosp.cc.cd/)
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://wosp.cc.cd/)
+[![Version](https://img.shields.io/badge/Version-0.3.0-234c5c?style=for-the-badge)](CHANGELOG.md)
 [![Vue 3](https://img.shields.io/badge/Vue-3-42b883?style=for-the-badge&logo=vue.js&logoColor=white)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5-646cff?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-334155?style=for-the-badge)](LICENSE)
@@ -18,7 +19,7 @@
 
 ## 项目说明
 
-DrawStamp Studio 已经从单纯的印章绘制工具，整理成一个完整的在线编辑器：支持常用模板、专业画布、字体选择、图片提取印章、本地自动草稿、模板导入导出，以及 PNG / SVG / JPEG 多格式下载。
+DrawStamp Studio 已经从单纯的印章绘制工具，整理成一个完整的在线编辑器：支持常用模板、纸感专业画布、字体选择、图片提取印章、本地自动草稿、模板导入导出，以及 PNG / SVG / JPEG 多格式下载。
 
 相关文档：
 
@@ -46,6 +47,7 @@ DrawStamp Studio 更适合这些场景：
 
 - 常用印章模板：支持合同、公章、财务、发票、收讫、业务、报价和空白基础章，并提供分类筛选。
 - 专业画布编辑：缩放、适配窗口、重置视图、网格背景、纸张背景、透明棋盘格背景。
+- 克制编辑器界面：纸感工作台、标尺网格、蓝色选框、分组工具栏和清晰的底部导出区域。
 - 元素列表管理：公司名称、印章类型、编码、税号、五角星、内圈、图片、线条、SVG 等元素集中管理。
 - 属性面板：基础设置与高级设置分区，按当前选中元素显示对应参数。
 - 字体选择：内置常用中文字体选项，并支持本地打包的华文隶书字体。
@@ -113,6 +115,8 @@ Cloudflare Pages 构建配置：
 | Root directory | 留空或 `/` |
 
 提交代码到 GitHub 后，Cloudflare Pages 会自动拉取仓库并重新部署。
+
+大版本或明显界面变动时，建议同时更新 `README.md`、`CHANGELOG.md`、README 截图、`public/social-preview.png`、SEO 信息和 `public/sitemap.xml`，确保 GitHub 仓库首页与线上版本保持一致。
 
 ## 项目结构
 
