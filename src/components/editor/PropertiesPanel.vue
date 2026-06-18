@@ -249,8 +249,8 @@ defineExpose({
 .properties-panel {
   width: 352px;
   min-width: 352px;
-  background: #ffffff;
-  border-left: 1px solid #d9dee7;
+  background: var(--studio-panel);
+  border-left: 1px solid var(--studio-line-hair);
   display: flex;
   flex-direction: column;
   height: auto;
@@ -261,8 +261,9 @@ defineExpose({
 .panel-header {
   min-height: 54px;
   padding: 14px 16px;
-  border-bottom: 1px solid #e6eaf0;
-  background: #ffffff;
+  border-bottom: 1px solid var(--studio-line-hair);
+  background:
+    linear-gradient(180deg, rgba(255, 254, 250, 0.98), rgba(248, 249, 245, 0.98));
   flex-shrink: 0;
   display: flex;
   justify-content: space-between;
@@ -273,7 +274,7 @@ defineExpose({
 .panel-eyebrow {
   display: block;
   margin-bottom: 2px;
-  color: #8a94a3;
+  color: var(--studio-soft);
   font-size: 10px;
   font-weight: 800;
   line-height: 1;
@@ -286,16 +287,16 @@ defineExpose({
   font-size: 15px;
   line-height: 1.3;
   font-weight: 700;
-  color: #202733;
+  color: var(--studio-ink);
 }
 
 .selection-pill {
   max-width: 130px;
   padding: 5px 9px;
-  border: 1px solid #d9e0e9;
+  border: 1px solid var(--studio-line);
   border-radius: 999px;
-  background: #f8fafc;
-  color: #536173;
+  background: #f2f4ef;
+  color: var(--studio-muted);
   font-size: 12px;
   line-height: 1.2;
   white-space: nowrap;
@@ -306,11 +307,11 @@ defineExpose({
 .inspector-summary {
   margin: 10px 12px 0;
   padding: 10px;
-  border: 1px solid #e0e6ee;
-  border-radius: 8px;
+  border: 1px solid var(--studio-line-hair);
+  border-radius: 10px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.98));
-  box-shadow: 0 8px 18px rgba(37, 48, 68, 0.05);
+    linear-gradient(180deg, rgba(255, 254, 250, 0.98), rgba(247, 248, 243, 0.98));
+  box-shadow: var(--studio-shadow-quiet);
   flex-shrink: 0;
 }
 
@@ -329,8 +330,8 @@ defineExpose({
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  background: #f5eef0;
-  color: #bd2431;
+  background: #f7eeee;
+  color: var(--studio-ui-red);
   font-size: 13px;
   line-height: 1;
   font-weight: 800;
@@ -346,7 +347,7 @@ defineExpose({
 }
 
 .summary-main strong {
-  color: #202733;
+  color: var(--studio-ink);
   font-size: 14px;
   line-height: 1.35;
   white-space: nowrap;
@@ -364,9 +365,9 @@ defineExpose({
 .summary-stats span {
   min-width: 0;
   padding: 6px 7px;
-  border: 1px solid #e7ecf3;
+  border: 1px solid var(--studio-line-hair);
   border-radius: 7px;
-  background: #ffffff;
+  background: var(--studio-panel);
 }
 
 .summary-stats small,
@@ -376,14 +377,14 @@ defineExpose({
 }
 
 .summary-stats small {
-  color: #8a94a3;
+  color: var(--studio-soft);
   font-size: 10px;
   line-height: 1.2;
 }
 
 .summary-stats strong {
   margin-top: 3px;
-  color: #303b4b;
+  color: var(--studio-ink);
   font-size: 12px;
   line-height: 1.25;
   white-space: nowrap;
@@ -397,7 +398,7 @@ defineExpose({
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 8px;
-  color: #536173;
+  color: var(--studio-muted);
   font-size: 12px;
   line-height: 1.2;
 }
@@ -410,7 +411,7 @@ defineExpose({
 }
 
 .summary-color-row strong {
-  color: #303b4b;
+  color: var(--studio-ink);
   font-size: 11px;
   font-weight: 700;
 }
@@ -419,7 +420,8 @@ defineExpose({
   flex: 1;
   overflow-y: auto;
   min-height: 0;
-  background: #f7f9fb;
+  background:
+    linear-gradient(180deg, rgba(242, 244, 239, 0.94), rgba(238, 241, 234, 0.94));
   scrollbar-width: thin;
   scrollbar-color: #b8c2cf transparent;
 }
@@ -430,9 +432,9 @@ defineExpose({
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 3px;
-  border: 1px solid #dfe6ef;
-  border-radius: 8px;
-  background: #edf1f6;
+  border: 1px solid var(--studio-line-hair);
+  border-radius: 9px;
+  background: #e8ece4;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
 
@@ -442,7 +444,7 @@ defineExpose({
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: #667386;
+  color: var(--studio-muted);
   font-size: 12px;
   line-height: 1;
   font-weight: 800;
@@ -454,15 +456,15 @@ defineExpose({
 }
 
 .settings-segment button:hover {
-  color: #303b4b;
+  color: var(--studio-ink);
 }
 
 .settings-segment button.active {
   background: #ffffff;
-  color: #bd2431;
+  color: var(--studio-ui-red);
   box-shadow:
     0 1px 2px rgba(31, 41, 55, 0.08),
-    0 0 0 1px rgba(189, 36, 49, 0.08);
+    0 0 0 1px rgba(163, 58, 50, 0.08);
 }
 
 .context-focus-strip {
@@ -472,10 +474,10 @@ defineExpose({
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  border: 1px solid #e3e8f0;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #667386;
+  border: 1px solid var(--studio-line-hair);
+  border-radius: 9px;
+  background: var(--studio-panel);
+  color: var(--studio-muted);
   font-size: 12px;
   line-height: 1.2;
   font-weight: 700;
@@ -485,10 +487,10 @@ defineExpose({
   flex: 0 0 auto;
   height: 26px;
   padding: 0 9px;
-  border: 1px solid #d9e0e9;
+  border: 1px solid var(--studio-line);
   border-radius: 6px;
-  background: #f8fafc;
-  color: #303b4b;
+  background: #f7f8f3;
+  color: var(--studio-ink);
   font-size: 12px;
   line-height: 1;
   font-weight: 800;
@@ -501,8 +503,88 @@ defineExpose({
 
 .context-focus-strip button:hover {
   border-color: rgba(189, 36, 49, 0.28);
-  background: #fff5f6;
-  color: #bd2431;
+  background: #fff5f3;
+  color: var(--studio-ui-red);
+}
+
+.panel-content :deep(.control-group) {
+  margin: 10px 12px;
+  border-color: var(--studio-line-hair);
+  background: rgba(255, 254, 250, 0.92);
+  box-shadow: none;
+}
+
+.panel-content :deep(.control-group:hover) {
+  box-shadow: var(--studio-shadow-quiet);
+}
+
+.panel-content :deep(.control-group h3),
+.panel-content :deep(.group-header h3) {
+  color: var(--studio-ink);
+  border-bottom-color: var(--studio-line-hair);
+}
+
+.panel-content :deep(input[type="text"]),
+.panel-content :deep(input[type="number"]),
+.panel-content :deep(input[type="email"]),
+.panel-content :deep(input[type="search"]),
+.panel-content :deep(textarea),
+.panel-content :deep(select),
+.panel-content :deep(.font-input),
+.panel-content :deep(.font-select),
+.panel-content :deep(.text-input-field) {
+  border-color: var(--studio-line);
+  border-radius: 7px;
+  background: var(--studio-panel);
+  color: var(--studio-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.panel-content :deep(input[type="text"]:focus),
+.panel-content :deep(input[type="number"]:focus),
+.panel-content :deep(input[type="email"]:focus),
+.panel-content :deep(input[type="search"]:focus),
+.panel-content :deep(textarea:focus),
+.panel-content :deep(select:focus),
+.panel-content :deep(.font-input:focus),
+.panel-content :deep(.font-select:focus),
+.panel-content :deep(.text-input-field:focus) {
+  border-color: rgba(35, 76, 92, 0.38);
+  box-shadow: var(--studio-focus);
+  outline: none;
+}
+
+.panel-content :deep(input[type="range"]) {
+  accent-color: var(--studio-ui-red);
+}
+
+.panel-content :deep(input[type="checkbox"]) {
+  accent-color: var(--studio-ui-red);
+}
+
+.panel-content :deep(.range-item),
+.panel-content :deep(.text-input-item),
+.panel-content :deep(.checkbox-label),
+.panel-content :deep(.inline-label) {
+  border-color: var(--studio-line-hair);
+  background: rgba(255, 254, 250, 0.72);
+}
+
+.panel-content :deep(.range-value-display) {
+  color: var(--studio-tool-blue);
+  background: var(--studio-tool-blue-soft);
+}
+
+.panel-content :deep(.range-btn) {
+  border-color: var(--studio-line);
+  background: var(--studio-panel);
+  color: var(--studio-muted);
+}
+
+.panel-content :deep(.range-btn:hover) {
+  border-color: rgba(35, 76, 92, 0.34);
+  background: var(--studio-tool-blue-soft);
+  color: var(--studio-tool-blue);
 }
 
 @media (max-width: 900px) {
@@ -511,7 +593,7 @@ defineExpose({
     min-width: 0;
     max-height: 520px;
     border-left: none;
-    border-top: 1px solid #d9dee7;
+    border-top: 1px solid var(--studio-line-hair);
   }
 }
 </style>

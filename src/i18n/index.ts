@@ -236,6 +236,7 @@ const messages: Record<string, any> = {
         addNew: '添加新行',
         expand: '展开',
         collapse: '收起',
+        italic: '倾斜',
         fontPlaceholder: '输入字体名称',
         fontWeightNormal: '正常',
         fontWeightBold: '粗体',
@@ -679,6 +680,7 @@ const messages: Record<string, any> = {
       }
     },
     common: {
+      loading: '加载中...',
       properties: {
         title: '属性设置',
         showAll: '显示全部'
@@ -999,6 +1001,7 @@ const messages: Record<string, any> = {
         addNew: 'Add New',
         expand: 'Expand',
         collapse: 'Collapse',
+        italic: 'Italic',
         fontPlaceholder: 'Enter font name',
         fontWeightNormal: 'Normal',
         fontWeightBold: 'Bold',
@@ -1483,6 +1486,7 @@ const messages: Record<string, any> = {
       }
     },
     common: {
+      loading: 'Loading...',
       properties: {
         title: 'Properties',
         showAll: 'Show All'
@@ -1591,6 +1595,7 @@ const messages: Record<string, any> = {
       }
     },
     common: {
+      loading: '読み込み中...',
       properties: {
         title: 'プロパティ',
         showAll: 'すべて表示'
@@ -1860,6 +1865,7 @@ const messages: Record<string, any> = {
         addNew: '追加',
         expand: '展開',
         collapse: '折りたたむ',
+        italic: 'イタリック',
         fontPlaceholder: 'フォント名を入力',
         fontWeightNormal: '標準',
         fontWeightBold: '太字',
