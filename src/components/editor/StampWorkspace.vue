@@ -494,6 +494,68 @@
       </div>
     </div>
   </div>
+
+  <section class="seo-content" aria-labelledby="seo-title">
+    <div class="seo-hero">
+      <p class="seo-eyebrow">Browser Local Stamp Editor</p>
+      <h2 id="seo-title">在线电子印章生成、图片提取与透明 PNG 导出</h2>
+      <p>
+        DrawStamp Studio 是一个浏览器本地运行的电子印章工作台，适合快速制作圆章、椭圆章、合同专用章、财务专用章、发票专用章等印章图片。
+        你可以直接调整文字、字体、边框、五角星、内圈、编码和图片元素，也可以从扫描件或照片中提取红色印章并导出透明背景 PNG。
+      </p>
+      <div class="seo-meta" aria-label="核心特性">
+        <span>本地处理</span>
+        <span>透明 PNG</span>
+        <span>SVG / JPEG</span>
+        <span>模板草稿</span>
+      </div>
+    </div>
+
+    <div class="seo-grid">
+      <article>
+        <span>01</span>
+        <h3>电子印章生成器</h3>
+        <p>内置常用模板和精细参数面板，支持公司名称、印章类型、编码、税号、中间文字等内容编辑，适合制作测试、演示和合规授权场景下的印章图片。</p>
+      </article>
+      <article>
+        <span>02</span>
+        <h3>图片提取透明印章</h3>
+        <p>支持拖拽上传印章扫描件或照片，在浏览器本地提取红色印章区域，输出透明背景结果，不需要把合同、票据或图片上传到服务器。</p>
+      </article>
+      <article>
+        <span>03</span>
+        <h3>PNG / SVG / JPEG 导出</h3>
+        <p>导出面板支持透明 PNG、白底 PNG、SVG 和 JPEG，并可调整导出倍率、尺寸和文件名，方便插入 Word、PDF、PPT 或内部测试文档。</p>
+      </article>
+    </div>
+
+    <div class="seo-faq" aria-label="常见问题">
+      <h2>常见问题</h2>
+      <details open>
+        <summary>DrawStamp Studio 会上传我的印章图片吗？</summary>
+        <p>不会。印章绘制、图片提取、模板草稿和导出都在浏览器端完成，项目没有为这些核心流程配置后端上传接口。</p>
+      </details>
+      <details>
+        <summary>可以导出透明背景印章吗？</summary>
+        <p>可以。推荐使用 PNG 格式并关闭白底选项，导出的透明 PNG 可用于文档排版、演示稿或内部测试素材。</p>
+      </details>
+      <details>
+        <summary>这个工具适合真实盖章或伪造文件吗？</summary>
+        <p>不适合。本项目仅用于学习、测试、设计预览和合规授权场景，请勿用于伪造合同、公文、票据或任何违法用途。</p>
+      </details>
+      <details>
+        <summary>可以保存和继续编辑模板吗？</summary>
+        <p>可以。当前配置可以导出为 JSON 模板，浏览器也会保存本地草稿，方便刷新后继续编辑。</p>
+      </details>
+    </div>
+
+    <nav class="seo-links" aria-label="站点说明链接">
+      <RouterLink to="/about">关于项目</RouterLink>
+      <RouterLink to="/privacy">隐私政策</RouterLink>
+      <RouterLink to="/terms">服务条款</RouterLink>
+      <RouterLink to="/contact">联系反馈</RouterLink>
+    </nav>
+  </section>
 </template>
 
 <script setup lang="ts">
@@ -2007,6 +2069,192 @@ onUnmounted(() => {
   box-shadow:
     0 16px 44px rgba(40, 48, 38, 0.11),
     inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.seo-content {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  margin: 18px 0 4px;
+  padding: clamp(18px, 3vw, 34px);
+  box-sizing: border-box;
+  text-align: left;
+  background:
+    radial-gradient(circle at 8% 12%, rgba(255, 255, 255, 0.88), transparent 28%),
+    linear-gradient(135deg, rgba(35, 76, 92, 0.055) 0 1px, transparent 1px 100%),
+    linear-gradient(180deg, #fffefa 0%, #f5f6f0 100%);
+  background-size: auto, 20px 20px, auto;
+  border: 1px solid var(--studio-line);
+  border-radius: 14px;
+  box-shadow: var(--studio-shadow-panel);
+  overflow: hidden;
+}
+
+.seo-content::after {
+  content: '';
+  position: absolute;
+  top: 22px;
+  right: 24px;
+  z-index: -1;
+  width: clamp(76px, 11vw, 132px);
+  height: clamp(76px, 11vw, 132px);
+  border: 2px solid rgba(255, 0, 21, 0.12);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 10px rgba(255, 0, 21, 0.035);
+}
+
+.seo-hero {
+  max-width: 880px;
+}
+
+.seo-eyebrow {
+  margin: 0 0 10px;
+  color: var(--studio-tool-blue);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.seo-content h2,
+.seo-content h3,
+.seo-content p {
+  margin-top: 0;
+}
+
+.seo-content h2 {
+  color: var(--studio-ink);
+  font-size: clamp(24px, 3vw, 38px);
+  line-height: 1.16;
+  letter-spacing: -0.04em;
+}
+
+.seo-content p {
+  color: var(--studio-muted);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.seo-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.seo-meta span {
+  padding: 7px 10px;
+  color: var(--studio-tool-blue);
+  background: rgba(232, 242, 245, 0.86);
+  border: 1px solid rgba(46, 111, 143, 0.14);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.seo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.seo-grid article,
+.seo-faq {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--studio-line-hair);
+  border-radius: 12px;
+  box-shadow: var(--studio-shadow-quiet);
+}
+
+.seo-grid article {
+  position: relative;
+  padding: 18px;
+}
+
+.seo-grid span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 24px;
+  margin-bottom: 12px;
+  color: var(--studio-tool-blue);
+  background: rgba(232, 242, 245, 0.72);
+  border: 1px solid rgba(46, 111, 143, 0.12);
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.seo-grid h3 {
+  margin-bottom: 8px;
+  color: var(--studio-ink);
+  font-size: 17px;
+}
+
+.seo-grid p {
+  margin-bottom: 0;
+  font-size: 14px;
+}
+
+.seo-faq {
+  margin-top: 14px;
+  padding: 18px;
+}
+
+.seo-faq h2 {
+  margin-bottom: 14px;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+.seo-faq details {
+  border-top: 1px solid var(--studio-line-hair);
+  padding: 12px 0;
+}
+
+.seo-faq details:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.seo-faq details:last-of-type {
+  padding-bottom: 0;
+}
+
+.seo-faq summary {
+  cursor: pointer;
+  color: var(--studio-ink);
+  font-weight: 700;
+}
+
+.seo-faq details p {
+  margin: 10px 0 0;
+}
+
+.seo-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.seo-links a {
+  padding: 8px 12px;
+  color: var(--studio-tool-blue);
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid var(--studio-line);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.seo-links a:hover {
+  color: #ffffff;
+  background: var(--studio-tool-blue);
+  border-color: var(--studio-tool-blue);
 }
 
 .top-toolbar {
@@ -3756,6 +4004,10 @@ onUnmounted(() => {
     overflow: visible;
   }
 
+  .seo-grid {
+    grid-template-columns: 1fr;
+  }
+
   .stamp-draw-container {
     flex-direction: column;
     overflow: visible;
@@ -3821,6 +4073,25 @@ onUnmounted(() => {
 }
 
 @media (max-width: 640px) {
+  .seo-content {
+    padding: 16px;
+  }
+
+  .seo-content::after {
+    opacity: 0.45;
+    right: 12px;
+  }
+
+  .seo-meta span {
+    flex: 1 1 120px;
+    text-align: center;
+  }
+
+  .seo-links a {
+    flex: 1 1 130px;
+    text-align: center;
+  }
+
   .top-toolbar {
     min-height: auto;
     padding: 12px;

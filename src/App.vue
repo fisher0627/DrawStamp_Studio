@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import StampWorkspace from './components/editor/StampWorkspace.vue'
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
   <div class="app-root">
     <div class="demo-wrapper">
-      <StampWorkspace />
+      <RouterView />
     </div>
   </div>
 </template>

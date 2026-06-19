@@ -992,10 +992,14 @@ canvas {
 .page-container {
   max-width: 1200px;
   margin: 0 auto;
-  background: white;
+  text-align: left;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255, 255, 255, 0.9), transparent 30%),
+    var(--studio-panel);
   padding: 3rem;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--studio-line);
+  box-shadow: var(--studio-shadow-panel);
 }
 
 .expand-toggle-btn {

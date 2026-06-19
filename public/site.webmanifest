@@ -1,6 +1,6 @@
 {
   "name": "DrawStamp Studio 在线电子印章工作台",
-  "short_name": "DrawStamp",
+  "short_name": "DrawStamp Studio",
   "description": "在线生成、提取、编辑和导出电子印章，支持透明 PNG、SVG 和 JPEG。",
   "start_url": "/",
   "scope": "/",

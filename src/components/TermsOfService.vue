@@ -1,173 +1,188 @@
 <template>
-  <div class="terms-of-service">
-    <div class="page-container">
-      <h1>服务条款</h1>
-      <p class="last-updated">最后更新日期: {{ new Date().toLocaleDateString('zh-CN') }}</p>
+  <InfoPageShell
+    title="服务条款"
+    kicker="Terms File"
+    description="DrawStamp Studio 是浏览器本地电子印章工作台。使用前请确认场景合法、内容真实、责任清晰。"
+    tone="legal"
+  >
+    <template #aside>
+      <div class="terms-aside">
+        <span>最后更新</span>
+        <strong>{{ lastUpdated }}</strong>
+        <p>禁止用于伪造公文、合同、票据或任何违法用途。</p>
+      </div>
+    </template>
 
-      <section>
+    <section class="terms-warning">
+      <strong>使用边界</strong>
+      <p>本工具适合学习、测试、设计预览和合规授权场景。您应自行确认使用行为符合所在地法律法规。</p>
+    </section>
+
+    <section class="terms-list">
+      <article>
         <h2>1. 接受条款</h2>
-        <p>欢迎使用DrawStamp（"服务"、"网站"）。通过访问和使用本网站，您同意遵守本服务条款。如果您不同意这些条款，请不要使用本服务。</p>
-      </section>
+        <p>欢迎使用 DrawStamp Studio。通过访问和使用本网站，您同意遵守本服务条款。如果您不同意这些条款，请不要使用本服务。</p>
+      </article>
 
-      <section>
+      <article>
         <h2>2. 服务描述</h2>
-        <p>DrawStamp是一个在线电子印章制作工具，允许用户创建和设计电子印章。本服务仅供合法用途使用。</p>
-      </section>
+        <p>DrawStamp Studio 是一个在线电子印章工作台，允许用户在浏览器本地创建、编辑、提取和导出电子印章图片。本服务仅供合法用途使用。</p>
+      </article>
 
-      <section>
+      <article>
         <h2>3. 使用限制</h2>
-        <p>您同意不会：</p>
         <ul>
-          <li>将本服务用于任何非法目的或违反任何适用法律法规</li>
-          <li>使用本服务创建用于欺诈、伪造或其他非法活动的印章</li>
-          <li>尝试未经授权访问本服务的任何部分或相关系统</li>
-          <li>干扰或破坏本服务的正常运行</li>
-          <li>复制、修改、分发或创建本服务的衍生作品</li>
+          <li>不得将本服务用于任何非法目的或违反任何适用法律法规。</li>
+          <li>不得使用本服务创建用于欺诈、伪造或其他非法活动的印章。</li>
+          <li>不得尝试未经授权访问本服务的任何部分或相关系统。</li>
+          <li>不得干扰或破坏本服务的正常运行。</li>
         </ul>
-      </section>
+      </article>
 
-      <section>
+      <article>
         <h2>4. 免责声明</h2>
-        <p><strong>重要提示：</strong>本服务仅供学习和参考使用。严禁用于任何非法用途！</p>
-        <ul>
-          <li>使用本服务生成的任何图片请勿用于任何非法用途</li>
-          <li>因违法使用本服务造成的任何法律责任和损失，需自行承担，与本服务无关</li>
-          <li>使用本服务请遵守相关法律法规</li>
-        </ul>
-        <p>本服务按"现状"提供，不提供任何明示或暗示的保证。我们不保证服务将始终可用、无错误或安全。</p>
-      </section>
+        <p>本服务按现状提供，不提供任何明示或暗示的保证。因违法使用本服务造成的任何法律责任和损失，需自行承担，与本服务无关。</p>
+      </article>
 
-      <section>
+      <article>
         <h2>5. 知识产权</h2>
-        <p>本网站的所有内容，包括但不限于文本、图形、徽标、图标、图像、软件，均为我们的财产或已获得使用许可，受版权和其他知识产权法保护。</p>
-        <p>您使用本服务创建的印章内容归您所有，但您授予我们使用这些内容来提供和改进服务的权利。</p>
-      </section>
+        <p>本网站的界面、代码、文本、图形和相关素材受版权和开源许可保护。项目源码以仓库中声明的开源许可证为准。</p>
+        <p>您在浏览器本地创建、导入或提取的印章内容由您自行负责。DrawStamp Studio 不会主动上传或保存您的印章图片和模板内容。</p>
+      </article>
 
-      <section>
+      <article>
         <h2>6. 用户内容</h2>
-        <p>您对使用本服务创建的所有内容负责。您保证：</p>
-        <ul>
-          <li>您拥有或有权使用您创建的所有内容</li>
-          <li>您的内容不侵犯任何第三方的权利</li>
-          <li>您的内容不包含非法、有害或不当材料</li>
-        </ul>
-      </section>
+        <p>您对使用本服务创建的所有内容负责，并保证您拥有或有权使用相关内容，且不侵犯第三方权利。</p>
+      </article>
 
-      <section>
+      <article>
         <h2>7. 服务变更和终止</h2>
-        <p>我们保留随时修改、暂停或终止服务的权利，恕不另行通知。我们不对因服务变更、暂停或终止而造成的任何损失承担责任。</p>
-      </section>
+        <p>我们保留随时修改、暂停或终止服务的权利，恕不另行通知。</p>
+      </article>
 
-      <section>
+      <article>
         <h2>8. 责任限制</h2>
         <p>在法律允许的最大范围内，我们不对因使用或无法使用本服务而产生的任何直接、间接、偶然、特殊或后果性损害承担责任。</p>
-      </section>
+      </article>
 
-      <section>
+      <article>
         <h2>9. 赔偿</h2>
-        <p>您同意赔偿并使我们免受因您违反本服务条款或使用本服务而产生的任何索赔、损失、责任和费用（包括律师费）。</p>
-      </section>
+        <p>您同意赔偿并使我们免受因您违反本服务条款或使用本服务而产生的任何索赔、损失、责任和费用。</p>
+      </article>
 
-      <section>
-        <h2>10. 适用法律</h2>
-        <p>本服务条款受适用法律管辖。任何争议应通过友好协商解决，协商不成的，应提交有管辖权的法院解决。</p>
-      </section>
+      <article>
+        <h2>10. 适用法律与条款修改</h2>
+        <p>本服务条款受适用法律管辖。我们保留修改本服务条款的权利，修改后的条款将在本页面发布。</p>
+      </article>
 
-      <section>
-        <h2>11. 条款修改</h2>
-        <p>我们保留随时修改本服务条款的权利。修改后的条款将在本页面上发布，并更新"最后更新日期"。继续使用服务即表示您接受修改后的条款。</p>
-      </section>
-
-      <section>
-        <h2>12. 联系我们</h2>
-        <p>如果您对本服务条款有任何疑问，请通过我们的 <router-link to="/contact">联系我们</router-link> 页面与我们联系。</p>
-      </section>
-    </div>
-  </div>
+      <article>
+        <h2>11. 联系方式</h2>
+        <p>如果您对本服务条款有任何疑问，请通过 <RouterLink to="/contact">联系反馈</RouterLink> 页面与我们联系，也可以发送邮件至 fisherztz@gmail.com。</p>
+      </article>
+    </section>
+  </InfoPageShell>
 </template>
 
 <script setup lang="ts">
+import InfoPageShell from './InfoPageShell.vue'
+
+const lastUpdated = '2026年6月19日'
 </script>
 
 <style scoped>
-.terms-of-service {
-  min-height: 100vh;
-  padding: 2rem;
-  background-color: #f5f5f5;
+.terms-aside,
+.terms-warning,
+.terms-list article {
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid var(--studio-line-hair);
+  border-radius: 16px;
+  box-shadow: var(--studio-shadow-quiet);
 }
 
-.container {
-  max-width: 900px;
-  margin: 0 auto;
-  background: white;
-  padding: 3rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.terms-aside {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
 }
 
-h1 {
-  color: #333;
-  margin-bottom: 0.5rem;
-  font-size: 2.5rem;
+.terms-aside span {
+  color: var(--studio-muted);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
 }
 
-.last-updated {
-  color: #666;
-  font-size: 0.9rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #eee;
+.terms-aside strong {
+  color: var(--studio-ink);
+  font-size: 22px;
 }
 
-section {
-  margin-bottom: 2.5rem;
+.terms-aside p {
+  margin: 0;
+  color: var(--studio-muted);
+  line-height: 1.7;
 }
 
-h2 {
-  color: #444;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
+.terms-warning {
+  padding: 22px;
+  background:
+    linear-gradient(135deg, rgba(255, 0, 21, 0.06), rgba(255, 255, 255, 0.82)),
+    #fff;
+  border-color: rgba(255, 0, 21, 0.18);
 }
 
-p {
+.terms-warning strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--studio-stamp-red);
+}
+
+.terms-warning p,
+.terms-list p,
+.terms-list li {
+  color: var(--studio-muted);
   line-height: 1.8;
-  color: #555;
-  margin-bottom: 1rem;
 }
 
-ul {
-  margin-left: 2rem;
-  margin-bottom: 1rem;
+.terms-warning p,
+.terms-list p {
+  margin: 0;
 }
 
-li {
-  line-height: 1.8;
-  color: #555;
-  margin-bottom: 0.5rem;
+.terms-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
 }
 
-a {
-  color: #007bff;
+.terms-list article {
+  padding: 22px;
+}
+
+.terms-list h2 {
+  margin: 0 0 10px;
+  color: var(--studio-ink);
+  font-size: 20px;
+}
+
+.terms-list ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.terms-list a {
+  color: var(--studio-tool-blue);
+  font-weight: 900;
   text-decoration: none;
 }
 
-a:hover {
-  text-decoration: underline;
-}
-
-@media (max-width: 768px) {
-  .terms-of-service {
-    padding: 1rem;
-  }
-
-  .container {
-    padding: 1.5rem;
-  }
-
-  h1 {
-    font-size: 2rem;
+@media (max-width: 820px) {
+  .terms-list {
+    grid-template-columns: 1fr;
   }
 }
 </style>
-

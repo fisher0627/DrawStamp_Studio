@@ -1,31 +1,43 @@
 <template>
-  <div class="about-us">
-    <div class="page-container">
-      <h1>{{ t('about.title') }}</h1>
+  <InfoPageShell
+    :title="t('about.title')"
+    kicker="Project File"
+    :description="t('about.whatIs.description')"
+  >
+    <template #aside>
+      <div class="stamp-mark">
+        <span>LOCAL</span>
+        <strong>FIRST</strong>
+      </div>
+    </template>
 
-      <section>
-        <h2>{{ t('about.whatIs.title') }}</h2>
-        <p>{{ t('about.whatIs.description') }}</p>
-      </section>
+    <section class="brief-card">
+      <p class="section-label">{{ t('about.mission.title') }}</p>
+      <p>{{ t('about.mission.description') }}</p>
+    </section>
 
-      <section>
-        <h2>{{ t('about.mission.title') }}</h2>
-        <p>{{ t('about.mission.description') }}</p>
-      </section>
+    <section class="feature-grid" aria-label="主要功能">
+      <article>
+        <span>生成</span>
+        <p>{{ t('about.features.items.customDesign') }}</p>
+      </article>
+      <article>
+        <span>模板</span>
+        <p>{{ t('about.features.items.templateSystem') }}</p>
+      </article>
+      <article>
+        <span>质感</span>
+        <p>{{ t('about.features.items.advancedEffects') }}</p>
+      </article>
+      <article>
+        <span>本地</span>
+        <p>{{ t('about.features.items.localProcessing') }}</p>
+      </article>
+    </section>
 
-      <section>
-        <h2>{{ t('about.features.title') }}</h2>
-        <ul>
-          <li><strong>{{ t('about.features.items.customDesign') }}</strong></li>
-          <li><strong>{{ t('about.features.items.templateSystem') }}</strong></li>
-          <li><strong>{{ t('about.features.items.advancedEffects') }}</strong></li>
-          <li><strong>{{ t('about.features.items.localProcessing') }}</strong></li>
-          <li><strong>{{ t('about.features.items.multilingual') }}</strong></li>
-        </ul>
-      </section>
-
-      <section>
-        <h2>{{ t('about.technology.title') }}</h2>
+    <section class="two-column">
+      <article class="info-block">
+        <p class="section-label">{{ t('about.technology.title') }}</p>
         <p>{{ t('about.technology.description') }}</p>
         <ul>
           <li>{{ t('about.technology.items.vue') }}</li>
@@ -33,10 +45,10 @@
           <li>{{ t('about.technology.items.canvas') }}</li>
           <li>{{ t('about.technology.items.responsive') }}</li>
         </ul>
-      </section>
+      </article>
 
-      <section>
-        <h2>{{ t('about.usage.title') }}</h2>
+      <article class="info-block">
+        <p class="section-label">{{ t('about.usage.title') }}</p>
         <p>{{ t('about.usage.description') }}</p>
         <ol>
           <li>{{ t('about.usage.steps.step1') }}</li>
@@ -44,302 +56,196 @@
           <li>{{ t('about.usage.steps.step3') }}</li>
           <li>{{ t('about.usage.steps.step4') }}</li>
         </ol>
-      </section>
+      </article>
+    </section>
 
-      <section>
-        <h2>{{ t('about.warning.title') }}</h2>
-        <div class="warning-box">
-          <p><strong>{{ t('about.warning.securityWarning') }}</strong></p>
-          <p>{{ t('about.warning.notice') }}</p>
-          <ul>
-            <li>{{ t('about.warning.items.item1') }}</li>
-            <li>{{ t('about.warning.items.item2') }}</li>
-            <li>{{ t('about.warning.items.item3') }}</li>
-          </ul>
-        </div>
-      </section>
+    <section class="warning-panel">
+      <p class="section-label">{{ t('about.warning.title') }}</p>
+      <strong>{{ t('about.warning.securityWarning') }}</strong>
+      <p>{{ t('about.warning.notice') }}</p>
+      <ul>
+        <li>{{ t('about.warning.items.item1') }}</li>
+        <li>{{ t('about.warning.items.item2') }}</li>
+        <li>{{ t('about.warning.items.item3') }}</li>
+      </ul>
+    </section>
 
-      <section>
-        <h2>{{ t('about.openSource.title') }}</h2>
+    <section class="closing-card">
+      <div>
+        <p class="section-label">{{ t('about.openSource.title') }}</p>
         <p>{{ t('about.openSource.description') }}</p>
-      </section>
-
-      <section>
-        <h2>{{ t('about.contact.title') }}</h2>
-        <p>{{ t('about.contact.description', { link: '' }) }} <router-link to="/contact">{{ t('about.contact.linkText') }}</router-link>。</p>
-      </section>
-    </div>
-  </div>
+      </div>
+      <RouterLink to="/contact">{{ t('about.contact.linkText') }}</RouterLink>
+    </section>
+  </InfoPageShell>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import InfoPageShell from './InfoPageShell.vue'
 
 const { t } = useI18n()
 </script>
 
 <style scoped>
-.about-us {
-  width: 100%;
-  min-height: 100vh;
-  padding: 2rem;
-  background-color: #f2f2f2;
-}
-
-h1 {
-  color: #343a40;
-  margin-bottom: 2.5rem;
-  font-size: 2.5rem;
-  font-weight: 700;
-  text-align: center;
-  padding-bottom: 1rem;
-  border-bottom: 3px solid #4caf50;
-}
-
-section {
-  margin-bottom: 3rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid #e9ecef;
-}
-
-section:last-of-type {
-  border-bottom: none;
-}
-
-h2 {
-  color: #343a40;
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  font-size: 1.75rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-h2::before {
-  content: '';
-  width: 4px;
-  height: 24px;
-  background: #4caf50;
-  border-radius: 2px;
-}
-
-p {
-  line-height: 1.8;
-  color: #555;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-}
-
-/* 美化无序列表 */
-ul {
-  margin-left: 0;
-  margin-bottom: 1.5rem;
-  padding-left: 0;
-  list-style: none;
-}
-
-ul li {
-  line-height: 1.8;
-  color: #555;
-  margin-bottom: 0.75rem;
-  padding-left: 1.75rem;
-  position: relative;
-  font-size: 1rem;
-  transition: color 0.2s ease;
-}
-
-ul li::before {
-  content: '✓';
-  position: absolute;
-  left: 0;
-  top: 0;
-  color: #4caf50;
-  font-weight: bold;
-  font-size: 1.1rem;
-  width: 1.25rem;
-  height: 1.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #e8f5e9;
+.stamp-mark {
+  display: grid;
+  place-items: center;
+  width: 176px;
+  height: 176px;
+  margin-left: auto;
+  color: var(--studio-stamp-red);
+  border: 2px solid rgba(255, 0, 21, 0.7);
   border-radius: 50%;
-  flex-shrink: 0;
+  transform: rotate(-8deg);
 }
 
-ul li:hover {
-  color: #343a40;
+.stamp-mark span {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.22em;
 }
 
-ul li strong {
-  color: #343a40;
-  font-weight: 600;
+.stamp-mark strong {
+  margin-top: -52px;
+  font-size: 34px;
+  letter-spacing: -0.06em;
 }
 
-/* 美化有序列表 */
-ol {
-  margin-left: 0;
-  margin-bottom: 1.5rem;
-  padding-left: 1.5rem;
-  counter-reset: step-counter;
-  list-style: none;
+.brief-card,
+.info-block,
+.warning-panel,
+.closing-card,
+.feature-grid article {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--studio-line-hair);
+  border-radius: 16px;
+  box-shadow: var(--studio-shadow-quiet);
 }
 
-ol li {
+.brief-card {
+  padding: clamp(18px, 3vw, 28px);
+}
+
+.brief-card p:last-child,
+.info-block p,
+.warning-panel p,
+.closing-card p,
+.feature-grid p {
+  margin: 0;
+  color: var(--studio-muted);
   line-height: 1.8;
-  color: #555;
-  margin-bottom: 1rem;
-  padding-left: 2.5rem;
-  position: relative;
-  font-size: 1rem;
-  counter-increment: step-counter;
-  transition: color 0.2s ease;
 }
 
-ol li::before {
-  content: counter(step-counter);
-  position: absolute;
-  left: 0;
-  top: 0;
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  color: white;
-  font-weight: 600;
-  font-size: 0.9rem;
-  width: 2rem;
-  height: 2rem;
+.section-label {
+  margin: 0 0 10px !important;
+  color: var(--studio-tool-blue) !important;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.feature-grid article {
+  padding: 18px;
+}
+
+.feature-grid span {
+  display: inline-flex;
+  margin-bottom: 12px;
+  padding: 5px 10px;
+  color: var(--studio-tool-blue);
+  background: var(--studio-tool-blue-soft);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.two-column {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.info-block {
+  padding: 22px;
+}
+
+.info-block ul,
+.warning-panel ul,
+.info-block ol {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 0;
+  padding-left: 20px;
+  color: var(--studio-muted);
+  line-height: 1.7;
+}
+
+.warning-panel {
+  margin-top: 14px;
+  padding: 22px;
+  background:
+    linear-gradient(135deg, rgba(255, 0, 21, 0.055), rgba(255, 255, 255, 0.8)),
+    #fff;
+  border-color: rgba(255, 0, 21, 0.18);
+}
+
+.warning-panel strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--studio-stamp-red);
+}
+
+.closing-card {
   display: flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  flex-shrink: 0;
-  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 14px;
+  padding: 22px;
 }
 
-ol li:hover {
-  color: #343a40;
-}
-
-.warning-box {
-  background: linear-gradient(135deg, #fff1f0 0%, #ffeaea 100%);
-  border-left: 4px solid #ff4d4f;
-  padding: 1.5rem;
-  margin: 1.5rem 0;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(255, 77, 79, 0.1);
-}
-
-.warning-box p {
-  color: #cf1322;
-  margin-bottom: 0.75rem;
-  font-weight: 500;
-}
-
-.warning-box p:first-child {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-.warning-box ul {
-  margin-top: 1rem;
-  margin-bottom: 0;
-}
-
-.warning-box li {
-  color: #cf1322;
-  padding-left: 1.75rem;
-}
-
-.warning-box li::before {
-  content: '⚠';
-  background: #ffebee;
-  color: #cf1322;
-}
-
-a {
-  color: #4caf50;
+.closing-card a {
+  flex: 0 0 auto;
+  padding: 10px 16px;
+  color: #fff;
+  background: var(--studio-tool-blue);
+  border-radius: 999px;
+  font-weight: 900;
   text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s ease;
-  border-bottom: 1px solid transparent;
 }
 
-a:hover {
-  color: #45a049;
-  border-bottom-color: #45a049;
+@media (max-width: 900px) {
+  .feature-grid,
+  .two-column {
+    grid-template-columns: 1fr;
+  }
+
+  .stamp-mark {
+    width: 132px;
+    height: 132px;
+    margin: 0;
+  }
+
+  .stamp-mark strong {
+    margin-top: -40px;
+    font-size: 26px;
+  }
 }
 
-/* 功能列表特殊样式 */
-section:nth-of-type(3) ul li,
-section:nth-of-type(4) ul li {
-  background: #f8f9fa;
-  padding: 1rem 1rem 1rem 2.5rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  border: 1px solid #e9ecef;
-  transition: all 0.2s ease;
-}
-
-section:nth-of-type(3) ul li:hover,
-section:nth-of-type(4) ul li:hover {
-  background: #e8f5e9;
-  border-color: #4caf50;
-  transform: translateX(4px);
-  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.1);
-}
-
-section:nth-of-type(3) ul li::before,
-section:nth-of-type(4) ul li::before {
-  left: 0.75rem;
-  top: 1rem;
-}
-
-@media (max-width: 768px) {
-  .about-us {
-    padding: 1rem;
-  }
-
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-  }
-
-  section {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-  }
-
-  ul li,
-  ol li {
-    padding-left: 1.5rem;
-    font-size: 0.95rem;
-  }
-
-  ol li {
-    padding-left: 2rem;
-  }
-
-  ol li::before {
-    width: 1.75rem;
-    height: 1.75rem;
-    font-size: 0.85rem;
-  }
-
-  section:nth-of-type(3) ul li,
-  section:nth-of-type(4) ul li {
-    padding: 0.75rem 0.75rem 0.75rem 2rem;
-  }
-
-  section:nth-of-type(3) ul li::before,
-  section:nth-of-type(4) ul li::before {
-    left: 0.5rem;
-    top: 0.75rem;
+@media (max-width: 640px) {
+  .closing-card {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 </style>
-

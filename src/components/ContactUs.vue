@@ -1,133 +1,111 @@
 <template>
-  <div class="contact-us">
-    <div class="page-container">
-      <h1>{{ t('contact.title') }}</h1>
-      <p class="intro">{{ t('contact.intro') }}</p>
+  <InfoPageShell
+    :title="t('contact.title')"
+    kicker="Contact Desk"
+    :description="t('contact.intro')"
+    tone="contact"
+  >
+    <template #aside>
+      <div class="contact-aside">
+        <img src="/telegram-qr.png" alt="Telegram 联系二维码 @KEVIN627ZTZ" loading="lazy" />
+        <strong>@KEVIN627ZTZ</strong>
+        <a target="_blank" rel="noopener noreferrer" :href="telegramUrl">打开 Telegram</a>
+      </div>
+    </template>
 
-      <section>
-        <h2>{{ t('contact.methods.title') }}</h2>
-          <div class="contact-info">
-          <div class="contact-item">
-            <h3>{{ t('contact.methods.qqGroup.title') }}</h3>
-            <p>{{ t('contact.methods.qqGroup.description') }}</p>
-            <a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=RheepCUCpXh6hT9CI-AAYtm0XATHVWQR&jump_from=webapi&authKey=V8c0e3oZG2Uku+JLVZA2bM7OaEUZaYHNVrO/bZojWoJVOlojVx/Gh6655XpfflRR"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="DrawStamp交流群" title="DrawStamp交流群"></a>
-            <p class="qq-group-tip">{{ t('contact.methods.qqGroup.tip') }}</p>
-          </div>
+    <section class="contact-primary">
+      <article class="contact-card telegram-card">
+        <p class="section-label">{{ t('contact.methods.telegram.title') }}</p>
+        <h2>首选联系入口</h2>
+        <p>{{ t('contact.methods.telegram.description') }}</p>
+        <a class="primary-action" target="_blank" rel="noopener noreferrer" :href="telegramUrl">
+          {{ t('contact.methods.telegram.joinGroup') }}
+        </a>
+      </article>
 
-          <div class="contact-item">
-            <h3>{{ t('contact.methods.email.title') }}</h3>
-            <p>{{ t('contact.methods.email.description') }}</p>
-            <a
-              class="email-link"
-              href="mailto:xxss0903@gmail.com?subject=DrawStamp反馈&body=请在此填写您的问题...">
-              {{ t('contact.methods.email.sendEmail') }}
-            </a>
-            <p class="email-tip">{{ t('contact.methods.email.tip') }}</p>
-          </div>
+      <article class="contact-card">
+        <p class="section-label">{{ t('contact.methods.email.title') }}</p>
+        <h2>邮件草稿</h2>
+        <p>{{ t('contact.methods.email.description') }}</p>
+        <a class="secondary-action" href="mailto:fisherztz@gmail.com?subject=DrawStamp%20Studio反馈&body=请在此填写您的问题...">
+          fisherztz@gmail.com
+        </a>
+      </article>
+    </section>
 
-          <div class="contact-item">
-            <h3>{{ t('contact.methods.bugReport.title') }}</h3>
-            <p>{{ t('contact.methods.bugReport.description') }}</p>
-          </div>
-
-          <div class="contact-item">
-            <h3>{{ t('contact.methods.suggestion.title') }}</h3>
-            <p>{{ t('contact.methods.suggestion.description') }}</p>
-          </div>
-
-          <div class="contact-item">
-            <h3>{{ t('contact.methods.contribute.title') }}</h3>
-            <p>{{ t('contact.methods.contribute.description') }}</p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>{{ t('contact.faq.title') }}</h2>
-        <div class="faq">
-          <div class="faq-item">
-            <h3>Q: {{ t('contact.faq.questions.q1.question') }}</h3>
-            <p>A: {{ t('contact.faq.questions.q1.answer') }}</p>
-          </div>
-
-          <div class="faq-item">
-            <h3>Q: {{ t('contact.faq.questions.q2.question') }}</h3>
-            <p>A: {{ t('contact.faq.questions.q2.answer') }}</p>
-          </div>
-
-          <div class="faq-item">
-            <h3>Q: {{ t('contact.faq.questions.q3.question') }}</h3>
-            <p>A: {{ t('contact.faq.questions.q3.answer') }}</p>
-          </div>
-
-          <div class="faq-item">
-            <h3>Q: {{ t('contact.faq.questions.q4.question') }}</h3>
-            <p>A: {{ t('contact.faq.questions.q4.answer') }}</p>
-          </div>
-
-          <div class="faq-item">
-            <h3>Q: {{ t('contact.faq.questions.q5.question') }}</h3>
-            <p>A: {{ t('contact.faq.questions.q5.answer') }}</p>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>{{ t('contact.form.title') }}</h2>
+    <section class="feedback-panel">
+      <div>
+        <p class="section-label">{{ t('contact.form.title') }}</p>
+        <h2>打开邮件草稿</h2>
         <p>{{ t('contact.form.description') }}</p>
-        <div class="feedback-form">
-          <form @submit.prevent="handleSubmit">
-            <div class="form-group">
-              <label for="name">{{ t('contact.form.name') }}</label>
-              <input type="text" id="name" v-model="form.name" />
-            </div>
-            <div class="form-group">
-              <label for="email">{{ t('contact.form.email') }}</label>
-              <input type="email" id="email" v-model="form.email" />
-            </div>
-            <div class="form-group">
-              <label for="subject">{{ t('contact.form.subject') }}</label>
-              <select id="subject" v-model="form.subject">
-                <option value="question">{{ t('contact.form.subjects.question') }}</option>
-                <option value="bug">{{ t('contact.form.subjects.bug') }}</option>
-                <option value="suggestion">{{ t('contact.form.subjects.suggestion') }}</option>
-                <option value="other">{{ t('contact.form.subjects.other') }}</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="message">{{ t('contact.form.message') }}</label>
-              <textarea id="message" v-model="form.message" rows="5" required></textarea>
-            </div>
-            <button type="submit" class="submit-btn">{{ t('contact.form.submit') }}</button>
-          </form>
-          <div v-if="submitStatus" class="submit-status" :class="submitStatus">
-            <p v-if="submitStatus === 'success'">{{ t('contact.form.status.success') }}</p>
-            <p v-else-if="submitStatus === 'error'">{{ t('contact.form.status.error') }}</p>
-          </div>
-        </div>
-      </section>
+      </div>
 
-      <section>
-        <h2>{{ t('contact.links.title') }}</h2>
-        <ul class="links">
-          <li><router-link to="/">{{ t('menu.home') }}</router-link></li>
-          <li><router-link to="/about">{{ t('navigation.about') }}</router-link></li>
-          <li><router-link to="/privacy">{{ t('navigation.footer.privacyPolicy') }}</router-link></li>
-          <li><router-link to="/terms">{{ t('navigation.footer.termsOfService') }}</router-link></li>
-        </ul>
-      </section>
-    </div>
-  </div>
+      <form @submit.prevent="handleSubmit">
+        <label>
+          {{ t('contact.form.name') }}
+          <input type="text" v-model="form.name" />
+        </label>
+        <label>
+          {{ t('contact.form.email') }}
+          <input type="email" v-model="form.email" />
+        </label>
+        <label>
+          {{ t('contact.form.subject') }}
+          <select v-model="form.subject">
+            <option value="question">{{ t('contact.form.subjects.question') }}</option>
+            <option value="bug">{{ t('contact.form.subjects.bug') }}</option>
+            <option value="suggestion">{{ t('contact.form.subjects.suggestion') }}</option>
+            <option value="other">{{ t('contact.form.subjects.other') }}</option>
+          </select>
+        </label>
+        <label class="wide-field">
+          {{ t('contact.form.message') }}
+          <textarea v-model="form.message" rows="5" required></textarea>
+        </label>
+        <button type="submit">{{ t('contact.form.submit') }}</button>
+        <p v-if="submitStatus" class="submit-status" :class="submitStatus">
+          {{ submitStatus === 'success' ? t('contact.form.status.success') : t('contact.form.status.error') }}
+        </p>
+      </form>
+    </section>
+
+    <section class="support-grid">
+      <article>
+        <p class="section-label">{{ t('contact.methods.bugReport.title') }}</p>
+        <p>{{ t('contact.methods.bugReport.description') }}</p>
+      </article>
+      <article>
+        <p class="section-label">{{ t('contact.methods.suggestion.title') }}</p>
+        <p>{{ t('contact.methods.suggestion.description') }}</p>
+      </article>
+      <article>
+        <p class="section-label">{{ t('contact.methods.contribute.title') }}</p>
+        <p>{{ t('contact.methods.contribute.description') }}</p>
+      </article>
+    </section>
+
+    <section class="faq-strip">
+      <article
+        v-for="item in faqItems"
+        :key="item.question"
+      >
+        <h3>{{ item.question }}</h3>
+        <p>{{ item.answer }}</p>
+      </article>
+    </section>
+  </InfoPageShell>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import InfoPageShell from './InfoPageShell.vue'
 
 const { t } = useI18n()
 
-const QQ_GROUP_NUMBER = '644574395'
-const qqGroupUrl = `https://qm.qq.com/q/${QQ_GROUP_NUMBER}`
+const TELEGRAM_USERNAME = 'KEVIN627ZTZ'
+const telegramUrl = `https://t.me/${TELEGRAM_USERNAME}`
+const COMPANY_EMAIL = 'fisherztz@gmail.com'
 
 const form = ref({
   name: '',
@@ -145,7 +123,28 @@ const subjectLabels = computed(() => ({
   other: t('contact.form.subjects.other')
 }))
 
-const COMPANY_EMAIL = 'xxss0903@gmail.com'
+const faqItems = computed(() => [
+  {
+    question: t('contact.faq.questions.q1.question'),
+    answer: t('contact.faq.questions.q1.answer')
+  },
+  {
+    question: t('contact.faq.questions.q2.question'),
+    answer: t('contact.faq.questions.q2.answer')
+  },
+  {
+    question: t('contact.faq.questions.q3.question'),
+    answer: t('contact.faq.questions.q3.answer')
+  },
+  {
+    question: t('contact.faq.questions.q4.question'),
+    answer: t('contact.faq.questions.q4.answer')
+  },
+  {
+    question: t('contact.faq.questions.q5.question'),
+    answer: t('contact.faq.questions.q5.answer')
+  }
+])
 
 const handleSubmit = () => {
   if (!form.value.message.trim()) {
@@ -154,7 +153,7 @@ const handleSubmit = () => {
   }
 
   const subjectText = subjectLabels.value[form.value.subject] || t('contact.form.subjects.other')
-  const subject = encodeURIComponent(`DrawStamp ${subjectText}`)
+  const subject = encodeURIComponent(`DrawStamp Studio ${subjectText}`)
   const bodyLines = [
     `姓名：${form.value.name || '未填写'}`,
     `联系邮箱：${form.value.email || '未填写'}`,
@@ -176,346 +175,235 @@ const handleSubmit = () => {
 </script>
 
 <style scoped>
-
-
-h1 {
-  color: #343a40;
-  margin-bottom: 1rem;
-  font-size: 2.5rem;
-  font-weight: 700;
-  text-align: center;
-  padding-bottom: 1rem;
-  border-bottom: 3px solid #4caf50;
+.contact-aside,
+.contact-card,
+.feedback-panel,
+.support-grid article,
+.faq-strip article {
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid var(--studio-line-hair);
+  border-radius: 16px;
+  box-shadow: var(--studio-shadow-quiet);
 }
 
-.intro {
-  font-size: 1.1rem;
-  color: #666;
-  margin-bottom: 2rem;
-  line-height: 1.8;
-  text-align: center;
-}
-
-section {
-  margin-bottom: 3rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid #e9ecef;
-}
-
-section:last-of-type {
-  border-bottom: none;
-}
-
-h2 {
-  color: #343a40;
-  margin-top: 0;
-  margin-bottom: 1.5rem;
-  font-size: 1.75rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-h2::before {
-  content: '';
-  width: 4px;
-  height: 24px;
-  background: #4caf50;
-  border-radius: 2px;
-}
-
-.contact-info {
+.contact-aside {
   display: grid;
-  gap: 1.5rem;
+  gap: 12px;
+  justify-items: center;
+  padding: 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(232, 242, 245, 0.58)),
+    #ffffff;
 }
 
-.contact-item {
-  padding: 1.5rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border-left: 4px solid #4caf50;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+.contact-aside img {
+  width: 100%;
+  max-width: 220px;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px var(--studio-line-hair);
 }
 
-.contact-item:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+.contact-aside strong {
+  color: var(--studio-tool-blue);
+  font-size: 16px;
 }
 
-.contact-item h3 {
-  color: #343a40;
-  margin-bottom: 0.75rem;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-.contact-item p {
-  color: #555;
-  line-height: 1.8;
-  margin-bottom: 0.75rem;
-}
-
-.qq-group-link {
-  display: inline-block;
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
-  margin-top: 0.5rem;
-}
-
-.qq-group-link:hover {
-  background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.4);
-  text-decoration: none;
-  color: white;
-}
-
-.qq-group-tip {
-  margin-top: 0.75rem;
-  font-size: 0.9rem;
-  color: #888;
-  font-style: italic;
-}
-
-/* 美化联系信息中的列表 */
-.contact-item ul {
-  margin-left: 0;
-  margin-top: 0.75rem;
-  margin-bottom: 0;
-  padding-left: 0;
-  list-style: none;
-}
-
-.contact-item li {
-  color: #555;
-  line-height: 1.8;
-  margin-bottom: 0.5rem;
-  padding-left: 1.75rem;
-  position: relative;
-  transition: color 0.2s ease;
-}
-
-.contact-item li::before {
-  content: '→';
-  position: absolute;
-  left: 0;
-  top: 0;
-  color: #4caf50;
-  font-weight: bold;
-  font-size: 1rem;
-  width: 1.25rem;
-  height: 1.25rem;
-  display: flex;
+.contact-aside a,
+.primary-action,
+.secondary-action,
+.feedback-panel button {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  border-radius: 999px;
+  font-weight: 900;
+  text-decoration: none;
 }
 
-.contact-item li:hover {
-  color: #343a40;
+.contact-aside a,
+.primary-action,
+.feedback-panel button {
+  color: #fff;
+  background: var(--studio-tool-blue);
 }
 
-.faq {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.faq-item {
-  padding: 1.5rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border-left: 4px solid #4caf50;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.faq-item:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transform: translateX(4px);
-}
-
-.faq-item h3 {
-  color: #343a40;
-  margin-bottom: 0.75rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.faq-item p {
-  color: #555;
-  line-height: 1.8;
-  margin: 0;
-}
-
-.feedback-form {
-  margin-top: 1rem;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #333;
-  font-weight: 500;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
+.contact-aside a {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-family: inherit;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  padding: 10px 14px;
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
+.contact-primary {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  gap: 14px;
+}
+
+.contact-card {
+  padding: 24px;
+}
+
+.telegram-card {
+  background:
+    radial-gradient(circle at 94% 0%, rgba(46, 111, 143, 0.14), transparent 36%),
+    rgba(255, 255, 255, 0.78);
+}
+
+.contact-card:hover,
+.feedback-panel:hover,
+.contact-aside:hover {
+  border-color: rgba(46, 111, 143, 0.22);
+}
+
+.section-label {
+  margin: 0 0 10px;
+  color: var(--studio-tool-blue);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.contact-card h2,
+.feedback-panel h2 {
+  margin: 0 0 10px;
+  color: var(--studio-ink);
+  font-size: clamp(22px, 2.4vw, 32px);
+  letter-spacing: -0.04em;
+}
+
+.contact-card p,
+.feedback-panel p,
+.support-grid p,
+.faq-strip p {
+  color: var(--studio-muted);
+  line-height: 1.8;
+}
+
+.primary-action,
+.secondary-action {
+  margin-top: 10px;
+  padding: 10px 16px;
+}
+
+.secondary-action {
+  color: var(--studio-tool-blue);
+  background: var(--studio-tool-blue-soft);
+}
+
+.feedback-panel {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.3fr);
+  gap: 22px;
+  margin-top: 14px;
+  padding: 24px;
+}
+
+.feedback-panel form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.feedback-panel label {
+  display: grid;
+  gap: 7px;
+  color: var(--studio-ink);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.feedback-panel input,
+.feedback-panel select,
+.feedback-panel textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  color: var(--studio-ink);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid var(--studio-line);
+  border-radius: 10px;
+  font: inherit;
+}
+
+.feedback-panel input:focus,
+.feedback-panel select:focus,
+.feedback-panel textarea:focus {
+  border-color: var(--studio-tool-blue);
+  box-shadow: var(--studio-focus);
   outline: none;
-  border-color: #4caf50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
 }
 
-.form-group textarea {
+.wide-field,
+.feedback-panel button,
+.submit-status {
+  grid-column: 1 / -1;
+}
+
+.feedback-panel textarea {
   resize: vertical;
 }
 
-.submit-btn {
-  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-  color: white;
-  padding: 0.75rem 2rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
+.feedback-panel button {
+  padding: 12px 18px;
+  border: 0;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
-}
-
-.submit-btn:hover {
-  background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.4);
-}
-
-.submit-btn:active {
-  transform: translateY(0);
 }
 
 .submit-status {
-  margin-top: 1rem;
-  padding: 1rem;
-  border-radius: 4px;
+  margin: 0;
+  padding: 12px;
+  border-radius: 10px;
 }
 
 .submit-status.success {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
+  color: #235633;
+  background: #e6f3ea;
 }
 
 .submit-status.error {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+  color: #9c1d28;
+  background: #fff0f1;
 }
 
-/* 美化相关链接列表 */
-.links {
-  list-style: none;
-  margin-left: 0;
-  margin-bottom: 0;
-  padding-left: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+.support-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
 }
 
-.links li {
+.support-grid article,
+.faq-strip article {
+  padding: 18px;
+}
+
+.faq-strip {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.faq-strip h3 {
+  margin: 0 0 8px;
+  color: var(--studio-ink);
+  font-size: 17px;
+}
+
+.faq-strip p {
   margin: 0;
-  padding: 0;
 }
 
-.links li::before {
-  display: none;
+@media (max-width: 860px) {
+  .contact-primary,
+  .feedback-panel,
+  .support-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-.links a {
-  color: #4caf50;
-  text-decoration: none;
-  padding: 0.75rem 1.5rem;
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  display: inline-block;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.links a:hover {
-  background: #e8f5e9;
-  border-color: #4caf50;
-  color: #45a049;
-  text-decoration: none;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.15);
-}
-
-@media (max-width: 768px) {
-  .contact-us {
-    padding: 1rem;
-  }
-
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-  }
-
-  section {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-  }
-
-  .contact-item {
-    padding: 1.25rem;
-  }
-
-  .contact-item li {
-    padding-left: 1.5rem;
-    font-size: 0.95rem;
-  }
-
-  .faq-item {
-    padding: 1.25rem;
-  }
-
-  .links {
-    flex-direction: column;
-  }
-
-  .links a {
-    width: 100%;
-    text-align: center;
+@media (max-width: 620px) {
+  .feedback-panel form {
+    grid-template-columns: 1fr;
   }
 }
 </style>
-

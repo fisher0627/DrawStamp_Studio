@@ -4,7 +4,7 @@
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-FF0015?style=for-the-badge)](https://wosp.cc.cd/)
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://wosp.cc.cd/)
-[![Version](https://img.shields.io/badge/Version-0.3.0-234c5c?style=for-the-badge)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.4.0-234c5c?style=for-the-badge)](CHANGELOG.md)
 [![Vue 3](https://img.shields.io/badge/Vue-3-42b883?style=for-the-badge&logo=vue.js&logoColor=white)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5-646cff?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-334155?style=for-the-badge)](LICENSE)
@@ -21,10 +21,16 @@
 
 DrawStamp Studio 已经从单纯的印章绘制工具，整理成一个完整的在线编辑器：支持常用模板、纸感专业画布、字体选择、图片提取印章、本地自动草稿、模板导入导出，以及 PNG / SVG / JPEG 多格式下载。
 
+当前大版本 `0.4.0` 重点完善了公开站点能力：新增真实说明页路由、首页 SEO 内容区、结构化数据、Cloudflare Pages SPA 回退与安全响应头，并将关于项目、隐私政策、服务条款和联系反馈页面统一为 DrawStamp Studio 的项目档案风格。
+
 相关文档：
 
 - [贡献指南](CONTRIBUTING.md)
 - [版本记录](CHANGELOG.md)
+- [关于项目](https://wosp.cc.cd/about)
+- [隐私政策](https://wosp.cc.cd/privacy)
+- [服务条款](https://wosp.cc.cd/terms)
+- [联系反馈](https://wosp.cc.cd/contact)
 
 ## 项目定位
 
@@ -56,6 +62,8 @@ DrawStamp Studio 更适合这些场景：
 - 本地自动草稿：编辑状态会保存在当前浏览器，并保留最近 5 个草稿版本，刷新页面后可以继续处理。
 - 导出面板：支持 PNG / SVG / JPEG、多倍导出、白底 PNG、文件名设置、导出预览和高级尺寸设置。
 - 本地优先：印章生成、图片提取、导出都在浏览器端完成。
+- 公开说明页：提供关于项目、隐私政策、服务条款和联系反馈页面，方便 GitHub 与搜索引擎展示。
+- SEO 与部署适配：内置 sitemap、robots、结构化数据、Cloudflare Pages SPA 回退和基础安全响应头。
 
 ## 技术栈
 
@@ -116,7 +124,15 @@ Cloudflare Pages 构建配置：
 
 提交代码到 GitHub 后，Cloudflare Pages 会自动拉取仓库并重新部署。
 
-大版本或明显界面变动时，建议同时更新 `README.md`、`CHANGELOG.md`、README 截图、`public/social-preview.png`、SEO 信息和 `public/sitemap.xml`，确保 GitHub 仓库首页与线上版本保持一致。
+当前静态 SEO 与部署相关文件：
+
+- `index.html`：站点 meta、Open Graph、Twitter Card、SoftwareApplication 与 FAQ 结构化数据。
+- `public/sitemap.xml`：首页、关于、隐私、条款和联系页收录入口。
+- `public/robots.txt`：允许抓取并声明 sitemap。
+- `public/_redirects`：Cloudflare Pages SPA 路由回退。
+- `public/_headers`：基础安全响应头。
+
+大版本或明显界面变动时，需要同步更新 `README.md`、`CHANGELOG.md`、`package.json`、`package-lock.json`、README 截图、`public/social-preview.png`、SEO 信息、`public/sitemap.xml`、`public/_headers` 和 `public/_redirects`，确保 GitHub 仓库首页与线上版本保持一致。
 
 ## 项目结构
 

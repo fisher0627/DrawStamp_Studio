@@ -39,22 +39,84 @@
     <meta http-equiv="content-language" content="zh-CN" />
     
     <!-- Theme Color -->
-    <meta name="theme-color" content="#ff0015" />
+    <meta name="theme-color" content="#FF0015" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
         "name": "DrawStamp Studio",
+        "alternateName": "在线电子印章工作台",
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "Web",
         "url": "https://wosp.cc.cd/",
         "image": "https://wosp.cc.cd/social-preview.png",
+        "screenshot": "https://wosp.cc.cd/readme-workspace.png",
+        "inLanguage": "zh-CN",
+        "softwareVersion": "0.4.0",
+        "isAccessibleForFree": true,
         "description": "在线电子印章工作台，支持圆章、椭圆章、图片提取印章、画布编辑、透明 PNG、SVG 和 JPEG 导出。",
+        "featureList": [
+          "在线电子印章生成",
+          "图片提取透明印章",
+          "圆章和椭圆章模板",
+          "PNG、SVG、JPEG 导出",
+          "浏览器本地图片处理",
+          "本地自动草稿和模板导入导出"
+        ],
+        "publisher": {
+          "@type": "Organization",
+          "name": "DrawStamp Studio",
+          "url": "https://wosp.cc.cd/"
+        },
+        "sameAs": [
+          "https://github.com/fisher0627/drawstamputils"
+        ],
+        "license": "https://github.com/fisher0627/drawstamputils/blob/main/LICENSE",
         "offers": {
           "@type": "Offer",
           "price": "0",
           "priceCurrency": "CNY"
         }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "DrawStamp Studio 会上传我的印章图片吗？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "不会。印章绘制、图片提取、模板草稿和导出都在浏览器端完成，项目没有为这些核心流程配置后端上传接口。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "可以导出透明背景印章吗？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "可以。推荐使用 PNG 格式并关闭白底选项，导出的透明 PNG 可用于文档排版、演示稿或内部测试素材。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "这个工具适合真实盖章或伪造文件吗？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "不适合。本项目仅用于学习、测试、设计预览和合规授权场景，请勿用于伪造合同、公文、票据或任何违法用途。"
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "可以保存和继续编辑模板吗？",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "可以。当前配置可以导出为 JSON 模板，浏览器也会保存本地草稿，方便刷新后继续编辑。"
+            }
+          }
+        ]
       }
     </script>
     <!-- umani stats -->

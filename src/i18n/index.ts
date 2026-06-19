@@ -5,7 +5,7 @@ const messages: Record<string, any> = {
     menu: {
       home: '首页',
       about: '关于',
-      contact: '联系我们'
+      contact: '联系反馈'
     },
     legal: {
       title: '法律提示',
@@ -394,8 +394,8 @@ const messages: Record<string, any> = {
     },
     navigation: {
       maker: '印章模板',
-      about: '关于我们',
-      contact: '联系我们',
+      about: '关于项目',
+      contact: '联系反馈',
       footer: {
         description: '专业的在线电子印章制作工具',
         quickLinks: '快速链接',
@@ -409,12 +409,12 @@ const messages: Record<string, any> = {
     },
     homepage: {
       hero: {
-        title: '最好的在线电子印章制作工具 - DrawStamp',
-        subtitle: 'DrawStamp 是现代企业和个人使用的专业解决方案！我们的印章设计工具将帮助您为任何场合创建独特的印章产品！'
+        title: '专业在线电子印章工作台 - DrawStamp Studio',
+        subtitle: 'DrawStamp Studio 是面向浏览器本地编辑的电子印章工作台，支持生成、提取、编辑和导出常用印章图片。'
       },
       qqNotification: {
-        text: '加入我们的QQ群，与其他用户交流，获取最新资讯和技术支持！',
-        joinButton: '加入QQ群'
+        text: '通过 Telegram 联系 DrawStamp Studio，反馈问题、提交建议或交流使用方式。',
+        joinButton: 'Telegram 联系'
       },
       stampTypes: {
         title: '支持多种印章类型',
@@ -429,7 +429,7 @@ const messages: Record<string, any> = {
         }
       },
       whyChoose: {
-        title: '为什么选择 DrawStamp？',
+        title: '为什么选择 DrawStamp Studio？',
         features: {
           allInOne: {
             title: '所有印章类型一站式服务',
@@ -505,7 +505,7 @@ const messages: Record<string, any> = {
         questions: {
           q1: {
             question: '如何在线制作自己的印章？',
-            answer: '访问 DrawStamp，使用我们的图形编辑器即可创建。直观的界面简单易用。创建完成后，您可以下载设计文件。'
+            answer: '访问 DrawStamp Studio，使用图形编辑器即可创建。直观的界面简单易用，创建完成后可以下载设计文件。'
           },
           q2: {
             question: '制作印章需要多长时间？',
@@ -521,11 +521,11 @@ const messages: Record<string, any> = {
           },
           q5: {
             question: '可以在手机上使用吗？',
-            answer: '可以！DrawStamp 支持所有智能设备，包括电脑、平板和手机，只要有网络连接即可使用。'
+            answer: '可以！DrawStamp Studio 支持所有智能设备，包括电脑、平板和手机，只要有网络连接即可使用。'
           },
           q6: {
             question: '使用是免费的吗？',
-            answer: '是的，DrawStamp 完全免费使用。您可以随时创建、编辑和下载您的印章设计。'
+            answer: '是的，DrawStamp Studio 完全免费使用。您可以随时创建、编辑和下载您的印章设计。'
           }
         }
       },
@@ -534,7 +534,7 @@ const messages: Record<string, any> = {
         exportTemplate: '导出模板',
         resetStamp: '重置印章',
         download: '下载',
-        joinQQGroup: '加入QQ群'
+        contactTelegram: 'Telegram 联系'
       },
       templateMeta: {
         titlePrompt: '请输入印章模板标题',
@@ -542,14 +542,14 @@ const messages: Record<string, any> = {
       }
     },
     about: {
-      title: '关于我们',
+      title: '关于项目',
       whatIs: {
-        title: '什么是 DrawStamp？',
-        description: 'DrawStamp 是一个专业的在线电子印章制作工具，旨在为用户提供简单、便捷的印章设计和制作服务。我们致力于通过先进的技术和友好的用户界面，让每个人都能轻松创建高质量的电子印章。'
+        title: '什么是 DrawStamp Studio？',
+        description: 'DrawStamp Studio 是一个专业的在线电子印章工作台，旨在提供简单、稳定、可直接使用的印章生成、图片提取、画布编辑和多格式导出能力。核心处理都在浏览器本地完成。'
       },
       mission: {
-        title: '我们的使命',
-        description: '我们的使命是提供安全、可靠、易用的电子印章制作工具，同时确保用户了解并遵守相关法律法规。我们相信技术应该服务于合法和正当的目的。'
+        title: '项目定位',
+        description: 'DrawStamp Studio 聚焦合法、合规、可控的电子印章图片制作与测试场景。项目强调本地处理、清晰编辑体验和明确的使用边界。'
       },
       features: {
         title: '主要功能',
@@ -563,7 +563,7 @@ const messages: Record<string, any> = {
       },
       technology: {
         title: '技术特点',
-        description: 'DrawStamp 基于现代 Web 技术构建：',
+        description: 'DrawStamp Studio 基于现代 Web 技术构建：',
         items: {
           vue: '使用 Vue 3 框架，提供流畅的用户体验',
           typescript: 'TypeScript 开发，确保代码质量和可维护性',
@@ -573,7 +573,7 @@ const messages: Record<string, any> = {
       },
       usage: {
         title: '使用说明',
-        description: '使用 DrawStamp 非常简单：',
+        description: '使用 DrawStamp Studio 非常简单：',
         steps: {
           step1: '在左侧控制面板中设置印章的基本参数（尺寸、颜色等）',
           step2: '添加公司名称、印章类型、编码等信息',
@@ -593,28 +593,28 @@ const messages: Record<string, any> = {
       },
       openSource: {
         title: '开源项目',
-        description: 'DrawStamp 是一个开源项目，欢迎贡献代码和建议。我们的目标是创建一个透明、可信赖的工具。'
+        description: 'DrawStamp Studio 是一个开源项目，欢迎贡献代码和建议。项目目标是提供透明、可信赖、可持续维护的浏览器本地工具。'
       },
       contact: {
-        title: '联系我们',
-        description: '如果您有任何问题、建议或反馈，请通过我们的',
-        linkText: '联系我们'
+        title: '联系反馈',
+        description: '如果您有任何问题、建议或反馈，请通过',
+        linkText: '联系反馈'
       }
     },
     contact: {
-      title: '联系我们',
-      intro: '我们很乐意听到您的声音！如果您有任何问题、建议或反馈，请通过以下方式与我们联系。',
+      title: '联系反馈',
+      intro: '如果您有关于 DrawStamp Studio 的问题、建议、Bug 反馈或合作交流，可以通过以下方式联系。',
       methods: {
         title: '联系方式',
-        qqGroup: {
-          title: '💬 QQ群 644574395',
-          description: '加入我们的QQ群，与其他用户交流，获取最新资讯和技术支持。',
-          joinGroup: '加入QQ群 644574395',
-          tip: '点击上方链接即可加入QQ群，与开发者和其他用户实时交流。'
+        telegram: {
+          title: '💬 Telegram',
+          description: '通过 Telegram 联系 DrawStamp Studio，可扫码或打开页面展示的 Telegram 账号。',
+          joinGroup: '打开 Telegram',
+          tip: '推荐反馈时附上浏览器、操作步骤和截图，方便快速定位问题。'
         },
         email: {
           title: '📧 邮箱',
-          description: '最直接的方式是发送邮件，我们会在 1-2 个工作日内回复。',
+          description: '也可以通过页面展示的邮箱提交较完整的问题说明或合作信息。',
           sendEmail: '发送邮件',
           tip: '请描述问题场景、浏览器环境以及复现步骤，方便我们快速定位。'
         },
@@ -628,14 +628,14 @@ const messages: Record<string, any> = {
         },
         contribute: {
           title: '🤝 贡献代码',
-          description: 'DrawStamp 是一个开源项目，我们欢迎社区贡献。如果您想参与开发，请查看项目的 GitHub 仓库。'
+          description: 'DrawStamp Studio 是一个开源项目，欢迎社区贡献。如果您想参与开发，请查看项目的 GitHub 仓库。'
         }
       },
       faq: {
         title: '常见问题',
         questions: {
           q1: {
-            question: '使用 DrawStamp 制作的印章可以用于商业用途吗？',
+            question: '使用 DrawStamp Studio 制作的印章可以用于商业用途吗？',
             answer: '可以，但请确保您有使用该印章的合法权利，并遵守相关法律法规。严禁用于任何非法用途。'
           },
           q2: {
@@ -644,7 +644,7 @@ const messages: Record<string, any> = {
           },
           q3: {
             question: '这个工具是免费的吗？',
-            answer: '是的，DrawStamp 是完全免费使用的。'
+            answer: '是的，DrawStamp Studio 是完全免费使用的。'
           },
           q4: {
             question: '如何保存我制作的印章？',
@@ -658,12 +658,12 @@ const messages: Record<string, any> = {
       },
       form: {
         title: '反馈表单',
-        description: '您也可以填写以下表单，我们会生成一封邮件草稿并发送至官方邮箱。',
+        description: '填写后会打开本机邮件客户端，并自动带上主题、联系方式和反馈内容。',
         name: '姓名（可选）',
         email: '邮箱（可选，便于我们回复）',
         subject: '主题',
         message: '消息内容',
-        submit: '发送反馈邮件',
+        submit: '打开邮件草稿',
         subjects: {
           question: '问题咨询',
           bug: 'Bug 报告',
@@ -671,8 +671,8 @@ const messages: Record<string, any> = {
           other: '其他'
         },
         status: {
-          success: '邮件客户端已打开，请确认内容后发送。',
-          error: '生成邮件失败，请直接发送。'
+          success: '邮件草稿已打开，请确认内容后发送。',
+          error: '生成邮件草稿失败，请直接发送。'
         }
       },
       links: {
@@ -1201,8 +1201,8 @@ const messages: Record<string, any> = {
     },
     navigation: {
       maker: 'Stamp Templates',
-      about: 'About Us',
-      contact: 'Contact Us',
+      about: 'Project',
+      contact: 'Feedback',
       footer: {
         description: 'Professional Online Electronic Stamp Maker',
         quickLinks: 'Quick Links',
@@ -1216,12 +1216,12 @@ const messages: Record<string, any> = {
     },
     homepage: {
       hero: {
-        title: 'Best Online Electronic Stamp Maker - DrawStamp',
-        subtitle: 'DrawStamp is a professional solution for modern businesses and individuals! Our stamp design tool will help you create unique stamp products for any occasion!'
+        title: 'Professional Online Electronic Stamp Workspace - DrawStamp Studio',
+        subtitle: 'DrawStamp Studio is a browser-local electronic stamp workspace for generating, extracting, editing, and exporting common stamp images.'
       },
       qqNotification: {
-        text: 'Join our QQ group to communicate with other users, get the latest news and technical support!',
-        joinButton: 'Join QQ Group'
+        text: 'Contact DrawStamp Studio on Telegram for feedback, suggestions, and usage questions.',
+        joinButton: 'Contact on Telegram'
       },
       stampTypes: {
         title: 'Support Multiple Stamp Types',
@@ -1236,7 +1236,7 @@ const messages: Record<string, any> = {
         }
       },
       whyChoose: {
-        title: 'Why Choose DrawStamp?',
+        title: 'Why Choose DrawStamp Studio?',
         features: {
           allInOne: {
             title: 'All-in-One Stamp Service',
@@ -1312,7 +1312,7 @@ const messages: Record<string, any> = {
         questions: {
           q1: {
             question: 'How to make your own stamp online?',
-            answer: 'Visit DrawStamp and use our graphic editor to create. The intuitive interface is easy to use. After creation, you can download the design file.'
+            answer: 'Visit DrawStamp Studio and use the graphic editor to create. The interface is straightforward, and you can download the design file after editing.'
           },
           q2: {
             question: 'How long does it take to make a stamp?',
@@ -1328,11 +1328,11 @@ const messages: Record<string, any> = {
           },
           q5: {
             question: 'Can I use it on mobile?',
-            answer: 'Yes! DrawStamp supports all smart devices, including computers, tablets and mobile phones, as long as there is an internet connection.'
+            answer: 'Yes! DrawStamp Studio supports modern devices including computers, tablets, and mobile phones.'
           },
           q6: {
             question: 'Is it free to use?',
-            answer: 'Yes, DrawStamp is completely free to use. You can create, edit and download your stamp designs anytime.'
+            answer: 'Yes, DrawStamp Studio is free to use. You can create, edit, and download your stamp designs anytime.'
           }
         }
       },
@@ -1348,14 +1348,14 @@ const messages: Record<string, any> = {
       }
     },
     about: {
-      title: 'About Us',
+      title: 'About Project',
       whatIs: {
-        title: 'What is DrawStamp?',
-        description: 'DrawStamp is a professional online electronic stamp maker tool designed to provide users with simple and convenient stamp design and creation services. We are committed to enabling everyone to easily create high-quality electronic stamps through advanced technology and user-friendly interface.'
+        title: 'What is DrawStamp Studio?',
+        description: 'DrawStamp Studio is a professional online electronic stamp workspace for stamp generation, image extraction, canvas editing, and multi-format export. Core processing runs locally in the browser.'
       },
       mission: {
-        title: 'Our Mission',
-        description: 'Our mission is to provide safe, reliable and easy-to-use electronic stamp maker tools while ensuring users understand and comply with relevant laws and regulations. We believe technology should serve legal and legitimate purposes.'
+        title: 'Project Positioning',
+        description: 'DrawStamp Studio focuses on legal, compliant, and controllable electronic stamp image creation and testing scenarios, with local processing and clear usage boundaries.'
       },
       features: {
         title: 'Main Features',
@@ -1369,7 +1369,7 @@ const messages: Record<string, any> = {
       },
       technology: {
         title: 'Technical Features',
-        description: 'DrawStamp is built on modern web technologies:',
+        description: 'DrawStamp Studio is built on modern web technologies:',
         items: {
           vue: 'Using Vue 3 framework to provide smooth user experience',
           typescript: 'TypeScript development to ensure code quality and maintainability',
@@ -1379,7 +1379,7 @@ const messages: Record<string, any> = {
       },
       usage: {
         title: 'Usage Instructions',
-        description: 'Using DrawStamp is very simple:',
+        description: 'Using DrawStamp Studio is very simple:',
         steps: {
           step1: 'Set the basic parameters of the stamp (size, color, etc.) in the left control panel',
           step2: 'Add company name, stamp type, code and other information',
@@ -1399,28 +1399,28 @@ const messages: Record<string, any> = {
       },
       openSource: {
         title: 'Open Source Project',
-        description: 'DrawStamp is an open source project, welcome to contribute code and suggestions. Our goal is to create a transparent and trustworthy tool.'
+        description: 'DrawStamp Studio is an open source project. Contributions and suggestions are welcome, with the goal of maintaining a transparent and trustworthy browser-local tool.'
       },
       contact: {
-        title: 'Contact Us',
-        description: 'If you have any questions, suggestions or feedback, please contact us through our',
-        linkText: 'Contact Us'
+        title: 'Contact & Feedback',
+        description: 'If you have questions, suggestions, or feedback, please use',
+        linkText: 'Contact & Feedback'
       }
     },
     contact: {
-      title: 'Contact Us',
-      intro: 'We would love to hear from you! If you have any questions, suggestions or feedback, please contact us through the following methods.',
+      title: 'Contact & Feedback',
+      intro: 'For DrawStamp Studio questions, suggestions, bug reports, or collaboration, use one of the contact methods below.',
       methods: {
         title: 'Contact Methods',
-        qqGroup: {
-          title: '💬 QQ Group',
-          description: 'Join our QQ group to communicate with other users, get the latest news and technical support.',
-          joinGroup: 'Join QQ Group 644574395',
-          tip: 'Click the link above to join the QQ group and communicate with developers and other users in real time.'
+        telegram: {
+          title: '💬 Telegram',
+          description: 'Contact DrawStamp Studio on Telegram by scanning the QR code or opening the Telegram account shown on this page.',
+          joinGroup: 'Open Telegram',
+          tip: 'When reporting an issue, include your browser, steps to reproduce, and screenshots if possible.'
         },
         email: {
           title: '📧 Email',
-          description: 'The most direct way is to send an email, we will reply within 1-2 business days.',
+          description: 'You can also use the email address shown on this page for detailed issue reports or collaboration messages.',
           sendEmail: 'Send Email',
           tip: 'Please describe the problem scenario, browser environment and reproduction steps to help us quickly locate the issue.'
         },
@@ -1434,14 +1434,14 @@ const messages: Record<string, any> = {
         },
         contribute: {
           title: '🤝 Contribute Code',
-          description: 'DrawStamp is an open source project, we welcome community contributions. If you want to participate in development, please check the project\'s GitHub repository.'
+          description: 'DrawStamp Studio is an open source project. Community contributions are welcome; please check the GitHub repository if you want to participate.'
         }
       },
       faq: {
         title: 'Frequently Asked Questions',
         questions: {
           q1: {
-            question: 'Can stamps made with DrawStamp be used for commercial purposes?',
+            question: 'Can stamps made with DrawStamp Studio be used for commercial purposes?',
             answer: 'Yes, but please ensure you have the legal right to use the stamp and comply with relevant laws and regulations. It is strictly prohibited for any illegal use.'
           },
           q2: {
@@ -1450,7 +1450,7 @@ const messages: Record<string, any> = {
           },
           q3: {
             question: 'Is this tool free?',
-            answer: 'Yes, DrawStamp is completely free to use.'
+            answer: 'Yes, DrawStamp Studio is free to use.'
           },
           q4: {
             question: 'How to save the stamp I made?',
@@ -1464,12 +1464,12 @@ const messages: Record<string, any> = {
       },
       form: {
         title: 'Feedback Form',
-        description: 'You can also fill out the following form, and we will generate an email draft and send it to the official email.',
+        description: 'Fill this out to open your email client with the subject, contact details, and message prefilled.',
         name: 'Name (Optional)',
         email: 'Email (Optional, for our reply)',
         subject: 'Subject',
         message: 'Message Content',
-        submit: 'Send Feedback Email',
+        submit: 'Open Email Draft',
         subjects: {
           question: 'Question',
           bug: 'Bug Report',
@@ -1477,8 +1477,8 @@ const messages: Record<string, any> = {
           other: 'Other'
         },
         status: {
-          success: 'Email client has been opened, please confirm the content before sending.',
-          error: 'Failed to generate email, please send directly.'
+          success: 'Email draft has been opened, please confirm the content before sending.',
+          error: 'Failed to generate email draft, please send directly.'
         }
       },
       links: {
