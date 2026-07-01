@@ -204,8 +204,36 @@ const updateImage = <K extends keyof IDrawImage>(
 ) => {
   emit('update-config', (config) => {
     const list = config.imageList || []
-    if (!list[index]) return
-    list[index][key] = value
+    const image = list[index]
+    if (!image) return
+
+    if (
+      image.keepAspectRatio &&
+      key === 'imageWidth' &&
+      typeof value === 'number' &&
+      image.imageWidth > 0 &&
+      image.imageHeight > 0
+    ) {
+      const ratio = image.imageHeight / image.imageWidth
+      image.imageWidth = value
+      image.imageHeight = Number((value * ratio).toFixed(1))
+      return
+    }
+
+    if (
+      image.keepAspectRatio &&
+      key === 'imageHeight' &&
+      typeof value === 'number' &&
+      image.imageWidth > 0 &&
+      image.imageHeight > 0
+    ) {
+      const ratio = image.imageWidth / image.imageHeight
+      image.imageHeight = value
+      image.imageWidth = Number((value * ratio).toFixed(1))
+      return
+    }
+
+    image[key] = value
   })
 }
 

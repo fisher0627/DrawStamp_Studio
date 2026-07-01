@@ -310,7 +310,7 @@ export class DrawStampUtils {
         const effectiveOffsetY = (this.drawStampConfigs.offsetY ?? this.stampOffsetY) * this.mmToPixel * this.scale
         const imageOffsetX = (image.positionX || 0) * this.mmToPixel * this.scale
         const imageOffsetY = (image.positionY || 0) * this.mmToPixel * this.scale
-        const shouldFitToStamp = image.fitToStamp || this.isStandaloneImageStamp()
+        const shouldFitToStamp = image.fitToStamp === true
         const frameWidth = shouldFitToStamp ? this.drawStampConfigs.width : image.imageWidth
         const frameHeight = shouldFitToStamp ? this.drawStampConfigs.height : image.imageHeight
         const width = Math.max(1, frameWidth * this.mmToPixel * this.scale)
@@ -505,7 +505,7 @@ export class DrawStampUtils {
         centerY: number,
         imageKey: string
     ) {
-        const shouldFitToStamp = imageConfig.fitToStamp || this.isStandaloneImageStamp();
+        const shouldFitToStamp = imageConfig.fitToStamp === true;
         const renderWidth = shouldFitToStamp ? this.drawStampConfigs.width : imageConfig.imageWidth;
         const renderHeight = shouldFitToStamp ? this.drawStampConfigs.height : imageConfig.imageHeight;
         const width = Math.max(1, renderWidth * this.mmToPixel);
@@ -610,31 +610,6 @@ export class DrawStampUtils {
 
         this.imageTrimCache.set(imageKey, bounds)
         return bounds
-    }
-
-    private isStandaloneImageStamp(): boolean {
-        const config = this.drawStampConfigs
-        return (
-            (config.imageList?.length || 0) === 1 &&
-            !config.outBorder?.drawInnerCircle &&
-            !config.innerCircle?.drawInnerCircle &&
-            !config.outThinCircle?.drawInnerCircle &&
-            (config.innerCircleList?.length || 0) === 0 &&
-            (config.svgList?.length || 0) === 0 &&
-            (config.lineList?.length || 0) === 0 &&
-            !config.drawStar?.drawStar &&
-            !config.securityPattern?.openSecurityPattern &&
-            !config.roughEdge?.drawRoughEdge &&
-            !config.agingEffect?.applyAging &&
-            !config.company?.companyName?.trim() &&
-            (config.companyList?.length || 0) === 0 &&
-            !config.stampType?.stampType?.trim() &&
-            (config.stampTypeList?.length || 0) === 0 &&
-            !config.stampCode?.code?.trim() &&
-            (config.stampCodeList?.length || 0) === 0 &&
-            !config.taxNumber?.code?.trim() &&
-            !(config.taxNumberList || []).some((item) => item.code?.trim())
-        )
     }
 
     private shouldClipStampContent(): boolean {

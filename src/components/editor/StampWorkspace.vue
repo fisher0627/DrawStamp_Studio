@@ -1819,20 +1819,34 @@ const clearGeneratedStampElements = (config: IDrawStampConfig) => {
   }
 }
 
+const getFittedImageSize = (payload: ExtractStampResult, config: IDrawStampConfig) => {
+  const sourceWidth = Math.max(1, payload.width || 1)
+  const sourceHeight = Math.max(1, payload.height || 1)
+  const maxWidth = Math.max(1, config.width || 40)
+  const maxHeight = Math.max(1, config.height || maxWidth)
+  const scale = Math.min(maxWidth / sourceWidth, maxHeight / sourceHeight)
+
+  return {
+    width: Number((sourceWidth * scale).toFixed(1)),
+    height: Number((sourceHeight * scale).toFixed(1))
+  }
+}
+
 const handleExtractedStampImage = async (payload: ExtractStampResult) => {
   if (!drawStampUtils) return
 
   const currentConfig = drawStampUtils.getDrawConfigs()
   clearGeneratedStampElements(currentConfig)
+  const fittedSize = getFittedImageSize(payload, currentConfig)
 
   const imageItem: IDrawImage = {
     imageUrl: payload.dataUrl,
-    imageWidth: Number(currentConfig.width.toFixed(1)),
-    imageHeight: Number(currentConfig.height.toFixed(1)),
+    imageWidth: fittedSize.width,
+    imageHeight: fittedSize.height,
     positionX: 0,
     positionY: 0,
     keepAspectRatio: true,
-    fitToStamp: true,
+    fitToStamp: false,
     rotation: 0
   }
 
