@@ -1,0 +1,31 @@
+# DrawStamp Studio
+
+DrawStamp Studio is a browser-local electronic stamp workspace for generating, extracting, editing, and exporting digital seal images.
+
+## Site
+
+- Home: https://wosp.cc.cd/
+- About: https://wosp.cc.cd/about
+- Privacy Policy: https://wosp.cc.cd/privacy
+- Terms of Service: https://wosp.cc.cd/terms
+- Contact: https://wosp.cc.cd/contact
+- GitHub: https://github.com/fisher0627/DrawStamp_Studio
+
+## What It Does
+
+- Generates round and oval electronic stamp images.
+- Extracts red stamp marks from scanned documents or photos in the browser.
+- Edits text, fonts, borders, stars, inner circles, codes, and image elements on a canvas.
+- Exports transparent PNG, white-background PNG, SVG, and JPEG files.
+- Saves local drafts and supports JSON template import/export.
+
+## Privacy And Safety
+
+Core stamp drawing, image extraction, draft storage, and export workflows run locally in the browser. DrawStamp Studio does not upload stamp images for these core workflows.
+
+The project is intended for learning, testing, design preview, and legally authorized use cases. It must not be used to forge contracts, official documents, invoices, or any other legal documents.
+
+## Contact
+
+- Telegram: https://t.me/KEVIN627ZTZ
+- Email: fisherztz@gmail.com

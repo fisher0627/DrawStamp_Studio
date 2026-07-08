@@ -86,7 +86,7 @@
 <script setup lang="ts">
 import InfoPageShell from './InfoPageShell.vue'
 
-const lastUpdated = '2026年6月19日'
+const lastUpdated = '2026年7月9日'
 </script>
 
 <style scoped>
