@@ -634,13 +634,19 @@ const clearSelectedElement = () => {
 
 // 处理元素列表配置更新
 const handleElementListUpdate = () => {
-  // 配置已通过 stampStore 更新，这里触发重新绘制
+  // ElementList 删除/撤销直接改 stampStore.config，需先把 store config 同步到 drawStampUtils 内部，
+  // 否则 drawStamp() 会用 utils 旧 config 重绘，再 getDrawConfigs() 写回 store，覆盖删除/撤销结果
+  if (stampStore.state.config) {
+    drawStampUtils.setDrawConfigs(stampStore.state.config)
+  }
   drawStamp()
 }
 
 // 处理元素列表刷新
 const handleElementListRefresh = () => {
-  // 刷新绘制
+  if (stampStore.state.config) {
+    drawStampUtils.setDrawConfigs(stampStore.state.config)
+  }
   drawStamp()
 }
 
