@@ -14,6 +14,10 @@
       </button>
     </div>
     <div class="panel-content">
+      <div v-if="undoLabel" class="undo-toast" role="status" aria-live="polite">
+        <span>{{ t('elementList.undo.deleted', { name: undoLabel }) }}</span>
+        <button type="button" @click="undoDelete">{{ t('elementList.undo.button') }}</button>
+      </div>
       <!-- 全部元素 -->
       <div v-show="activeTab === 'all'" class="element-category">
         <div class="element-item"
@@ -442,78 +446,111 @@ const shouldClearSelectionAfterDelete = (elementType: string, index: number) => 
     (indexedElementTypes.has(elementType) && selectedElement.value.startsWith(`${elementType}-`))
 }
 
-// 删除元素
-const deleteElement = (elementType: string, index: number) => {
-  if (confirm(t('elementList.confirm.deleteElement'))) {
-    const shouldClearSelection = shouldClearSelectionAfterDelete(elementType, index)
+// 删除元素（快照 + 撤销窗口，替代原生 confirm）
+const undoSnapshot = ref<IDrawStampConfig | null>(null)
+const undoLabel = ref('')
+let undoTimer: number | undefined
 
-    stampStore.updateConfig((config) => {
-      if (elementType === 'company' && config.companyList) {
-        config.companyList.splice(index, 1)
-        // 如果删除后列表为空，取消选中
-        if (config.companyList.length === 0) {
-          selectedElement.value = ''
-        }
-      } else if (elementType === 'stampType' && config.stampTypeList) {
-        config.stampTypeList.splice(index, 1)
-        // 如果删除后列表为空，取消选中
-        if (config.stampTypeList.length === 0) {
-          selectedElement.value = ''
-        }
-      } else if (elementType === 'code') {
-        if (config.stampCodeList) {
-          config.stampCodeList.splice(index, 1)
-        }
-        config.stampCode = (config.stampCodeList && config.stampCodeList[0]) || config.stampCode
-        if (selectedElement.value === `code-${index}`) {
-          selectedElement.value = ''
-        }
-      } else if (elementType === 'taxNumber') {
-        if (config.taxNumberList) {
-          config.taxNumberList.splice(index, 1)
-        } else if (index === 0) {
-          config.taxNumber.code = ''
-        }
-        config.taxNumber = (config.taxNumberList && config.taxNumberList[0]) || config.taxNumber
-        if (selectedElement.value === `taxNumber-${index}`) {
-          selectedElement.value = ''
-        }
-      } else if (elementType === 'star' && config.drawStar) {
-        config.drawStar.drawStar = false
-        if (selectedElement.value === 'star') {
-          selectedElement.value = ''
-        }
-      } else if (elementType === 'image' && config.imageList) {
-        config.imageList.splice(index, 1)
-        if (config.imageList.length === 0) {
-          selectedElement.value = ''
-        }
-      } else if (elementType === 'line' && config.lineList) {
-        config.lineList.splice(index, 1)
-        if (config.lineList.length === 0) {
-          selectedElement.value = ''
-        }
-      } else if (elementType === 'svg' && config.svgList) {
-        config.svgList.splice(index, 1)
-        if (config.svgList.length === 0) {
-          selectedElement.value = ''
-        }
-      } else if (elementType === 'circle' && config.innerCircleList) {
-        config.innerCircleList.splice(index, 1)
-        if (config.innerCircleList.length === 0) {
-          selectedElement.value = ''
-        }
-      }
-    })
-
-    if (shouldClearSelection) {
-      clearSelection()
-      emit('selectElement', '', '', -1)
-    }
-
-    emit('updateConfig')
-    emit('refresh')
+const buildDeleteLabel = (elementType: string, index: number) => {
+  const map: Record<string, string> = {
+    company: '公司文字', stampType: '印章类型', code: '编码', taxNumber: '中间文字',
+    circle: '内圆', image: '图片', line: '线条', svg: 'SVG', star: '中心图形'
   }
+  const base = map[elementType] || '元素'
+  return index > 0 ? `${base} ${index + 1}` : base
+}
+
+const deleteElement = (elementType: string, index: number) => {
+  const shouldClearSelection = shouldClearSelectionAfterDelete(elementType, index)
+
+  // 快照用于撤销
+  const currentConfig = stampStore.state.config
+  if (currentConfig) {
+    undoSnapshot.value = JSON.parse(JSON.stringify(currentConfig)) as IDrawStampConfig
+    undoLabel.value = buildDeleteLabel(elementType, index)
+  }
+
+  stampStore.updateConfig((config) => {
+    if (elementType === 'company' && config.companyList) {
+      config.companyList.splice(index, 1)
+      if (config.companyList.length === 0) {
+        selectedElement.value = ''
+      }
+    } else if (elementType === 'stampType' && config.stampTypeList) {
+      config.stampTypeList.splice(index, 1)
+      if (config.stampTypeList.length === 0) {
+        selectedElement.value = ''
+      }
+    } else if (elementType === 'code') {
+      if (config.stampCodeList) {
+        config.stampCodeList.splice(index, 1)
+      }
+      config.stampCode = (config.stampCodeList && config.stampCodeList[0]) || config.stampCode
+      if (selectedElement.value === `code-${index}`) {
+        selectedElement.value = ''
+      }
+    } else if (elementType === 'taxNumber') {
+      if (config.taxNumberList) {
+        config.taxNumberList.splice(index, 1)
+      } else if (index === 0) {
+        config.taxNumber.code = ''
+      }
+      config.taxNumber = (config.taxNumberList && config.taxNumberList[0]) || config.taxNumber
+      if (selectedElement.value === `taxNumber-${index}`) {
+        selectedElement.value = ''
+      }
+    } else if (elementType === 'star' && config.drawStar) {
+      config.drawStar.drawStar = false
+      if (selectedElement.value === 'star') {
+        selectedElement.value = ''
+      }
+    } else if (elementType === 'image' && config.imageList) {
+      config.imageList.splice(index, 1)
+      if (config.imageList.length === 0) {
+        selectedElement.value = ''
+      }
+    } else if (elementType === 'line' && config.lineList) {
+      config.lineList.splice(index, 1)
+      if (config.lineList.length === 0) {
+        selectedElement.value = ''
+      }
+    } else if (elementType === 'svg' && config.svgList) {
+      config.svgList.splice(index, 1)
+      if (config.svgList.length === 0) {
+        selectedElement.value = ''
+      }
+    } else if (elementType === 'circle' && config.innerCircleList) {
+      config.innerCircleList.splice(index, 1)
+      if (config.innerCircleList.length === 0) {
+        selectedElement.value = ''
+      }
+    }
+  })
+
+  if (shouldClearSelection) {
+    clearSelection()
+    emit('selectElement', '', '', -1)
+  }
+
+  emit('updateConfig')
+  emit('refresh')
+
+  // 5 秒撤销窗口
+  if (undoTimer) window.clearTimeout(undoTimer)
+  undoTimer = window.setTimeout(() => {
+    undoLabel.value = ''
+    undoSnapshot.value = null
+  }, 5000)
+}
+
+const undoDelete = () => {
+  if (!undoSnapshot.value) return
+  if (undoTimer) window.clearTimeout(undoTimer)
+  stampStore.setConfig(JSON.parse(JSON.stringify(undoSnapshot.value)) as IDrawStampConfig)
+  undoLabel.value = ''
+  undoSnapshot.value = null
+  emit('updateConfig')
+  emit('refresh')
 }
 
 // 暴露给父组件调用，方便右侧面板折叠时同步清空左侧选中状态
@@ -589,7 +626,7 @@ defineExpose({
   overflow-y: auto;
   padding: 10px;
   scrollbar-width: thin;
-  scrollbar-color: #b8c2cf transparent;
+  scrollbar-color: var(--studio-line-strong) transparent;
 }
 
 .element-category {
@@ -693,7 +730,7 @@ defineExpose({
   line-height: 1;
   color: var(--studio-muted);
   border-radius: 6px;
-  transition: all 0.2s;
+  transition: background-color 0.18s var(--ease-out), border-color 0.18s var(--ease-out), color 0.18s var(--ease-out);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -717,9 +754,49 @@ defineExpose({
   border: 1px solid var(--studio-line-hair);
   border-radius: 8px;
   background: #fbfaf6;
-  color: var(--studio-soft);
+  color: var(--studio-muted);
   font-size: 13px;
   text-align: center;
+}
+
+.undo-toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  border: 1px solid rgba(163, 58, 50, 0.32);
+  border-radius: 8px;
+  background: var(--studio-ui-red-soft);
+  color: var(--studio-ink);
+  font-size: 12.5px;
+  line-height: 1.3;
+}
+
+.undo-toast span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.undo-toast button {
+  flex: 0 0 auto;
+  border: 1px solid var(--studio-ui-red);
+  border-radius: 6px;
+  background: var(--studio-panel);
+  color: var(--studio-ui-red);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: background-color 0.16s var(--ease-out), color 0.16s var(--ease-out);
+}
+
+.undo-toast button:hover {
+  background: var(--studio-ui-red);
+  color: #ffffff;
 }
 
 @media (max-width: 900px) {

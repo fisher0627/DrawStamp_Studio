@@ -439,7 +439,7 @@ label {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: background-color 0.18s var(--ease-out), border-color 0.18s var(--ease-out), color 0.18s var(--ease-out);
   flex-shrink: 0;
   line-height: 1;
 }
@@ -523,15 +523,15 @@ label {
   align-items: center;
   justify-content: center;
   color: #666;
-  transition: all 0.2s;
+  transition: background-color 0.18s var(--ease-out), border-color 0.18s var(--ease-out), color 0.18s var(--ease-out);
   min-width: 24px;
   height: 24px;
 }
 
 .expand-toggle-btn:hover {
-  color: #1890ff;
-  border-color: #1890ff;
-  background: #e6f7ff;
+  color: var(--studio-ui-red);
+  border-color: rgba(163, 58, 50, 0.42);
+  background: var(--studio-ui-red-soft);
 }
 
 .expand-icon {

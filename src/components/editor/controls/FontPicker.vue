@@ -143,7 +143,7 @@ const inputFont = (font: string) => {
   width: 100%;
   margin-bottom: 8px;
   padding: 10px;
-  border: 1px solid #e3e8ef;
+  border: 1px solid var(--studio-line);
   border-radius: 8px;
   background: #fbfcfd;
   box-sizing: border-box;
@@ -196,9 +196,9 @@ const inputFont = (font: string) => {
 
 .font-chip:hover,
 .font-chip.active {
-  border-color: #bd2431;
-  background: #fff5f6;
-  color: #bd2431;
+  border-color: var(--studio-ui-red);
+  background: var(--studio-ui-red-soft);
+  color: var(--studio-ui-red);
 }
 
 .font-row {
@@ -213,18 +213,18 @@ const inputFont = (font: string) => {
   width: 100%;
   height: 34px;
   padding: 6px 9px;
-  border: 1px solid #d2dae6;
+  border: 1px solid var(--studio-line);
   border-radius: 7px;
   background: #ffffff;
-  color: #202733;
+  color: var(--studio-ink);
   font-size: 13px;
   box-sizing: border-box;
 }
 
 .font-select:focus,
 .font-input:focus {
-  border-color: #bd2431;
-  box-shadow: 0 0 0 3px rgba(189, 36, 49, 0.12);
+  border-color: var(--studio-focus-border);
+  box-shadow: var(--studio-focus);
   outline: none;
 }
 
@@ -238,7 +238,7 @@ const inputFont = (font: string) => {
   border: 1px dashed #cfd7e4;
   border-radius: 7px;
   background: #ffffff;
-  color: #202733;
+  color: var(--studio-ink);
 }
 
 .font-preview span {

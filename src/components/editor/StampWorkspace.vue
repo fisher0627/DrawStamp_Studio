@@ -4,16 +4,17 @@
     <div class="legal-dialog export-dialog">
       <div class="export-dialog-header">
         <div>
-          <span class="export-eyebrow">EXPORT</span>
           <h3>{{ t('stamp.exportFormat.title') }}</h3>
         </div>
-        <button type="button" class="export-close-button" @click="closeFormatDialog" aria-label="关闭">×</button>
+        <button type="button" class="export-close-button" @click="closeFormatDialog" :aria-label="t('homepage.canvas.close')">×</button>
       </div>
       <div class="legal-content export-dialog-content">
         <section class="export-preview-panel">
           <div class="export-preview-card" :class="{ checker: selectedFormat === 'png' && !useWhitePngBackground }">
             <img v-if="exportPreviewUrl" :src="exportPreviewUrl" alt="导出预览" />
-            <div v-else class="export-preview-empty">预览生成中</div>
+            <div v-else class="export-preview-empty" aria-busy="true" :aria-label="t('homepage.canvas.previewGenerating')">
+              <span class="skeleton-stamp"></span>
+            </div>
           </div>
           <div class="export-preview-meta">
             <strong>{{ exportSummary }}</strong>
@@ -205,23 +206,31 @@
 
   <!-- 主内容区域：三栏布局（可复用） -->
   <div class="main-workspace">
+    <!-- 错误提示 toast（替代原生 alert） -->
+    <Transition name="toast-fade">
+      <div v-if="errorToast" class="error-toast" role="alert" aria-live="assertive">
+        <span class="error-toast-icon" aria-hidden="true">!</span>
+        <span class="error-toast-msg">{{ errorToast }}</span>
+        <button type="button" class="error-toast-close" @click="dismissErrorToast" :aria-label="t('homepage.canvas.close')">×</button>
+      </div>
+    </Transition>
     <!-- 顶部快速工具栏 -->
     <div class="top-toolbar" v-if="isDrawStampUtilsReady">
       <div class="toolbar-brand">
         <div>
           <p class="toolbar-kicker">DrawStamp Studio</p>
-          <h1>电子印章工作台</h1>
+          <h1>{{ t('homepage.canvas.workspace') }}</h1>
         </div>
-        <div class="toolbar-status-group" aria-label="本地草稿状态">
-          <span class="toolbar-status">本地编辑</span>
+        <div class="toolbar-status-group" :aria-label="t('homepage.canvas.draftStatus')">
+          <span class="toolbar-status">{{ t('homepage.canvas.localEditing') }}</span>
           <div class="draft-menu-wrap">
             <button
               type="button"
               class="toolbar-draft-status"
               :class="draftStatusClass"
-              @click="isDraftMenuOpen = !isDraftMenuOpen"
+              @click="handleDraftStatusClick"
               :aria-expanded="isDraftMenuOpen"
-              title="查看最近草稿版本"
+              :title="draftSaveState === 'failed' ? t('homepage.canvas.retrySave') : t('homepage.canvas.viewRecentDraft')"
             >
               <span class="draft-status-dot"></span>
               <span>{{ draftStatusLabel }}</span>
@@ -229,13 +238,13 @@
             </button>
             <div v-if="isDraftMenuOpen" class="draft-menu">
               <div class="draft-menu-head">
-                <strong>最近草稿</strong>
+                <strong>{{ t('homepage.canvas.recentDraft') }}</strong>
                 <button
                   v-if="draftVersions.length"
                   type="button"
                   @click="clearLocalDraft"
                 >
-                  清空
+                  {{ t('homepage.canvas.clearDraft') }}
                 </button>
               </div>
               <div v-if="draftVersions.length" class="draft-version-list">
@@ -250,22 +259,18 @@
                     <strong>{{ formatDraftTime(draft.savedAt) }}</strong>
                     <small>{{ draft.summary }}</small>
                   </span>
-                  <em>恢复</em>
+                  <em>{{ t('homepage.canvas.restore') }}</em>
                 </button>
               </div>
-              <p v-else class="draft-menu-empty">开始编辑后会自动保存最近 5 个版本</p>
+              <p v-else class="draft-menu-empty">{{ t('homepage.canvas.draftEmptyHint') }}</p>
             </div>
           </div>
         </div>
       </div>
       <div class="toolbar-actions">
-        <button class="toolbar-btn compact" type="button" @click="openExtractorDialog" title="从图片提取印章">
+        <button class="toolbar-btn compact" type="button" @click="openExtractorDialog" :title="t('homepage.canvas.extractStampTitle')">
           <span class="toolbar-icon">印</span>
-          <span class="toolbar-label">提取印章</span>
-        </button>
-        <button class="toolbar-btn compact" type="button" @click="triggerTemplateFileLoad" :title="t('homepage.canvas.importTemplate')">
-          <span class="toolbar-icon">↓</span>
-          <span class="toolbar-label">{{ t('homepage.canvas.importTemplate') }}</span>
+          <span class="toolbar-label">{{ t('homepage.canvas.extractStamp') }}</span>
         </button>
         <button class="toolbar-btn compact primary" type="button" @click="saveStampAsPNG" :title="t('homepage.canvas.download')">
           <span class="toolbar-icon">↧</span>
@@ -277,13 +282,15 @@
     <div class="stamp-draw-container">
       <!-- 左侧：模板与元素资源 -->
       <div class="workspace-left">
-        <section class="template-library" v-if="isDrawStampUtilsReady" aria-label="常用模板">
+        <section class="template-library" v-if="isDrawStampUtilsReady" :aria-label="t('homepage.canvas.commonTemplates')">
           <div class="library-header">
             <div>
-              <span class="panel-eyebrow">Template</span>
-              <h2>常用模板</h2>
+              <h2>{{ t('homepage.canvas.commonTemplates') }}</h2>
             </div>
-            <button class="library-link" type="button" @click="triggerTemplateFileLoad">导入</button>
+            <div class="library-actions">
+              <button class="library-link" type="button" @click="saveCurrentAsTemplate" :title="t('homepage.canvas.exportTemplate')">{{ t('homepage.canvas.saveAsTemplate') }}</button>
+              <button class="library-link" type="button" @click="triggerTemplateFileLoad">{{ t('homepage.canvas.importShort') }}</button>
+            </div>
           </div>
           <div class="template-picker">
             <button
@@ -373,22 +380,22 @@
             </div>
           </div>
           <div class="canvas-tools">
-            <span class="canvas-tool-group" aria-label="缩放视图">
-              <button class="canvas-action-btn" @click="zoomCanvas(0.9)" title="缩小">
+            <span class="canvas-tool-group" :aria-label="t('homepage.canvas.zoomView')">
+              <button class="canvas-action-btn" @click="zoomCanvas(0.9)" :title="t('homepage.canvas.zoomOut')">
                 <span>−</span>
               </button>
-              <button class="canvas-action-btn" @click="zoomCanvas(1.1)" title="放大">
+              <button class="canvas-action-btn" @click="zoomCanvas(1.1)" :title="t('homepage.canvas.zoomIn')">
                 <span>＋</span>
               </button>
               <span class="zoom-indicator">{{ viewScalePercent }}%</span>
-              <button class="canvas-action-btn" @click="fitCanvasToView" title="适配窗口">
+              <button class="canvas-action-btn" @click="fitCanvasToView" :title="t('homepage.canvas.fitWindow')">
                 <span>⌖</span>
               </button>
-              <button class="canvas-action-btn" @click="resetCanvasView" title="重置视图">
+              <button class="canvas-action-btn" @click="resetCanvasView" :title="t('homepage.canvas.resetView')">
                 <span>↺</span>
               </button>
             </span>
-            <span class="canvas-tool-group" aria-label="背景模式">
+            <span class="canvas-tool-group" :aria-label="t('homepage.canvas.backgroundMode')">
               <button
                 v-for="option in canvasBackgroundOptions"
                 :key="option.value"
@@ -400,22 +407,19 @@
                 <span>{{ option.icon }}</span>
               </button>
             </span>
-            <span class="canvas-tool-group canvas-tool-group-actions" aria-label="导入导出">
-              <button class="canvas-action-btn" @click="openExtractorDialog" title="从图片提取印章">
-                <span>印</span>
-              </button>
-              <button class="canvas-action-btn" @click="saveCurrentAsTemplate" :title="t('homepage.canvas.exportTemplate')">
-                <span>⇪</span>
-              </button>
-              <button class="canvas-action-btn primary" @click="saveStampAsPNG" title="导出预览">
-                <span>↧</span>
-              </button>
-            </span>
           </div>
         </div>
         <div class="canvas-wrapper" :class="`canvas-bg-${canvasBackgroundMode}`">
-          <div class="canvas-ruler horizontal"><span>0</span><span>300</span><span>600</span></div>
-          <div class="canvas-ruler vertical"><span>0</span><span>300</span><span>600</span></div>
+          <div class="canvas-ruler horizontal">
+            <span>{{ rulerMarks.h[0] }}</span>
+            <span>{{ rulerMarks.h[1] }}</span>
+            <span>{{ rulerMarks.h[2] }}</span>
+          </div>
+          <div class="canvas-ruler vertical">
+            <span>{{ rulerMarks.v[0] }}</span>
+            <span>{{ rulerMarks.v[1] }}</span>
+            <span>{{ rulerMarks.v[2] }}</span>
+          </div>
           <div class="canvas-stage">
             <canvas ref="stampCanvas" width="600" height="600"></canvas>
             <div
@@ -442,12 +446,12 @@
           <div class="canvas-status">
             <span>{{ selectedElementLabel }}</span>
             <span>{{ canvasMeta }}</span>
-            <a :href="onlineUrl" target="_blank" rel="noopener noreferrer" title="打开线上版本">
+            <a :href="onlineUrl" target="_blank" rel="noopener noreferrer" :title="t('homepage.canvas.openOnline')">
               v{{ appVersion }}
             </a>
           </div>
-          <div class="export-dock" aria-label="导出设置">
-            <span class="export-dock-title">导出</span>
+          <div class="export-dock" :aria-label="t('homepage.canvas.exportSettings')">
+            <span class="export-dock-title">{{ t('homepage.canvas.quickExport') }}</span>
             <div class="export-scale-mini">
               <button
                 v-for="option in scaleOptions"
@@ -459,18 +463,18 @@
                 {{ option.label }}
               </button>
             </div>
-            <label class="white-bg-toggle" title="PNG 使用白色背景">
+            <label class="white-bg-toggle" :title="t('homepage.canvas.whiteBackground')">
               <input type="checkbox" v-model="useWhitePngBackground" />
-              <span>白底</span>
+              <span>{{ t('homepage.canvas.whiteBackground') }}</span>
             </label>
             <input
               v-model="exportFilename"
               class="export-name-mini"
               type="text"
-              placeholder="文件名"
+              :placeholder="t('homepage.canvas.filenamePlaceholder')"
               @focus="prepareExportDock"
             />
-            <button class="canvas-action-btn primary" @click="quickExportFromDock" title="按当前导出设置下载">
+            <button class="canvas-action-btn primary" @click="quickExportFromDock" :title="t('homepage.canvas.quickExportTitle')">
               <span>↧</span>
             </button>
           </div>
@@ -586,6 +590,21 @@ const { t } = useI18n()
 const stampStore = useStampStore()
 const appVersion = __APP_VERSION__
 const onlineUrl = 'https://wosp.cc.cd/'
+
+// 通用错误 toast（替代原生 alert）
+const errorToast = ref('')
+let errorToastTimer: number | undefined
+const showErrorToast = (msg: string) => {
+  errorToast.value = msg
+  if (errorToastTimer) window.clearTimeout(errorToastTimer)
+  errorToastTimer = window.setTimeout(() => {
+    errorToast.value = ''
+  }, 3500)
+}
+const dismissErrorToast = () => {
+  errorToast.value = ''
+  if (errorToastTimer) window.clearTimeout(errorToastTimer)
+}
 
 // 控制内部逻辑是否已就绪
 const isDrawStampUtilsReady = ref(false)
@@ -743,6 +762,16 @@ const canvasMeta = computed(() => {
   const width = Math.round(Number(config?.width) || 40)
   const height = Math.round(Number(config?.height) || 40)
   return `${width} x ${height} mm`
+})
+
+const rulerMarks = computed(() => {
+  const config = stampStore.state.config
+  const width = Math.round(Number(config?.width) || 40)
+  const height = Math.round(Number(config?.height) || 40)
+  return {
+    h: [0, Math.round(width / 2), width],
+    v: [0, Math.round(height / 2), height]
+  }
 })
 
 const selectedElementLabel = computed(() => {
@@ -1471,6 +1500,20 @@ const clearLocalDraft = () => {
   }, DRAFT_SAVE_DELAY)
 }
 
+const retryDraftSave = () => {
+  const config = stampStore.state.config
+  if (!config) return
+  saveLocalDraftNow(config)
+}
+
+const handleDraftStatusClick = () => {
+  if (draftSaveState.value === 'failed') {
+    retryDraftSave()
+    return
+  }
+  isDraftMenuOpen.value = !isDraftMenuOpen.value
+}
+
 const restoreDraftVersion = async (draftId: string) => {
   const draft = draftVersions.value.find(item => item.id === draftId)
   if (!draft || !drawStampUtils) return
@@ -1625,7 +1668,7 @@ const loadTemplateFile = async (event: Event) => {
     propertiesPanelRef.value?.restoreDrawConfigs()
   } catch (error) {
     console.error(t('errors.loadTemplateFailed') + ':', error)
-    alert(t('errors.loadTemplateFailed'))
+    showErrorToast(t('errors.loadTemplateFailed'))
   } finally {
     // 清除文件选择，以便可以再次选择同一个文件
     inputEl.value = ''
@@ -2066,6 +2109,77 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* 错误提示 toast（替代原生 alert） */
+.error-toast {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(90vw, 420px);
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--studio-ui-red-soft);
+  border: 1px solid rgba(163, 58, 50, 0.32);
+  box-shadow: 0 6px 20px rgba(60, 30, 28, 0.12);
+  color: var(--studio-ui-red-deep);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.error-toast-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--studio-ui-red);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1;
+}
+
+.error-toast-msg {
+  flex: 1;
+  min-width: 0;
+}
+
+.error-toast-close {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  background: transparent;
+  color: var(--studio-ui-red-deep);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.18s var(--ease-out);
+}
+
+.error-toast-close:hover {
+  background: rgba(163, 58, 50, 0.12);
+}
+
+.toast-fade-enter-active,
+.toast-fade-leave-active {
+  transition: opacity 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+}
+
+.toast-fade-enter-from,
+.toast-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-8px);
+}
+
 /* 主工作区：三栏布局 */
 .main-workspace {
   display: flex;
@@ -2275,8 +2389,7 @@ onUnmounted(() => {
   min-height: 72px;
   padding: 12px 16px;
   border-bottom: 1px solid var(--studio-line-hair);
-  background:
-    linear-gradient(180deg, rgba(255, 254, 250, 0.98), rgba(247, 248, 243, 0.98));
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2399,8 +2512,8 @@ onUnmounted(() => {
 }
 
 .toolbar-draft-status.failed .draft-status-dot {
-  background: #bd2431;
-  box-shadow: 0 0 0 3px rgba(189, 36, 49, 0.13);
+  background: var(--studio-ui-red);
+  box-shadow: 0 0 0 3px rgba(163, 58, 50, 0.13);
 }
 
 .draft-menu {
@@ -2518,7 +2631,7 @@ onUnmounted(() => {
 .draft-menu-empty {
   margin: 0;
   padding: 14px 4px 4px;
-  color: var(--studio-soft);
+  color: var(--studio-muted);
   font-size: 12px;
   line-height: 1.5;
 }
@@ -2652,6 +2765,11 @@ onUnmounted(() => {
   line-height: 1.4;
   letter-spacing: 0;
   text-transform: uppercase;
+}
+
+.library-actions {
+  display: flex;
+  gap: 6px;
 }
 
 .library-link {
@@ -3056,12 +3174,12 @@ onUnmounted(() => {
   cursor: pointer;
   font-size: 13px;
   color: #666;
-  transition: all 0.2s;
+  transition: color 0.18s var(--ease-out), border-color 0.18s var(--ease-out);
 }
 
 .canvas-tab.active {
-  color: #1890ff;
-  border-bottom-color: #1890ff;
+  color: var(--studio-tool-blue);
+  border-bottom-color: var(--studio-tool-blue);
 }
 
 .canvas-wrapper {
@@ -3179,7 +3297,8 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
   min-height: 54px;
   padding: 9px 14px;
   border-top: 1px solid var(--studio-line);
@@ -3191,7 +3310,8 @@ onUnmounted(() => {
 .canvas-status {
   display: flex;
   align-items: center;
-  gap: 14px;
+  flex-wrap: wrap;
+  gap: 10px 14px;
   color: var(--studio-muted);
   font-size: 12px;
   min-width: 0;
@@ -3213,7 +3333,7 @@ onUnmounted(() => {
 }
 
 .canvas-status a {
-  color: var(--studio-soft);
+  color: var(--studio-muted);
   font-size: 12px;
   text-decoration: none;
   white-space: nowrap;
@@ -3362,7 +3482,8 @@ onUnmounted(() => {
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 6px 8px;
   padding: 4px;
   border: 1px solid var(--studio-line-hair);
   border-radius: 9px;
@@ -3374,6 +3495,8 @@ onUnmounted(() => {
   color: var(--studio-muted);
   font-size: 12px;
   font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .export-scale-mini {
@@ -3561,8 +3684,29 @@ onUnmounted(() => {
 }
 
 .export-preview-empty {
-  color: var(--studio-muted);
-  font-size: 13px;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.skeleton-stamp {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--studio-panel-muted);
+  border: 1px solid var(--studio-line);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .export-preview-meta {
@@ -3966,7 +4110,7 @@ onUnmounted(() => {
   width: 18px;
   height: 18px;
   border: 2px solid #e0e0e0;
-  border-top-color: #1890ff;
+  border-top-color: var(--studio-tool-blue);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -3998,6 +4142,27 @@ onUnmounted(() => {
 
 .save-count-small {
   font-size: 12px;
+}
+
+@media (max-width: 1280px) {
+  .canvas-footer {
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  .export-dock {
+    gap: 4px 6px;
+    padding: 3px;
+  }
+
+  .export-dock-title {
+    padding: 0 4px;
+    font-size: 11px;
+  }
+
+  .canvas-status {
+    gap: 8px 10px;
+  }
 }
 
 @media (max-width: 1180px) {
@@ -4033,7 +4198,7 @@ onUnmounted(() => {
     min-width: 0;
     max-height: none;
     border-right: none;
-    border-bottom: 1px solid #d9dee7;
+    border-bottom: 1px solid var(--studio-line);
   }
 
   .workspace-left :deep(.element-list-panel) {
@@ -4053,7 +4218,7 @@ onUnmounted(() => {
     order: 1;
     min-height: 520px;
     border-right: none;
-    border-bottom: 1px solid #d9dee7;
+    border-bottom: 1px solid var(--studio-line);
   }
 
   .canvas-wrapper {
@@ -4227,7 +4392,7 @@ onUnmounted(() => {
 
   .export-preview-panel {
     border-right: 0;
-    border-bottom: 1px solid #e3e8ef;
+    border-bottom: 1px solid var(--studio-line);
   }
 
   .export-dialog .format-options {

@@ -380,6 +380,10 @@ const messages: Record<string, any> = {
       confirm: {
         deleteElement: '确定要删除这个元素吗？'
       },
+      undo: {
+        deleted: '已删除「{name}」',
+        button: '撤销'
+      },
       defaults: {
         newCompanyName: '新公司名称',
         newStampType: '新印章类型',
@@ -534,7 +538,36 @@ const messages: Record<string, any> = {
         exportTemplate: '导出模板',
         resetStamp: '重置印章',
         download: '下载',
-        contactTelegram: 'Telegram 联系'
+        contactTelegram: 'Telegram 联系',
+        extractStamp: '提取印章',
+        extractStampTitle: '从图片提取印章',
+        workspace: '电子印章工作台',
+        localEditing: '本地编辑',
+        draftStatus: '本地草稿状态',
+        recentDraft: '最近草稿',
+        restore: '恢复',
+        viewRecentDraft: '查看最近草稿',
+        retrySave: '重试保存',
+        commonTemplates: '常用模板',
+        templateCategory: '模板分类',
+        saveAsTemplate: '存为模板',
+        importShort: '导入',
+        zoomView: '缩放视图',
+        zoomOut: '缩小',
+        zoomIn: '放大',
+        fitWindow: '适配窗口',
+        resetView: '重置视图',
+        backgroundMode: '背景模式',
+        quickExport: '快速导出',
+        exportSettings: '导出设置',
+        whiteBackground: '白底',
+        filenamePlaceholder: '文件名',
+        quickExportTitle: '按当前导出设置下载',
+        openOnline: '打开线上版本',
+        close: '关闭',
+        previewGenerating: '预览生成中',
+        clearDraft: '清空',
+        draftEmptyHint: '开始编辑后会自动保存最近 5 个版本'
       },
       templateMeta: {
         titlePrompt: '请输入印章模板标题',
@@ -1187,6 +1220,10 @@ const messages: Record<string, any> = {
       confirm: {
         deleteElement: 'Are you sure you want to delete this element?'
       },
+      undo: {
+        deleted: 'Deleted "{name}"',
+        button: 'Undo'
+      },
       defaults: {
         newCompanyName: 'New Company Name',
         newStampType: 'New Stamp Type',
@@ -1340,7 +1377,37 @@ const messages: Record<string, any> = {
         importTemplate: 'Import Template',
         exportTemplate: 'Export Template',
         resetStamp: 'Reset Stamp',
-        download: 'Download'
+        download: 'Download',
+        contactTelegram: 'Contact on Telegram',
+        extractStamp: 'Extract Stamp',
+        extractStampTitle: 'Extract stamp from image',
+        workspace: 'Stamp Workspace',
+        localEditing: 'Local editing',
+        draftStatus: 'Local draft status',
+        recentDraft: 'Recent draft',
+        restore: 'Restore',
+        viewRecentDraft: 'View recent draft',
+        retrySave: 'Retry save',
+        commonTemplates: 'Common templates',
+        templateCategory: 'Template categories',
+        saveAsTemplate: 'Save as template',
+        importShort: 'Import',
+        zoomView: 'Zoom view',
+        zoomOut: 'Zoom out',
+        zoomIn: 'Zoom in',
+        fitWindow: 'Fit to window',
+        resetView: 'Reset view',
+        backgroundMode: 'Background mode',
+        quickExport: 'Quick export',
+        exportSettings: 'Export settings',
+        whiteBackground: 'White bg',
+        filenamePlaceholder: 'Filename',
+        quickExportTitle: 'Download with current export settings',
+        openOnline: 'Open online version',
+        close: 'Close',
+        previewGenerating: 'Generating preview',
+        clearDraft: 'Clear',
+        draftEmptyHint: 'Editing will auto-save the last 5 versions'
       },
       templateMeta: {
         titlePrompt: 'Enter stamp template title',

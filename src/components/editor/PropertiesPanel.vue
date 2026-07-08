@@ -274,7 +274,7 @@ defineExpose({
 .panel-eyebrow {
   display: block;
   margin-bottom: 2px;
-  color: var(--studio-soft);
+  color: var(--studio-muted);
   font-size: 10px;
   font-weight: 800;
   line-height: 1;
@@ -377,7 +377,7 @@ defineExpose({
 }
 
 .summary-stats small {
-  color: var(--studio-soft);
+  color: var(--studio-muted);
   font-size: 10px;
   line-height: 1.2;
 }
@@ -423,7 +423,7 @@ defineExpose({
   background:
     linear-gradient(180deg, rgba(242, 244, 239, 0.94), rgba(238, 241, 234, 0.94));
   scrollbar-width: thin;
-  scrollbar-color: #b8c2cf transparent;
+  scrollbar-color: var(--studio-line-strong) transparent;
 }
 
 .settings-segment {
@@ -502,7 +502,7 @@ defineExpose({
 }
 
 .context-focus-strip button:hover {
-  border-color: rgba(189, 36, 49, 0.28);
+  border-color: rgba(163, 58, 50, 0.28);
   background: #fff5f3;
   color: var(--studio-ui-red);
 }

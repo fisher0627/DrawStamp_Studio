@@ -3,7 +3,6 @@
     <section class="extractor-dialog" aria-label="从图片提取印章">
       <header class="extractor-header">
         <div>
-          <span class="panel-eyebrow">Extract</span>
           <h2>从图片提取印章</h2>
         </div>
         <button type="button" class="extractor-close" @click="close" title="关闭">×</button>

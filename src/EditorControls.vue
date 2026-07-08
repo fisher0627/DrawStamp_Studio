@@ -879,15 +879,17 @@ const expandOnlyGroup = (groupName: GroupKey) => {
   .refresh-button {
     margin-top: 8px;
     padding: 6px 12px;
-    background-color: #f5f5f5;
-    border: 1px solid #d9d9d9;
+    background-color: var(--studio-panel-muted);
+    border: 1px solid var(--studio-line);
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.3s;
+    color: var(--studio-muted);
+    transition: background-color 0.18s var(--ease-out), border-color 0.18s var(--ease-out), color 0.18s var(--ease-out);
   }
 
   .refresh-button:hover {
-    background-color: #e6f7ff;
-    border-color: #1890ff;
+    background-color: var(--studio-ui-red-soft);
+    border-color: rgba(163, 58, 50, 0.4);
+    color: var(--studio-ui-red);
   }
   </style>

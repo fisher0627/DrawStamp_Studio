@@ -180,7 +180,7 @@ onMounted(() => {
   border-radius: 8px;
   margin-bottom: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: border-color 0.18s var(--ease-out), box-shadow 0.18s var(--ease-out);
   break-inside: avoid;
   display: flex;
   flex-direction: column;

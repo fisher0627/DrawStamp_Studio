@@ -571,7 +571,7 @@ const adjustScale = (index: number, delta: number) => {
   background: #fff;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.18s var(--ease-out), border-color 0.18s var(--ease-out), color 0.18s var(--ease-out);
 }
 
 .add-asset-button:disabled {
@@ -585,12 +585,12 @@ const adjustScale = (index: number, delta: number) => {
   background: #fff;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.18s var(--ease-out), border-color 0.18s var(--ease-out), color 0.18s var(--ease-out);
 }
 
 .add-svg-button:hover {
-  border-color: #1890ff;
-  color: #1890ff;
+  border-color: var(--studio-tool-blue);
+  color: var(--studio-tool-blue);
 }
 
 .empty-hint {
@@ -625,21 +625,21 @@ const adjustScale = (index: number, delta: number) => {
   border-radius: 4px;
   cursor: pointer;
   font-size: 12px;
-  transition: all 0.2s ease;
+  transition: background-color 0.18s var(--ease-out), border-color 0.18s var(--ease-out), color 0.18s var(--ease-out);
 }
 
 .action-btn:hover {
-  border-color: #1890ff;
-  color: #1890ff;
+  border-color: var(--studio-tool-blue);
+  color: var(--studio-tool-blue);
 }
 
 .delete-btn {
-  border-color: #ff4d4f;
-  color: #ff4d4f;
+  border-color: var(--studio-ui-red);
+  color: var(--studio-ui-red);
 }
 
 .delete-btn:hover {
-  background: #fff1f0;
+  background: var(--studio-ui-red-soft);
 }
 
 .range-container {
@@ -662,7 +662,7 @@ const adjustScale = (index: number, delta: number) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: background-color 0.18s var(--ease-out), border-color 0.18s var(--ease-out), color 0.18s var(--ease-out);
   flex-shrink: 0;
   line-height: 1;
 }
@@ -727,15 +727,15 @@ const adjustScale = (index: number, delta: number) => {
   align-items: center;
   justify-content: center;
   color: #666;
-  transition: all 0.2s;
+  transition: background-color 0.18s var(--ease-out), border-color 0.18s var(--ease-out), color 0.18s var(--ease-out);
   min-width: 24px;
   height: 24px;
 }
 
 .expand-toggle-btn:hover {
-  color: #1890ff;
-  border-color: #1890ff;
-  background: #e6f7ff;
+  color: var(--studio-ui-red);
+  border-color: rgba(163, 58, 50, 0.42);
+  background: var(--studio-ui-red-soft);
 }
 
 .expand-icon {

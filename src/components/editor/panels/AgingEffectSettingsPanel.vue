@@ -148,7 +148,7 @@ const adjustIntensity = (delta: number) => {
   color: #374151;
   font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.18s var(--ease-out), border-color 0.18s var(--ease-out), color 0.18s var(--ease-out);
   align-self: flex-start;
 }
 
@@ -214,7 +214,7 @@ const adjustIntensity = (delta: number) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: background-color 0.18s var(--ease-out), border-color 0.18s var(--ease-out), color 0.18s var(--ease-out);
   flex-shrink: 0;
   line-height: 1;
 }
