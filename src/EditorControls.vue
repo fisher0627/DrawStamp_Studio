@@ -287,7 +287,7 @@ const handleIsCircleDetectChange = (value: boolean) => {
   const bottomTextLineSpacing = ref(1.2) // 默认行间距为1.2mm
 
   const drawStamp = (refreshSecurityPattern: boolean = false, refreshOld: boolean = false, refreshRoughEdge: boolean = false) => {
-    // 使用drawstamputils进行绘制
+    // 使用 DrawStamp Studio 绘制核心进行绘制
     props.drawStampUtils.refreshStamp(refreshSecurityPattern, refreshOld, refreshRoughEdge)
     emit('updateDrawStamp', getDrawConfigs(), refreshSecurityPattern, refreshOld, refreshRoughEdge)
   }
