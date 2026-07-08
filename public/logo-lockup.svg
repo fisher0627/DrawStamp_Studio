@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 356 92" role="img" aria-label="DrawStamp Studio">
+  <defs>
+    <linearGradient id="sealRed" x1="16" y1="10" x2="74" y2="82" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f51b24"/>
+      <stop offset="0.5" stop-color="#ff0015"/>
+      <stop offset="1" stop-color="#c40b15"/>
+    </linearGradient>
+    <pattern id="sealGrain" width="8" height="8" patternUnits="userSpaceOnUse">
+      <circle cx="1.4" cy="1.1" r="0.75" fill="#ffffff" opacity="0.18"/>
+      <circle cx="5.8" cy="4.9" r="0.65" fill="#7d0710" opacity="0.13"/>
+      <circle cx="3.2" cy="7.2" r="0.45" fill="#ffffff" opacity="0.12"/>
+    </pattern>
+  </defs>
+  <rect x="8" y="8" width="76" height="76" rx="19" fill="url(#sealRed)"/>
+  <rect x="8" y="8" width="76" height="76" rx="19" fill="url(#sealGrain)" opacity="0.46"/>
+  <path d="M30.7 67.7A27 27 0 1 1 72.2 44.9" fill="none" stroke="#fff7ef" stroke-width="8.8" stroke-linecap="butt"/>
+  <path d="M44.2 46.2h27V55L53 75h-8.8V46.2Z" fill="#fff7ef"/>
+  <text x="108" y="43" font-family="Avenir Next, Helvetica Neue, Arial, sans-serif" font-size="30" font-weight="760" letter-spacing="-0.7" fill="#18201d">DrawStamp</text>
+  <text x="109" y="67" font-family="Avenir Next, Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="3.6" fill="#68736c">STUDIO</text>
+</svg>

@@ -217,6 +217,7 @@
     <!-- 顶部快速工具栏 -->
     <div class="top-toolbar" v-if="isDrawStampUtilsReady">
       <div class="toolbar-brand">
+        <img class="toolbar-logo" src="/logo-mark.svg" alt="" aria-hidden="true" />
         <div>
           <p class="toolbar-kicker">DrawStamp Studio</p>
           <h1>{{ t('homepage.canvas.workspace') }}</h1>
@@ -2410,6 +2411,15 @@ onUnmounted(() => {
   text-align: left;
 }
 
+.toolbar-logo {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  display: block;
+  border-radius: 12px;
+  filter: drop-shadow(0 8px 14px rgba(111, 18, 24, 0.14));
+}
+
 .toolbar-status-group {
   display: inline-flex;
   align-items: center;
@@ -4284,8 +4294,8 @@ onUnmounted(() => {
 
   .toolbar-brand {
     width: 100%;
-    align-items: flex-start;
-    flex-direction: column;
+    align-items: center;
+    flex-direction: row;
     gap: 8px;
   }
 

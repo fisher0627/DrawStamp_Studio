@@ -1,68 +1,81 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
   <title id="title">DrawStamp Studio 社交预览图</title>
-  <desc id="desc">在线电子印章工作台，支持印章生成、图片提取、画布编辑和多格式导出。</desc>
+  <desc id="desc">DrawStamp Studio 在线电子印章工作台，支持印章生成、图片提取、画布编辑和多格式导出。</desc>
   <defs>
     <clipPath id="screenClip">
-      <rect x="585" y="84" width="610" height="448" rx="18"/>
+      <rect x="592" y="88" width="594" height="430" rx="18"/>
     </clipPath>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#f8fafc"/>
-      <stop offset="48%" stop-color="#eef3f8"/>
-      <stop offset="100%" stop-color="#f9fbfd"/>
+    <linearGradient id="paperBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffaf1"/>
+      <stop offset="54%" stop-color="#f6f1e7"/>
+      <stop offset="100%" stop-color="#fdf8ee"/>
     </linearGradient>
-    <linearGradient id="red" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#d3162a"/>
-      <stop offset="100%" stop-color="#a91e2a"/>
+    <linearGradient id="sealRed" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff2a36"/>
+      <stop offset="50%" stop-color="#ff0015"/>
+      <stop offset="100%" stop-color="#a90815"/>
     </linearGradient>
-    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="150%">
-      <feDropShadow dx="0" dy="24" stdDeviation="28" flood-color="#334155" flood-opacity="0.16"/>
+    <filter id="panelShadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="24" stdDeviation="26" flood-color="#18201d" flood-opacity="0.16"/>
     </filter>
-    <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="150%">
-      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#1e293b" flood-opacity="0.12"/>
+    <filter id="markShadow" x="-24%" y="-24%" width="148%" height="156%">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#4b0b10" flood-opacity="0.2"/>
     </filter>
-    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
-      <path d="M36 0H0V36" fill="none" stroke="#d7e0eb" stroke-width="1"/>
+    <pattern id="microGrid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#d9d3c7" stroke-width="1"/>
+    </pattern>
+    <pattern id="dotGrid" width="22" height="22" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.2" fill="#cfc7b8"/>
+    </pattern>
+    <pattern id="sealGrain" width="8" height="8" patternUnits="userSpaceOnUse">
+      <circle cx="1.6" cy="1.4" r="0.8" fill="#ffffff" opacity="0.18"/>
+      <circle cx="6" cy="5.2" r="0.7" fill="#7d0710" opacity="0.12"/>
     </pattern>
   </defs>
 
-  <rect width="1280" height="640" fill="url(#bg)"/>
-  <rect width="1280" height="640" fill="url(#grid)" opacity="0.42"/>
-  <circle cx="1108" cy="106" r="150" fill="#f2ccd3" opacity="0.34"/>
-  <circle cx="101" cy="579" r="190" fill="#dbeafe" opacity="0.46"/>
+  <rect width="1280" height="640" fill="#18201d"/>
+  <rect x="28" y="28" width="1224" height="584" rx="34" fill="url(#paperBg)"/>
+  <rect x="28" y="28" width="1224" height="584" rx="34" fill="url(#microGrid)" opacity="0.36"/>
+  <rect x="28" y="28" width="1224" height="584" rx="34" fill="url(#dotGrid)" opacity="0.22"/>
 
-  <g transform="translate(88 88)">
-    <rect x="0" y="0" width="94" height="94" rx="24" fill="#fff" stroke="#d9e2ef" filter="url(#cardShadow)"/>
-    <rect x="20" y="20" width="54" height="54" rx="14" fill="#fdf1f3"/>
-    <text x="47" y="58" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="34" font-weight="800" fill="#c91523">章</text>
+  <g transform="translate(88 84)" filter="url(#markShadow)">
+    <rect x="0" y="0" width="112" height="112" rx="28" fill="url(#sealRed)"/>
+    <rect x="0" y="0" width="112" height="112" rx="28" fill="url(#sealGrain)" opacity="0.46"/>
+    <path d="M33 80A33 33 0 1 1 83.7 52.2" fill="none" stroke="#fff7ef" stroke-width="10.8" stroke-linecap="butt"/>
+    <path d="M49.5 53.8h33v10.8L60.3 89.1H49.5V53.8Z" fill="#fff7ef"/>
   </g>
 
-  <text x="88" y="229" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="24" font-weight="700" letter-spacing="1" fill="#64748b">DRAWSTAMP STUDIO</text>
-  <text x="88" y="289" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="50" font-weight="850" fill="#111827">在线电子印章工作台</text>
-  <text x="88" y="345" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="30" font-weight="650" fill="#334155">生成、提取、编辑、导出</text>
-  <text x="88" y="396" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="22" font-weight="500" fill="#64748b">本地处理 · 透明 PNG / SVG</text>
+  <text x="88" y="244" font-family="Avenir Next, Helvetica Neue, Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="22" font-weight="800" letter-spacing="2.8" fill="#68736c">DRAWSTAMP STUDIO</text>
+  <text x="88" y="309" font-family="Avenir Next, Helvetica Neue, Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="54" font-weight="850" letter-spacing="-1.8" fill="#18201d">在线电子印章工作台</text>
+  <text x="88" y="365" font-family="Avenir Next, Helvetica Neue, Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="28" font-weight="650" fill="#3e4a44">生成、提取、编辑、导出，一次完成</text>
+  <text x="88" y="414" font-family="Avenir Next, Helvetica Neue, Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" font-weight="600" fill="#68736c">浏览器本地处理 · 透明 PNG / SVG / JPEG · 专业画布</text>
 
-  <g font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" font-weight="700">
-    <rect x="88" y="447" width="122" height="44" rx="22" fill="#fff" stroke="#d9e2ef"/>
-    <text x="149" y="476" text-anchor="middle" fill="#334155">Vue 3</text>
-    <rect x="224" y="447" width="132" height="44" rx="22" fill="#fff" stroke="#d9e2ef"/>
-    <text x="290" y="476" text-anchor="middle" fill="#334155">Canvas</text>
-    <rect x="370" y="447" width="156" height="44" rx="22" fill="url(#red)"/>
-    <text x="448" y="476" text-anchor="middle" fill="#fff">本地编辑</text>
+  <g font-family="Avenir Next, Helvetica Neue, Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" font-weight="750">
+    <rect x="88" y="464" width="118" height="42" rx="21" fill="#18201d"/>
+    <text x="147" y="491" text-anchor="middle" fill="#fffaf1">Canvas</text>
+    <rect x="220" y="464" width="146" height="42" rx="21" fill="#fffaf1" stroke="#d6ccbc"/>
+    <text x="293" y="491" text-anchor="middle" fill="#3e4a44">本地编辑</text>
+    <rect x="380" y="464" width="132" height="42" rx="21" fill="url(#sealRed)"/>
+    <text x="446" y="491" text-anchor="middle" fill="#fff7ef">提取印章</text>
   </g>
 
-  <g filter="url(#softShadow)">
-    <rect x="560" y="60" width="660" height="504" rx="28" fill="#ffffff" stroke="#dbe3ef"/>
-    <image href="/readme-workspace.png" x="585" y="84" width="610" height="448" preserveAspectRatio="xMidYMid slice" clip-path="url(#screenClip)"/>
+  <g filter="url(#panelShadow)">
+    <rect x="560" y="60" width="660" height="500" rx="28" fill="#fffdf7" stroke="#d9d0c0"/>
+    <rect x="584" y="84" width="612" height="452" rx="20" fill="#f8f4ec"/>
+    <image href="/readme-workspace.png" x="592" y="88" width="594" height="430" preserveAspectRatio="xMidYMid slice" clip-path="url(#screenClip)" opacity="0.94"/>
+    <rect x="592" y="88" width="594" height="430" rx="18" fill="none" stroke="#eee5d6"/>
   </g>
 
-  <g transform="translate(858 428)" filter="url(#cardShadow)">
-    <rect x="0" y="0" width="286" height="82" rx="18" fill="#ffffff" stroke="#e2e8f0"/>
-    <circle cx="43" cy="41" r="22" fill="#fdf1f3"/>
-    <text x="43" y="50" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="24" font-weight="800" fill="#c91523">取</text>
-    <text x="80" y="35" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="20" font-weight="800" fill="#1f2937">图片提取印章</text>
-    <text x="80" y="62" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="16" font-weight="600" fill="#64748b">拖拽上传，自动生成透明 PNG</text>
+  <g transform="translate(874 430)" filter="url(#panelShadow)">
+    <rect x="0" y="0" width="280" height="84" rx="20" fill="#fffaf1" stroke="#d8cebf"/>
+    <rect x="24" y="22" width="40" height="40" rx="12" fill="#fff1f1"/>
+    <rect x="29" y="27" width="30" height="30" rx="8" fill="#ff0015"/>
+    <path d="M37.3 49.7A11 11 0 1 1 54.2 40.4" fill="none" stroke="#fff7ef" stroke-width="3.6" stroke-linecap="butt"/>
+    <path d="M42.8 41h11v3.6l-7.4 8.2h-3.6V41Z" fill="#fff7ef"/>
+    <text x="82" y="36" font-family="Avenir Next, Helvetica Neue, Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="19" font-weight="850" fill="#18201d">图片提取印章</text>
+    <text x="82" y="63" font-family="Avenir Next, Helvetica Neue, Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" font-weight="650" fill="#68736c">拖拽上传，保留透明背景</text>
   </g>
 
-  <text x="88" y="567" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="22" font-weight="700" fill="#c91523">wosp.cc.cd</text>
-  <text x="216" y="567" font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="18" font-weight="600" fill="#64748b">github.com/fisher0627/DrawStamp_Studio</text>
+  <text x="88" y="563" font-family="Avenir Next, Helvetica Neue, Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="22" font-weight="800" fill="#ff0015">wosp.cc.cd</text>
+  <text x="216" y="563" font-family="Avenir Next, Helvetica Neue, Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="17" font-weight="650" fill="#68736c">github.com/fisher0627/DrawStamp_Studio</text>
 </svg>
