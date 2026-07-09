@@ -2,6 +2,18 @@
 
 本项目的版本记录遵循简洁的人工维护格式。
 
+## 0.6.0 - 2026-07-09
+
+### Added
+
+- 新增 DrawStamp Studio 印石风格品牌 logo，并同步提供站点 logo、favicon、PWA 图标、Apple Touch Icon 和社交预览图。
+- 在首页 SEO 内容区、编辑器顶部和说明页侧栏增加克制的品牌露出，让 GitHub、搜索结果和网站界面保持一致。
+
+### Changed
+
+- 更新 SoftwareApplication 结构化数据、manifest、Open Graph 图片和 GitHub 展示素材中的品牌图像。
+- 将项目版本更新为 `0.6.0`，作为 logo 与品牌系统升级版本。
+
 ## 0.5.0 - 2026-07-09
 
 ### Changed
