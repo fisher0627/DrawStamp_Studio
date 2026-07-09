@@ -2,8 +2,8 @@
   <main class="info-page-shell" :class="toneClass">
     <aside class="info-page-rail" aria-label="说明页面导航">
       <RouterLink to="/" class="rail-home">
+        <img src="/logo-lockup.svg" alt="DrawStamp Studio 首页" width="178" height="46" />
         <span>Project Dossier</span>
-        <strong>Studio</strong>
       </RouterLink>
       <nav>
         <RouterLink to="/about">关于项目</RouterLink>
@@ -87,7 +87,7 @@ const toneClass = computed(() => `tone-${props.tone || 'default'}`)
 
 .rail-home {
   display: grid;
-  gap: 2px;
+  gap: 8px;
   padding: 12px;
   color: var(--studio-ink);
   background: #fff;
@@ -96,18 +96,19 @@ const toneClass = computed(() => `tone-${props.tone || 'default'}`)
   text-decoration: none;
 }
 
+.rail-home img {
+  display: block;
+  width: 100%;
+  max-width: 178px;
+  height: auto;
+}
+
 .rail-home span {
   color: var(--studio-muted);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-}
-
-.rail-home strong {
-  color: var(--studio-stamp-red);
-  font-size: 18px;
-  line-height: 1;
 }
 
 .info-page-rail nav {

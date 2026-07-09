@@ -502,6 +502,13 @@
 
   <section class="seo-content" aria-labelledby="seo-title">
     <div class="seo-hero">
+      <div class="seo-brand-lockup">
+        <img src="/logo-mark.svg" alt="DrawStamp Studio 电子印章工作台标志" width="52" height="52" loading="lazy" />
+        <div>
+          <strong>DrawStamp Studio</strong>
+          <span>Browser-local electronic stamp workspace</span>
+        </div>
+      </div>
       <p class="seo-eyebrow">Browser Local Stamp Editor</p>
       <h2 id="seo-title">在线电子印章生成、图片提取与透明 PNG 导出</h2>
       <p>
@@ -2240,6 +2247,49 @@ onUnmounted(() => {
 
 .seo-hero {
   max-width: 880px;
+}
+
+.seo-brand-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 10px 14px 10px 10px;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid var(--studio-line-hair);
+  border-radius: 16px;
+  box-shadow: var(--studio-shadow-quiet);
+}
+
+.seo-brand-lockup img {
+  display: block;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  filter: drop-shadow(0 8px 14px rgba(111, 18, 24, 0.14));
+}
+
+.seo-brand-lockup strong,
+.seo-brand-lockup span {
+  display: block;
+}
+
+.seo-brand-lockup strong {
+  color: var(--studio-ink);
+  font-size: 15px;
+  line-height: 1.25;
+  font-weight: 850;
+  letter-spacing: -0.01em;
+}
+
+.seo-brand-lockup span {
+  margin-top: 2px;
+  color: var(--studio-muted);
+  font-size: 11px;
+  line-height: 1.3;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .seo-eyebrow {
