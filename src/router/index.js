@@ -7,6 +7,7 @@ import TermsOfService from '../components/TermsOfService.vue'
 
 const siteUrl = 'https://wosp.cc.cd'
 const previewImage = `${siteUrl}/social-preview.png`
+const logoImage = `${siteUrl}/icon-512.png`
 
 const routes = [
   {
@@ -122,7 +123,17 @@ const setPageSchema = (to, title, description, canonicalHref) => {
     publisher: {
       '@type': 'Organization',
       name: 'DrawStamp Studio',
-      url: siteUrl
+      url: siteUrl,
+      logo: {
+        '@type': 'ImageObject',
+        url: logoImage,
+        width: 512,
+        height: 512
+      },
+      sameAs: [
+        'https://github.com/fisher0627/DrawStamp_Studio',
+        'https://t.me/KEVIN627ZTZ'
+      ]
     },
     breadcrumb: {
       '@type': 'BreadcrumbList',

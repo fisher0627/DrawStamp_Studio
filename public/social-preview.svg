@@ -39,10 +39,12 @@
   <rect x="28" y="28" width="1224" height="584" rx="34" fill="url(#dotGrid)" opacity="0.22"/>
 
   <g transform="translate(88 84)" filter="url(#markShadow)">
-    <rect x="0" y="0" width="112" height="112" rx="28" fill="url(#sealRed)"/>
-    <rect x="0" y="0" width="112" height="112" rx="28" fill="url(#sealGrain)" opacity="0.46"/>
-    <path d="M33 80A33 33 0 1 1 83.7 52.2" fill="none" stroke="#fff7ef" stroke-width="10.8" stroke-linecap="butt"/>
-    <path d="M49.5 53.8h33v10.8L60.3 89.1H49.5V53.8Z" fill="#fff7ef"/>
+    <rect x="0" y="0" width="112" height="112" rx="24" fill="url(#sealRed)"/>
+    <rect x="0" y="0" width="112" height="112" rx="24" fill="url(#sealGrain)" opacity="0.44"/>
+    <path d="M34 76A35 35 0 0 1 85.3 30.6" fill="none" stroke="#fff7ef" stroke-width="9.8" stroke-linecap="butt"/>
+    <path d="M56 45.8h26.5v10.8H66.8v30.1H56V45.8Z" fill="#fff7ef"/>
+    <path d="M66.8 86.7 84.9 56.6H73.8L56 86.7h10.8Z" fill="#fff7ef"/>
+    <path d="M29.2 86.7h20.4" stroke="#fff7ef" stroke-width="9.8" stroke-linecap="butt"/>
   </g>
 
   <text x="88" y="244" font-family="Avenir Next, Helvetica Neue, Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="22" font-weight="800" letter-spacing="2.8" fill="#68736c">DRAWSTAMP STUDIO</text>
@@ -69,9 +71,11 @@
   <g transform="translate(874 430)" filter="url(#panelShadow)">
     <rect x="0" y="0" width="280" height="84" rx="20" fill="#fffaf1" stroke="#d8cebf"/>
     <rect x="24" y="22" width="40" height="40" rx="12" fill="#fff1f1"/>
-    <rect x="29" y="27" width="30" height="30" rx="8" fill="#ff0015"/>
-    <path d="M37.3 49.7A11 11 0 1 1 54.2 40.4" fill="none" stroke="#fff7ef" stroke-width="3.6" stroke-linecap="butt"/>
-    <path d="M42.8 41h11v3.6l-7.4 8.2h-3.6V41Z" fill="#fff7ef"/>
+    <rect x="29" y="27" width="30" height="30" rx="7" fill="#ff0015"/>
+    <path d="M37 48.7A11.5 11.5 0 0 1 54.4 34.1" fill="none" stroke="#fff7ef" stroke-width="3.3" stroke-linecap="butt"/>
+    <path d="M44 39h8.5v3.6h-5v9.8H44V39Z" fill="#fff7ef"/>
+    <path d="M47.5 52.4 53.4 42.6h-3.6L44 52.4h3.5Z" fill="#fff7ef"/>
+    <path d="M35.5 52.4h6.5" stroke="#fff7ef" stroke-width="3.3" stroke-linecap="butt"/>
     <text x="82" y="36" font-family="Avenir Next, Helvetica Neue, Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="19" font-weight="850" fill="#18201d">图片提取印章</text>
     <text x="82" y="63" font-family="Avenir Next, Helvetica Neue, Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="15" font-weight="650" fill="#68736c">拖拽上传，保留透明背景</text>
   </g>
