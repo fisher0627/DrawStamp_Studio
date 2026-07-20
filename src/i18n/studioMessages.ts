@@ -154,7 +154,7 @@ export const studioMessages = {
         local: '本地'
       },
       contact: {
-        qrAlt: 'Telegram 联系二维码 @KEVIN627ZTZ',
+        qrAlt: 'Telegram 联系二维码（账号：KEVIN627ZTZ）',
         openTelegram: '打开 Telegram',
         primaryHeading: '首选联系入口',
         emailHeading: '邮件草稿',
@@ -359,7 +359,7 @@ export const studioMessages = {
         local: 'Local'
       },
       contact: {
-        qrAlt: 'Telegram contact QR code for @KEVIN627ZTZ',
+        qrAlt: 'Telegram contact QR code (username: KEVIN627ZTZ)',
         openTelegram: 'Open Telegram',
         primaryHeading: 'Primary contact',
         emailHeading: 'Email draft',
