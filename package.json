@@ -1,7 +1,7 @@
 {
   "name": "drawstamp-studio",
   "private": false,
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Browser-local online stamp maker and electronic seal editor with image extraction and PNG, SVG, and JPEG export",
   "keywords": [
     "stamp",

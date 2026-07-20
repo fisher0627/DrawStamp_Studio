@@ -6,7 +6,7 @@ DrawStamp Studio is a browser-local electronic stamp workspace for creating, ext
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-FF0015?style=for-the-badge)](https://wosp.cc.cd/)
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://wosp.cc.cd/)
-[![Version](https://img.shields.io/badge/Version-0.6.0-234c5c?style=for-the-badge)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.6.1-234c5c?style=for-the-badge)](CHANGELOG.md)
 [![Vue 3](https://img.shields.io/badge/Vue-3-42b883?style=for-the-badge&logo=vue.js&logoColor=white)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5-646cff?style=for-the-badge)](https://vitejs.dev/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-334155?style=for-the-badge)](LICENSE)
@@ -22,6 +22,8 @@ DrawStamp Studio is a browser-local electronic stamp workspace for creating, ext
 ## What it does
 
 DrawStamp Studio combines a template library, a canvas editor, browser-local image extraction, automatic local drafts, JSON template import/export, and PNG / SVG / JPEG downloads in one web interface.
+
+Version `0.6.1` adds Chinese and English interface support, localized SEO metadata, and updated GitHub project presentation while keeping all image processing in the browser.
 
 It is useful when you need to:
 

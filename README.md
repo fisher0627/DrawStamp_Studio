@@ -8,7 +8,7 @@ A browser-local electronic stamp editor for generating, extracting, editing and 
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-FF0015?style=for-the-badge)](https://wosp.cc.cd/)
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://wosp.cc.cd/)
-[![Version](https://img.shields.io/badge/Version-0.6.0-234c5c?style=for-the-badge)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.6.1-234c5c?style=for-the-badge)](CHANGELOG.md)
 [![Vue 3](https://img.shields.io/badge/Vue-3-42b883?style=for-the-badge&logo=vue.js&logoColor=white)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5-646cff?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-334155?style=for-the-badge)](LICENSE)
@@ -25,7 +25,7 @@ A browser-local electronic stamp editor for generating, extracting, editing and 
 
 DrawStamp Studio 已经从单纯的印章绘制工具，整理成一个完整的在线编辑器：支持常用模板、纸感专业画布、字体选择、图片提取印章、本地自动草稿、模板导入导出，以及 PNG / SVG / JPEG 多格式下载。
 
-当前大版本 `0.6.0` 重点完成 DrawStamp Studio 品牌升级：启用新的印石风格 logo，补齐 favicon、PWA 图标、Apple Touch Icon、社交预览图和结构化数据中的品牌图像，并在站点关键入口增加更统一的品牌露出。
+当前版本 `0.6.1` 完成 DrawStamp Studio 的中英文界面支持，并同步优化 SEO 标题、页面描述、结构化数据和 GitHub 展示信息；同时保留新的印石风格 logo 与完整品牌图标体系。
 
 相关文档：
 
