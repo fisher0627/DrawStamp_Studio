@@ -16,21 +16,21 @@
       <p>{{ t('about.mission.description') }}</p>
     </section>
 
-    <section class="feature-grid" aria-label="主要功能">
+    <section class="feature-grid" :aria-label="t('studio.aboutBadges.aria')">
       <article>
-        <span>生成</span>
+        <span>{{ t('studio.aboutBadges.create') }}</span>
         <p>{{ t('about.features.items.customDesign') }}</p>
       </article>
       <article>
-        <span>模板</span>
+        <span>{{ t('studio.aboutBadges.template') }}</span>
         <p>{{ t('about.features.items.templateSystem') }}</p>
       </article>
       <article>
-        <span>质感</span>
+        <span>{{ t('studio.aboutBadges.finish') }}</span>
         <p>{{ t('about.features.items.advancedEffects') }}</p>
       </article>
       <article>
-        <span>本地</span>
+        <span>{{ t('studio.aboutBadges.local') }}</span>
         <p>{{ t('about.features.items.localProcessing') }}</p>
       </article>
     </section>

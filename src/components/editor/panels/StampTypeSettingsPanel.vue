@@ -45,7 +45,6 @@
               :model-value="type.fontFamily"
               :fonts="systemFonts"
               :preview-text="type.stampType || '合同专用章'"
-              label="字体"
               @update:model-value="value => updateStampType(index, 'fontFamily', value)"
             />
             <div class="text-toolbar">

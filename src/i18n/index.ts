@@ -1,7 +1,31 @@
 import { createI18n } from 'vue-i18n'
+import { studioMessages } from './studioMessages'
+
+export type AppLocale = 'zh' | 'en'
+
+const LOCALE_STORAGE_KEY = 'drawstamp-studio:locale'
+
+const normalizeLocale = (value?: string | null): AppLocale => {
+  return value?.toLowerCase().startsWith('zh') ? 'zh' : 'en'
+}
+
+export const getInitialLocale = (): AppLocale => {
+  if (typeof window === 'undefined') return 'zh'
+
+  try {
+    const savedLocale = window.localStorage.getItem(LOCALE_STORAGE_KEY)
+    if (savedLocale === 'zh' || savedLocale === 'en') return savedLocale
+  } catch {
+    // Continue with browser language when storage is unavailable.
+  }
+
+  const browserLocale = window.navigator.languages?.[0] || window.navigator.language
+  return normalizeLocale(browserLocale)
+}
 
 const messages: Record<string, any> = {
   zh: {
+    ...studioMessages.zh,
     menu: {
       home: '首页',
       about: '关于',
@@ -800,6 +824,7 @@ const messages: Record<string, any> = {
     }
   },
   en: {
+    ...studioMessages.en,
     menu: {
       home: 'Home',
       about: 'About',
@@ -2025,10 +2050,34 @@ const messages: Record<string, any> = {
   }
 }
 
+const initialLocale = getInitialLocale()
+
 const i18n = createI18n({
-  locale: 'zh', // 默认语言
-  fallbackLocale: 'en', // 备用语言
+  legacy: false,
+  globalInjection: true,
+  locale: initialLocale,
+  fallbackLocale: 'en',
   messages
 })
+
+const applyDocumentLocale = (locale: AppLocale) => {
+  if (typeof document === 'undefined') return
+  const languageTag = locale === 'zh' ? 'zh-CN' : 'en'
+  document.documentElement.lang = languageTag
+  document.querySelector('meta[http-equiv="content-language"]')?.setAttribute('content', languageTag)
+}
+
+export const setAppLocale = (locale: AppLocale) => {
+  i18n.global.locale.value = locale
+  applyDocumentLocale(locale)
+
+  try {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, locale)
+  } catch {
+    // The selected language still applies for this session when storage is unavailable.
+  }
+}
+
+applyDocumentLocale(initialLocale)
 
 export default i18n

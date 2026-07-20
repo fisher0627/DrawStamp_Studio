@@ -1,13 +1,12 @@
 {
-  "name": "DrawStamp Studio 在线电子印章工作台",
+  "name": "DrawStamp Studio",
   "short_name": "DrawStamp Studio",
-  "description": "在线生成、提取、编辑和导出电子印章，支持透明 PNG、SVG 和 JPEG。",
+  "description": "Online stamp maker and electronic seal editor / 在线电子印章生成与编辑工具",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#f4f5f1",
   "theme_color": "#ff0015",
-  "lang": "zh-CN",
   "icons": [
     {
       "src": "/favicon.svg",

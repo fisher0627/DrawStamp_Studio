@@ -1,11 +1,11 @@
 <template>
   <div class="extractor-overlay" @click.self="close">
-    <section class="extractor-dialog" aria-label="从图片提取印章">
+    <section class="extractor-dialog" :aria-label="t('studio.extractor.aria')">
       <header class="extractor-header">
         <div>
-          <h2>从图片提取印章</h2>
+          <h2>{{ t('studio.extractor.title') }}</h2>
         </div>
-        <button type="button" class="extractor-close" @click="close" title="关闭">×</button>
+        <button type="button" class="extractor-close" @click="close" :title="t('studio.extractor.close')">×</button>
       </header>
 
       <div class="extractor-body">
@@ -20,19 +20,19 @@
           >
             <input ref="uploadInput" type="file" accept="image/*" @change="handleFileChange" />
             <span class="drop-mark">取</span>
-            <strong>{{ selectedFile ? selectedFile.name : '拖拽图片到这里，或点击选择' }}</strong>
-            <small>支持 PNG / JPG / 扫描件，本地处理，不上传图片。</small>
-            <span class="drop-hint">松手后自动提取红色印章</span>
+            <strong>{{ selectedFile ? selectedFile.name : t('studio.extractor.drop') }}</strong>
+            <small>{{ t('studio.extractor.support') }}</small>
+            <span class="drop-hint">{{ t('studio.extractor.dropHint') }}</span>
           </label>
 
           <div class="source-card">
             <div class="preview-title">
-              <span>原图预览</span>
-              <small>{{ sourceSize || '等待上传' }}</small>
+              <span>{{ t('studio.extractor.sourcePreview') }}</span>
+              <small>{{ sourceSize || t('studio.extractor.waitingUpload') }}</small>
             </div>
             <div class="source-preview" :class="{ empty: !sourceUrl }">
-              <img v-if="sourceUrl" :src="sourceUrl" alt="原图预览" />
-              <span v-else>图片会显示在这里，方便和右侧结果对照。</span>
+              <img v-if="sourceUrl" :src="sourceUrl" :alt="t('studio.extractor.sourcePreview')" />
+              <span v-else>{{ t('studio.extractor.sourcePlaceholder') }}</span>
             </div>
           </div>
         </div>
@@ -40,13 +40,13 @@
         <div class="extractor-controls">
           <section class="settings-card">
             <div class="settings-title">
-              <span>提取参数</span>
-              <small>{{ selectedFile ? '已自动预览' : '上传后可微调' }}</small>
+              <span>{{ t('studio.extractor.parameters') }}</span>
+              <small>{{ selectedFile ? t('studio.extractor.autoPreviewed') : t('studio.extractor.tuneAfterUpload') }}</small>
             </div>
 
             <div class="control-row">
               <label>
-                <span>保留范围</span>
+                <span>{{ t('studio.extractor.retainRange') }}</span>
                 <strong>{{ threshold }}</strong>
               </label>
               <input v-model.number="threshold" type="range" min="0" max="100" step="1" @input="scheduleProcess" />
@@ -54,14 +54,14 @@
 
             <div class="control-row">
               <label>
-                <span>杂点清理</span>
+                <span>{{ t('studio.extractor.cleanup') }}</span>
                 <strong>{{ cleanup }}</strong>
               </label>
               <input v-model.number="cleanup" type="range" min="0" max="4" step="1" @input="scheduleProcess" />
             </div>
 
             <label class="color-row">
-              <span>输出颜色</span>
+              <span>{{ t('studio.extractor.outputColor') }}</span>
               <input v-model="targetColor" type="color" @input="scheduleProcess" />
             </label>
           </section>
@@ -69,29 +69,29 @@
           <div class="toggle-grid">
             <label>
               <input v-model="transparentBackground" type="checkbox" @change="scheduleProcess" />
-              <span>透明背景</span>
+              <span>{{ t('studio.extractor.transparent') }}</span>
             </label>
             <label>
               <input v-model="edgeEnhance" type="checkbox" @change="scheduleProcess" />
-              <span>边缘增强</span>
+              <span>{{ t('studio.extractor.enhance') }}</span>
             </label>
             <label>
               <input v-model="preserveShading" type="checkbox" @change="scheduleProcess" />
-              <span>保留深浅</span>
+              <span>{{ t('studio.extractor.preserveTones') }}</span>
             </label>
           </div>
 
           <div class="result-panel" :class="{ empty: !resultUrl }">
             <div class="preview-title">
-              <span>透明 PNG 结果</span>
+              <span>{{ t('studio.extractor.resultTitle') }}</span>
               <div class="preview-actions">
-                <small>{{ resultMeta || '实时生成' }}</small>
-                <button type="button" @click="triggerUpload">重新上传</button>
-                <button type="button" :disabled="!resultUrl" @click="clearResult">清除结果</button>
+                <small>{{ resultMeta || t('studio.extractor.live') }}</small>
+                <button type="button" @click="triggerUpload">{{ t('studio.extractor.reupload') }}</button>
+                <button type="button" :disabled="!resultUrl" @click="clearResult">{{ t('studio.extractor.clear') }}</button>
               </div>
             </div>
             <div class="result-preview">
-              <img v-if="resultUrl" :src="resultUrl" alt="提取结果预览" />
+              <img v-if="resultUrl" :src="resultUrl" :alt="t('studio.extractor.resultTitle')" />
               <span v-else>{{ statusText }}</span>
             </div>
           </div>
@@ -101,9 +101,9 @@
       <footer class="extractor-footer">
         <p>{{ helperText }}</p>
         <div>
-          <button type="button" class="extractor-secondary" @click="close">取消</button>
+          <button type="button" class="extractor-secondary" @click="close">{{ t('studio.extractor.cancel') }}</button>
           <button type="button" class="extractor-primary" :disabled="!resultUrl" @click="addToCanvas">
-            替换画布
+            {{ t('studio.extractor.replaceCanvas') }}
           </button>
         </div>
       </footer>
@@ -113,12 +113,15 @@
 
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { extractStampFromFile, type ExtractStampResult } from '../../utils/extractStampImage'
 import { DEFAULT_STAMP_RED } from '../../Constants'
 
 const props = defineProps<{
   primaryColor: string
 }>()
+
+const { t } = useI18n()
 
 const emit = defineEmits<{
   (e: 'close'): void
@@ -154,18 +157,22 @@ const resultMeta = computed(() => {
   const ratio = result.value.totalPixels
     ? Math.round((result.value.redPixels / result.value.totalPixels) * 1000) / 10
     : 0
-  return `${result.value.width} x ${result.value.height}px · 红色区域 ${ratio}%`
+  return t('studio.extractor.resultMeta', {
+    width: result.value.width,
+    height: result.value.height,
+    ratio
+  })
 })
 
 const statusText = computed(() => {
-  if (isProcessing.value) return '正在提取...'
+  if (isProcessing.value) return t('studio.extractor.processing')
   if (errorMessage.value) return errorMessage.value
-  return '选择图片后自动生成透明 PNG'
+  return t('studio.extractor.readyHint')
 })
 
 const helperText = computed(() => {
-  if (errorMessage.value) return '如果漏章，提高保留范围；如果背景杂点多，提高杂点清理。'
-  return '确认后会清空默认章面，只保留提取结果；右侧仍可继续调整尺寸、位置和旋转。'
+  if (errorMessage.value) return t('studio.extractor.errorHint')
+  return t('studio.extractor.replaceHint')
 })
 
 watch(
@@ -212,7 +219,9 @@ const process = async () => {
   } catch (error) {
     if (isDisposed) return
     result.value = null
-    errorMessage.value = error instanceof Error ? error.message : '提取失败，请换一张更清晰的图片'
+    errorMessage.value = error instanceof Error && error.message.includes('红色印章')
+      ? t('studio.extractor.noRedArea')
+      : t('studio.extractor.failed')
   } finally {
     if (!isDisposed) {
       isProcessing.value = false
@@ -238,7 +247,7 @@ const readSourceSize = async (file: File) => {
 const applyFile = async (file: File) => {
   if (!file.type.startsWith('image/')) {
     result.value = null
-    errorMessage.value = '请拖入或选择图片文件'
+    errorMessage.value = t('studio.extractor.chooseImage')
     return
   }
 
@@ -302,7 +311,7 @@ const handleDrop = async (event: DragEvent) => {
   const file = Array.from(event.dataTransfer?.files || []).find(item => item.type.startsWith('image/'))
   if (!file) {
     result.value = null
-    errorMessage.value = '没有检测到图片文件'
+    errorMessage.value = t('studio.extractor.noImage')
     return
   }
   await applyFile(file)

@@ -1,16 +1,17 @@
 <template>
   <main class="info-page-shell" :class="toneClass">
-    <aside class="info-page-rail" aria-label="说明页面导航">
+    <aside class="info-page-rail" :aria-label="t('studio.nav.aria')">
       <RouterLink to="/" class="rail-home">
-        <img src="/logo-lockup.svg" alt="DrawStamp Studio 首页" width="178" height="46" />
-        <span>Project Dossier</span>
+        <img src="/logo-lockup.svg" :alt="t('studio.nav.homeAlt')" width="178" height="46" />
+        <span>{{ t('studio.nav.dossier') }}</span>
       </RouterLink>
       <nav>
-        <RouterLink to="/about">关于项目</RouterLink>
-        <RouterLink to="/privacy">隐私政策</RouterLink>
-        <RouterLink to="/terms">服务条款</RouterLink>
-        <RouterLink to="/contact">联系反馈</RouterLink>
+        <RouterLink to="/about">{{ t('studio.nav.about') }}</RouterLink>
+        <RouterLink to="/privacy">{{ t('studio.nav.privacy') }}</RouterLink>
+        <RouterLink to="/terms">{{ t('studio.nav.terms') }}</RouterLink>
+        <RouterLink to="/contact">{{ t('studio.nav.contact') }}</RouterLink>
       </nav>
+      <LanguageSwitcher />
     </aside>
 
     <section class="info-page-document">
@@ -34,6 +35,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import LanguageSwitcher from './LanguageSwitcher.vue'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   title: string
@@ -114,6 +119,10 @@ const toneClass = computed(() => `tone-${props.tone || 'default'}`)
 .info-page-rail nav {
   display: grid;
   gap: 8px;
+}
+
+.info-page-rail :deep(.language-switcher) {
+  align-self: flex-start;
 }
 
 .info-page-rail nav a {

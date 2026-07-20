@@ -1,5 +1,7 @@
 # DrawStamp Studio - 在线电子印章工作台
 
+[简体中文](README.md) | [English](README.en.md)
+
 一个可以直接在线使用的电子印章工作台，支持印章生成、图片提取、画布编辑、模板管理和多格式导出。核心处理都在浏览器本地完成，不依赖后端接口。
 
 A browser-local electronic stamp editor for generating, extracting, editing and exporting digital seals.
@@ -64,8 +66,9 @@ DrawStamp Studio 更适合这些场景：
 - 本地自动草稿：编辑状态会保存在当前浏览器，并保留最近 5 个草稿版本，刷新页面后可以继续处理。
 - 导出面板：支持 PNG / SVG / JPEG、多倍导出、白底 PNG、文件名设置、导出预览和高级尺寸设置。
 - 本地优先：印章生成、图片提取、导出都在浏览器端完成。
+- 中英文界面：根据浏览器语言自动选择中文或英文，也可在页面中手动切换并记住选择。
 - 公开说明页：提供关于项目、隐私政策、服务条款和联系反馈页面，方便 GitHub 与搜索引擎展示。
-- SEO 与部署适配：内置 sitemap、robots、结构化数据、Cloudflare Pages SPA 回退和基础安全响应头。
+- SEO 与部署适配：中英文标题、页面描述、Open Graph、Twitter Card 和 JSON-LD 会随界面语言同步，并内置 sitemap、robots 与 Cloudflare Pages SPA 回退。
 
 ## 技术栈
 

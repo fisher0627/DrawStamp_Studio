@@ -49,7 +49,6 @@
               :model-value="code.fontFamily"
               :fonts="systemFonts"
               :preview-text="code.code || 'NO.000001'"
-              label="字体"
               @update:model-value="value => updateCode(index, 'fontFamily', value)"
             />
             <div class="text-toolbar">

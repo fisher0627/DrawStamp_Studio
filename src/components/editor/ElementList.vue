@@ -23,7 +23,7 @@
         <div class="element-item"
              :class="{ active: selectedElement === 'basic-settings' }"
              @click.stop="selectElement('basic-settings', 'basic', 0)">
-          <span class="element-icon">基</span>
+          <span class="element-icon">◎</span>
           <span class="element-name">{{ t('elementList.elements.basicSettings') }}</span>
         </div>
         <div class="element-item"
@@ -31,7 +31,7 @@
              :key="`company-${index}`"
              :class="{ active: selectedElement === `company-${index}` }"
              @click.stop="selectElement(`company-${index}`, 'company', index)">
-          <span class="element-icon">文</span>
+          <span class="element-icon wide">Aa</span>
           <span class="element-name">
             {{ company.companyName || t('elementList.defaults.companyNameIndex', { index: index + 1 }) }}
           </span>
@@ -45,7 +45,7 @@
              :key="`stampType-${index}`"
              :class="{ active: selectedElement === `stampType-${index}` }"
              @click.stop="selectElement(`stampType-${index}`, 'stampType', index)">
-          <span class="element-icon">类</span>
+          <span class="element-icon">T</span>
           <span class="element-name">
             {{ type.stampType || t('elementList.defaults.stampTypeIndex', { index: index + 1 }) }}
           </span>
@@ -61,7 +61,7 @@
           :class="{ active: selectedElement === `code-${index}` }"
           @click.stop="selectElement(`code-${index}`, 'code', index)"
         >
-          <span class="element-icon">码</span>
+          <span class="element-icon">#</span>
           <span
             class="element-name"
           >
@@ -71,7 +71,7 @@
             <button
               class="action-btn delete-btn"
               @click="deleteElement('code', index)"
-              title="删除"
+              :title="t('elementList.buttons.delete')"
             >×</button>
           </div>
         </div>
@@ -82,19 +82,19 @@
           :class="{ active: selectedElement === `taxNumber-${index}` }"
           @click.stop="selectElement(`taxNumber-${index}`, 'taxNumber', index)"
         >
-          <span class="element-icon">中</span>
+          <span class="element-icon">C</span>
           <span class="element-name">
             {{ item.code || t('elementList.elements.taxNumber') + ' ' + (index + 1) }}
           </span>
           <div class="element-actions show-always" @click.stop>
-            <button class="action-btn delete-btn" @click="deleteElement('taxNumber', index)" title="删除">×</button>
+            <button class="action-btn delete-btn" @click="deleteElement('taxNumber', index)" :title="t('elementList.buttons.delete')">×</button>
           </div>
         </div>
         <div class="element-item"
              v-if="drawStar.drawStar"
              :class="{ active: selectedElement === 'star' }"
              @click.stop="selectElement('star', 'star', 0)">
-          <span class="element-icon">星</span>
+          <span class="element-icon">★</span>
           <span class="element-name">{{ t('elementList.elements.star') }}</span>
           <span class="element-type">{{ drawStar.drawStar ? t('elementList.status.enabled') : t('elementList.status.disabled') }}</span>
           <div class="element-actions show-always" @click.stop>
@@ -106,10 +106,10 @@
              :key="`circle-all-${index}`"
              :class="{ active: selectedElement === `circle-${index}` }"
              @click.stop="selectElement(`circle-${index}`, 'circle', index)">
-          <span class="element-icon">圆</span>
+          <span class="element-icon">○</span>
           <span class="element-name">{{ t('elementList.defaults.innerCircleIndex', { index: index + 1 }) }}</span>
           <div class="element-actions show-always" @click.stop>
-            <button class="action-btn delete-btn" @click="deleteElement('circle', index)" title="删除">×</button>
+            <button class="action-btn delete-btn" @click="deleteElement('circle', index)" :title="t('elementList.buttons.delete')">×</button>
           </div>
         </div>
         <div class="element-item"
@@ -117,10 +117,10 @@
              :key="`image-${imageInfo.index}`"
              :class="{ active: selectedElement === `image-${imageInfo.index}` }"
              @click.stop="selectElement(`image-${imageInfo.index}`, 'image', imageInfo.index)">
-          <span class="element-icon">图</span>
+          <span class="element-icon">▧</span>
           <span class="element-name">{{ t('elementList.defaults.imageIndex', { index: imageInfo.index + 1 }) }}</span>
           <div class="element-actions show-always" @click.stop>
-            <button class="action-btn delete-btn" @click="deleteElement('image', imageInfo.index)" title="删除">×</button>
+            <button class="action-btn delete-btn" @click="deleteElement('image', imageInfo.index)" :title="t('elementList.buttons.delete')">×</button>
           </div>
         </div>
         <div class="element-item"
@@ -128,10 +128,10 @@
              :key="line.id || `line-${index}`"
              :class="{ active: selectedElement === `line-${index}` }"
              @click.stop="selectElement(`line-${index}`, 'line', index)">
-          <span class="element-icon">{{ line.type === 'vertical' ? '纵' : '横' }}</span>
+          <span class="element-icon">{{ line.type === 'vertical' ? '↕' : '↔' }}</span>
           <span class="element-name">{{ line.type === 'vertical' ? t('elementList.defaults.verticalLineIndex', { index: index + 1 }) : t('elementList.defaults.horizontalLineIndex', { index: index + 1 }) }}</span>
           <div class="element-actions show-always" @click.stop>
-            <button class="action-btn delete-btn" @click="deleteElement('line', index)" title="删除">×</button>
+            <button class="action-btn delete-btn" @click="deleteElement('line', index)" :title="t('elementList.buttons.delete')">×</button>
           </div>
         </div>
         <div class="element-item"
@@ -142,14 +142,14 @@
           <span class="element-icon wide">SVG</span>
           <span class="element-name">{{ svg.name || t('elementList.defaults.svgIndex', { index: index + 1 }) }}</span>
           <div class="element-actions show-always" @click.stop>
-            <button class="action-btn delete-btn" @click="deleteElement('svg', index)" title="删除">×</button>
+            <button class="action-btn delete-btn" @click="deleteElement('svg', index)" :title="t('elementList.buttons.delete')">×</button>
           </div>
         </div>
         <div class="element-item"
              v-if="agingEffect.applyAging"
              :class="{ active: selectedElement === 'aging' }"
              @click.stop="selectElement('aging', 'aging', 0)">
-          <span class="element-icon">旧</span>
+          <span class="element-icon wide">Fx</span>
           <span class="element-name">{{ t('elementList.elements.agingEffect') }}</span>
           <span class="element-type">{{ agingEffect.applyAging ? t('elementList.status.enabled') : t('elementList.status.disabled') }}</span>
         </div>
@@ -157,7 +157,7 @@
              v-if="roughEdge.drawRoughEdge"
              :class="{ active: selectedElement === 'roughEdge' }"
              @click.stop="selectElement('roughEdge', 'roughEdge', 0)">
-          <span class="element-icon">边</span>
+          <span class="element-icon">≋</span>
           <span class="element-name">{{ t('elementList.elements.roughEdge') }}</span>
           <span class="element-type">{{ roughEdge.drawRoughEdge ? t('elementList.status.enabled') : t('elementList.status.disabled') }}</span>
         </div>
@@ -165,7 +165,7 @@
              v-if="securityPattern.openSecurityPattern"
              :class="{ active: selectedElement === 'security' }"
              @click.stop="selectElement('security', 'security', 0)">
-          <span class="element-icon">防</span>
+          <span class="element-icon">S</span>
           <span class="element-name">{{ t('elementList.elements.securityPattern') }}</span>
           <span class="element-type">{{ securityPattern.openSecurityPattern ? t('elementList.status.enabled') : t('elementList.status.disabled') }}</span>
         </div>
@@ -178,7 +178,7 @@
              :key="`company-${index}`"
              :class="{ active: selectedElement === `company-${index}` }"
              @click.stop="selectElement(`company-${index}`, 'company', index)">
-          <span class="element-icon">文</span>
+          <span class="element-icon wide">Aa</span>
           <span class="element-name">
             {{ company.companyName || t('elementList.defaults.companyNameIndex', { index: index + 1 }) }}
           </span>
@@ -191,7 +191,7 @@
              :key="`stampType-${index}`"
              :class="{ active: selectedElement === `stampType-${index}` }"
              @click.stop="selectElement(`stampType-${index}`, 'stampType', index)">
-          <span class="element-icon">类</span>
+          <span class="element-icon">T</span>
           <span class="element-name">
             {{ type.stampType || t('elementList.defaults.stampTypeIndex', { index: index + 1 }) }}
           </span>
@@ -206,7 +206,7 @@
           :class="{ active: selectedElement === `code-${index}` }"
           @click.stop="selectElement(`code-${index}`, 'code', index)"
         >
-          <span class="element-icon">码</span>
+          <span class="element-icon">#</span>
           <span
             class="element-name"
           >
@@ -220,12 +220,12 @@
           :class="{ active: selectedElement === `taxNumber-${index}` }"
           @click.stop="selectElement(`taxNumber-${index}`, 'taxNumber', index)"
         >
-          <span class="element-icon">中</span>
+          <span class="element-icon">C</span>
           <span class="element-name">
             {{ item.code || t('elementList.elements.taxNumber') + ' ' + (index + 1) }}
           </span>
         </div>
-        <p v-if="textElementCount === 0" class="empty-state">暂无文字元素</p>
+        <p v-if="textElementCount === 0" class="empty-state">{{ t('studio.editor.empty.text') }}</p>
       </div>
 
       <!-- 图形元素 -->
@@ -234,7 +234,7 @@
              v-if="drawStar.drawStar"
              :class="{ active: selectedElement === 'star' }"
              @click.stop="selectElement('star', 'star', 0)">
-          <span class="element-icon">星</span>
+          <span class="element-icon">★</span>
           <span class="element-name">{{ t('elementList.elements.star') }}</span>
           <span class="element-type">{{ drawStar.drawStar ? t('elementList.status.enabled') : t('elementList.status.disabled') }}</span>
           <div class="element-actions show-always" @click.stop>
@@ -246,10 +246,10 @@
              :key="`circle-${index}`"
              :class="{ active: selectedElement === `circle-${index}` }"
              @click.stop="selectElement(`circle-${index}`, 'circle', index)">
-          <span class="element-icon">圆</span>
+          <span class="element-icon">○</span>
           <span class="element-name">{{ t('elementList.defaults.innerCircleIndex', { index: index + 1 }) }}</span>
           <div class="element-actions show-always" @click.stop>
-            <button class="action-btn delete-btn" @click="deleteElement('circle', index)" title="删除">×</button>
+            <button class="action-btn delete-btn" @click="deleteElement('circle', index)" :title="t('elementList.buttons.delete')">×</button>
           </div>
         </div>
         <div class="element-item"
@@ -257,10 +257,10 @@
              :key="`image-figure-${imageInfo.index}`"
              :class="{ active: selectedElement === `image-${imageInfo.index}` }"
              @click.stop="selectElement(`image-${imageInfo.index}`, 'image', imageInfo.index)">
-          <span class="element-icon">图</span>
+          <span class="element-icon">▧</span>
           <span class="element-name">{{ t('elementList.defaults.imageIndex', { index: imageInfo.index + 1 }) }}</span>
           <div class="element-actions show-always" @click.stop>
-            <button class="action-btn delete-btn" @click="deleteElement('image', imageInfo.index)" title="删除">×</button>
+            <button class="action-btn delete-btn" @click="deleteElement('image', imageInfo.index)" :title="t('elementList.buttons.delete')">×</button>
           </div>
         </div>
         <div class="element-item"
@@ -268,10 +268,10 @@
              :key="`figure-line-${line.id || index}`"
              :class="{ active: selectedElement === `line-${index}` }"
              @click.stop="selectElement(`line-${index}`, 'line', index)">
-          <span class="element-icon">{{ line.type === 'vertical' ? '纵' : '横' }}</span>
+          <span class="element-icon">{{ line.type === 'vertical' ? '↕' : '↔' }}</span>
           <span class="element-name">{{ line.type === 'vertical' ? t('elementList.defaults.verticalLineIndex', { index: index + 1 }) : t('elementList.defaults.horizontalLineIndex', { index: index + 1 }) }}</span>
           <div class="element-actions show-always" @click.stop>
-            <button class="action-btn delete-btn" @click="deleteElement('line', index)" title="删除">×</button>
+            <button class="action-btn delete-btn" @click="deleteElement('line', index)" :title="t('elementList.buttons.delete')">×</button>
           </div>
         </div>
         <div class="element-item"
@@ -282,10 +282,10 @@
           <span class="element-icon wide">SVG</span>
           <span class="element-name">{{ svg.name || t('elementList.defaults.svgIndex', { index: index + 1 }) }}</span>
           <div class="element-actions show-always" @click.stop>
-            <button class="action-btn delete-btn" @click="deleteElement('svg', index)" title="删除">×</button>
+            <button class="action-btn delete-btn" @click="deleteElement('svg', index)" :title="t('elementList.buttons.delete')">×</button>
           </div>
         </div>
-        <p v-if="figureElementCount === 0" class="empty-state">暂无图形元素</p>
+        <p v-if="figureElementCount === 0" class="empty-state">{{ t('studio.editor.empty.figure') }}</p>
       </div>
 
       <!-- 效果元素 -->
@@ -294,7 +294,7 @@
              v-if="agingEffect.applyAging"
              :class="{ active: selectedElement === 'aging' }"
              @click.stop="selectElement('aging', 'aging', 0)">
-          <span class="element-icon">旧</span>
+          <span class="element-icon wide">Fx</span>
           <span class="element-name">{{ t('elementList.elements.agingEffect') }}</span>
           <span class="element-type">{{ agingEffect.applyAging ? t('elementList.status.enabled') : t('elementList.status.disabled') }}</span>
         </div>
@@ -302,7 +302,7 @@
              v-if="roughEdge.drawRoughEdge"
              :class="{ active: selectedElement === 'roughEdge' }"
              @click.stop="selectElement('roughEdge', 'roughEdge', 0)">
-          <span class="element-icon">边</span>
+          <span class="element-icon">≋</span>
           <span class="element-name">{{ t('elementList.elements.roughEdge') }}</span>
           <span class="element-type">{{ roughEdge.drawRoughEdge ? t('elementList.status.enabled') : t('elementList.status.disabled') }}</span>
         </div>
@@ -310,11 +310,11 @@
              v-if="securityPattern.openSecurityPattern"
              :class="{ active: selectedElement === 'security' }"
              @click.stop="selectElement('security', 'security', 0)">
-          <span class="element-icon">防</span>
+          <span class="element-icon">S</span>
           <span class="element-name">{{ t('elementList.elements.securityPattern') }}</span>
           <span class="element-type">{{ securityPattern.openSecurityPattern ? t('elementList.status.enabled') : t('elementList.status.disabled') }}</span>
         </div>
-        <p v-if="effectElementCount === 0" class="empty-state">暂无效果元素</p>
+        <p v-if="effectElementCount === 0" class="empty-state">{{ t('studio.editor.empty.effect') }}</p>
       </div>
     </div>
   </div>
@@ -453,10 +453,10 @@ let undoTimer: number | undefined
 
 const buildDeleteLabel = (elementType: string, index: number) => {
   const map: Record<string, string> = {
-    company: '公司文字', stampType: '印章类型', code: '编码', taxNumber: '中间文字',
-    circle: '内圆', image: '图片', line: '线条', svg: 'SVG', star: '中心图形'
+    company: 'company', stampType: 'stampType', code: 'code', taxNumber: 'taxNumber',
+    circle: 'circle', image: 'image', line: 'line', svg: 'svg', star: 'star'
   }
-  const base = map[elementType] || '元素'
+  const base = t(`studio.editor.selection.${map[elementType] || 'element'}`)
   return index > 0 ? `${base} ${index + 1}` : base
 }
 

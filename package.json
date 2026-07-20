@@ -2,7 +2,7 @@
   "name": "drawstamp-studio",
   "private": false,
   "version": "0.6.0",
-  "description": "DrawStamp Studio - online electronic stamp workspace",
+  "description": "Browser-local online stamp maker and electronic seal editor with image extraction and PNG, SVG, and JPEG export",
   "keywords": [
     "stamp",
     "drawstamp",
@@ -10,6 +10,8 @@
     "印章制作",
     "电子印章",
     "stamp maker",
+    "online stamp maker",
+    "electronic stamp editor",
     "stamp generator",
     "digital seal",
     "印章生成",

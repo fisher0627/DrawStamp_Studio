@@ -1,7 +1,7 @@
 <template>
   <div class="font-picker">
     <div class="font-picker-header">
-      <span>{{ label }}</span>
+      <span>{{ displayLabel }}</span>
       <span class="font-current">{{ getFontDisplayName(modelValue) }}</span>
     </div>
 
@@ -38,21 +38,22 @@
         class="font-input"
         type="text"
         :value="modelValue"
-        placeholder="手动输入字体名"
+        :placeholder="t('studio.editor.font.placeholder')"
         @input="inputFont(($event.target as HTMLInputElement).value)"
         @change="updateFont(($event.target as HTMLInputElement).value)"
       />
     </div>
 
     <div class="font-preview" :style="{ fontFamily: getFontCssFamily(modelValue) }">
-      <span>预览</span>
-      <strong>{{ previewText }}</strong>
+      <span>{{ t('studio.editor.font.preview') }}</span>
+      <strong>{{ displayPreviewText }}</strong>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import {
   getFontDisplayName,
   getCanonicalFontName,
@@ -60,15 +61,16 @@ import {
   getRecommendedStampFonts
 } from '../../../utils/fontUtils'
 
-const props = withDefaults(defineProps<{
+const props = defineProps<{
   modelValue: string
   fonts: string[]
   label?: string
   previewText?: string
-}>(), {
-  label: '字体',
-  previewText: '印章文字 012345'
-})
+}>()
+
+const { t } = useI18n()
+const displayLabel = computed(() => props.label || t('studio.editor.font.label'))
+const displayPreviewText = computed(() => props.previewText || t('studio.editor.font.previewText'))
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void

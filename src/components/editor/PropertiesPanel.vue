@@ -16,26 +16,26 @@
       </div>
       <div class="summary-stats">
         <span>
-          <small>尺寸</small>
+          <small>{{ t('studio.editor.properties.size') }}</small>
           <strong>{{ stampSizeLabel }}</strong>
         </span>
         <span>
-          <small>形状</small>
+          <small>{{ t('studio.editor.properties.shape') }}</small>
           <strong>{{ shapeLabel }}</strong>
         </span>
         <span>
-          <small>元素</small>
+          <small>{{ t('studio.editor.properties.elements') }}</small>
           <strong>{{ elementCount }}</strong>
         </span>
       </div>
       <div class="summary-color-row">
-        <span>印章色</span>
+        <span>{{ t('studio.editor.properties.color') }}</span>
         <i :style="{ backgroundColor: primaryColor }"></i>
         <strong>{{ primaryColorLabel }}</strong>
       </div>
     </div>
     <div class="panel-content">
-      <div v-if="showCategoryControls" class="settings-segment" role="tablist" aria-label="属性设置分类">
+      <div v-if="showCategoryControls" class="settings-segment" role="tablist" :aria-label="t('studio.editor.properties.categoryAria')">
         <button
           type="button"
           :class="{ active: activeSettingsTab === 'basic' }"
@@ -43,7 +43,7 @@
           :aria-selected="activeSettingsTab === 'basic'"
           @click="switchSettingsTab('basic')"
         >
-          基础设置
+          {{ t('studio.editor.properties.basicTab') }}
         </button>
         <button
           type="button"
@@ -52,12 +52,12 @@
           :aria-selected="activeSettingsTab === 'advanced'"
           @click="switchSettingsTab('advanced')"
         >
-          高级设置
+          {{ t('studio.editor.properties.advancedTab') }}
         </button>
       </div>
       <div v-else class="context-focus-strip">
-        <span>当前对象参数</span>
-        <button type="button" @click="handleCollapseContext">回到基础</button>
+        <span>{{ t('studio.editor.properties.currentObject') }}</span>
+        <button type="button" @click="handleCollapseContext">{{ t('studio.editor.properties.backToBasic') }}</button>
       </div>
       <EditorControls
         v-if="drawStampUtils"
@@ -121,21 +121,22 @@ const currentConfig = computed<IDrawStampConfig | null>(() => {
 
 const selectedLabel = computed(() => {
   const typeMap: Record<string, string> = {
-    basic: '基础',
-    company: '公司文字',
-    stampType: '印章类型',
-    code: '编码',
-    taxNumber: '中间文字',
-    star: '中心图形',
-    circle: '内圆',
-    image: '图片',
-    svg: 'SVG',
-    aging: '做旧',
-    roughEdge: '毛边',
-    security: '防伪',
-    line: '线条'
+    basic: 'basic',
+    company: 'company',
+    stampType: 'stampType',
+    code: 'code',
+    taxNumber: 'taxNumber',
+    star: 'star',
+    circle: 'circle',
+    image: 'image',
+    svg: 'svg',
+    aging: 'aging',
+    roughEdge: 'roughEdge',
+    security: 'security',
+    line: 'line'
   }
-  const label = typeMap[props.elementType || 'basic'] || '对象'
+  const labelKey = typeMap[props.elementType || 'basic']
+  const label = labelKey ? t(`studio.editor.selection.${labelKey}`) : t('studio.editor.properties.object')
   const indexLabel = props.elementIndex && props.elementIndex > 0 ? ` ${props.elementIndex + 1}` : ''
   return `${label}${indexLabel}`
 })
@@ -148,21 +149,21 @@ const switchSettingsTab = (tab: 'basic' | 'advanced') => {
 
 const selectedIcon = computed(() => {
   const iconMap: Record<string, string> = {
-    basic: '基',
-    company: '文',
-    stampType: '类',
-    code: '码',
-    taxNumber: '中',
-    star: '星',
-    circle: '圆',
-    image: '图',
+    basic: '◎',
+    company: 'Aa',
+    stampType: 'T',
+    code: '#',
+    taxNumber: 'C',
+    star: '★',
+    circle: '○',
+    image: '▧',
     svg: 'SVG',
-    aging: '旧',
-    roughEdge: '边',
-    security: '防',
-    line: '线'
+    aging: 'Fx',
+    roughEdge: '≋',
+    security: 'S',
+    line: '━'
   }
-  return iconMap[props.elementType || 'basic'] || '项'
+  return iconMap[props.elementType || 'basic'] || '•'
 })
 
 const stampSizeLabel = computed(() => {
@@ -174,13 +175,13 @@ const stampSizeLabel = computed(() => {
 const shapeLabel = computed(() => {
   const shape = currentConfig.value?.company?.shape || 'ellipse'
   const labels: Record<string, string> = {
-    ellipse: '椭圆/圆形',
-    rectangle: '矩形',
-    rhombus: '菱形',
-    triangle: '三角形',
-    organic: '不规则'
+    ellipse: 'ellipse',
+    rectangle: 'rectangle',
+    rhombus: 'rhombus',
+    triangle: 'triangle',
+    organic: 'organic'
   }
-  return labels[shape] || '自定义'
+  return labels[shape] ? t(`stamp.basic.shapeOptions.${labels[shape]}`) : t('studio.editor.properties.custom')
 })
 
 const elementCount = computed(() => {
@@ -206,7 +207,7 @@ const elementCount = computed(() => {
 const primaryColor = computed(() => currentConfig.value?.primaryColor || DEFAULT_STAMP_RED)
 const primaryColorLabel = computed(() => {
   const value = primaryColor.value.trim()
-  return value.startsWith('#') ? value.toUpperCase() : '自定义色'
+  return value.startsWith('#') ? value.toUpperCase() : t('studio.editor.properties.customColor')
 })
 
 const handleUpdateDrawStamp = (

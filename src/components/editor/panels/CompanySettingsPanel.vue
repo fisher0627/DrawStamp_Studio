@@ -49,7 +49,6 @@
               :model-value="company.fontFamily"
               :fonts="fonts"
               :preview-text="company.companyName || '示例科技有限公司'"
-              label="字体"
               @update:model-value="value => updateCompanyFont(index, value)"
             />
             <div class="text-toolbar">

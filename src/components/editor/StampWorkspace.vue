@@ -11,7 +11,7 @@
       <div class="legal-content export-dialog-content">
         <section class="export-preview-panel">
           <div class="export-preview-card" :class="{ checker: selectedFormat === 'png' && !useWhitePngBackground }">
-            <img v-if="exportPreviewUrl" :src="exportPreviewUrl" alt="导出预览" />
+            <img v-if="exportPreviewUrl" :src="exportPreviewUrl" :alt="t('studio.editor.previewAlt')" />
             <div v-else class="export-preview-empty" aria-busy="true" :aria-label="t('homepage.canvas.previewGenerating')">
               <span class="skeleton-stamp"></span>
             </div>
@@ -25,7 +25,7 @@
         <section class="export-settings-panel">
           <div class="export-section">
             <div class="export-section-title">
-              <label>文件格式</label>
+              <label>{{ t('studio.editor.fileFormat') }}</label>
               <span>{{ selectedFormatInfo?.tip }}</span>
             </div>
             <div class="format-options">
@@ -42,7 +42,7 @@
                   <span class="format-name">{{ format.name }}</span>
                   <span class="format-desc">{{ format.desc }}</span>
                 </span>
-                <em v-if="format.value === 'png'">推荐</em>
+                <em v-if="format.value === 'png'">{{ t('studio.editor.recommended') }}</em>
               </button>
             </div>
           </div>
@@ -61,7 +61,7 @@
 
           <div class="export-section">
             <div class="export-section-title">
-              <label>导出倍率</label>
+              <label>{{ t('studio.editor.exportScale') }}</label>
               <span>{{ exportSizeLabel }}</span>
             </div>
             <div class="scale-options">
@@ -80,24 +80,24 @@
 
           <label v-if="selectedFormat === 'png'" class="export-checkbox">
             <input type="checkbox" v-model="useWhitePngBackground" />
-            <span>PNG 使用白色背景</span>
+            <span>{{ t('studio.editor.pngWhiteBackground') }}</span>
           </label>
 
           <div class="export-section">
             <div class="export-section-title">
-              <label>文件名</label>
-              <span>自动补充扩展名</span>
+              <label>{{ t('studio.editor.filename') }}</label>
+              <span>{{ t('studio.editor.autoExtension') }}</span>
             </div>
             <input
               v-model="exportFilename"
               type="text"
               class="export-name-input"
-              placeholder="自动使用公司名"
+              :placeholder="t('studio.editor.filenamePlaceholder')"
             />
           </div>
 
           <details class="export-advanced">
-            <summary>更多尺寸设置</summary>
+            <summary>{{ t('studio.editor.moreSizeSettings') }}</summary>
             <div class="size-setting">
               <div class="size-setting-header">
                 <label>{{ t('stamp.exportFormat.sizeTitle') }}</label>
@@ -157,7 +157,9 @@
       </div>
       <div class="dialog-buttons">
         <button @click="closeFormatDialog" class="cancel-button">{{ t('stamp.exportFormat.cancel') }}</button>
-        <button @click="confirmExport" class="confirm-button">下载 {{ selectedFormat.toUpperCase() }}</button>
+        <button @click="confirmExport" class="confirm-button">
+          {{ t('studio.editor.downloadFormat', { format: selectedFormat.toUpperCase() }) }}
+        </button>
       </div>
     </div>
   </div>
@@ -269,6 +271,7 @@
         </div>
       </div>
       <div class="toolbar-actions">
+        <LanguageSwitcher />
         <button class="toolbar-btn compact" type="button" @click="openExtractorDialog" :title="t('homepage.canvas.extractStampTitle')">
           <span class="toolbar-icon">印</span>
           <span class="toolbar-label">{{ t('homepage.canvas.extractStamp') }}</span>
@@ -319,7 +322,7 @@
             </button>
 
             <div v-if="isTemplatePickerOpen" class="template-menu">
-              <div class="template-category-tabs" aria-label="模板分类">
+              <div class="template-category-tabs" :aria-label="t('studio.editor.templateCategoryAria')">
                 <button
                   v-for="category in templatePresetCategories"
                   :key="category.key"
@@ -503,69 +506,66 @@
   <section class="seo-content" aria-labelledby="seo-title">
     <div class="seo-hero">
       <div class="seo-brand-lockup">
-        <img src="/logo-mark.svg" alt="DrawStamp Studio 电子印章工作台标志" width="52" height="52" loading="lazy" />
+        <img src="/logo-mark.svg" alt="DrawStamp Studio" width="52" height="52" loading="lazy" />
         <div>
           <strong>DrawStamp Studio</strong>
           <span>Browser-local electronic stamp workspace</span>
         </div>
       </div>
       <p class="seo-eyebrow">Browser Local Stamp Editor</p>
-      <h2 id="seo-title">在线电子印章生成、图片提取与透明 PNG 导出</h2>
-      <p>
-        DrawStamp Studio 是一个浏览器本地运行的在线电子印章工作台，可生成圆章、椭圆章、合同专用章、财务专用章和发票专用章图片，并支持从扫描件或照片中提取红色印章。
-        文字、字体、边框、五角星、内圈、编码和图片元素都可以直接编辑，导出支持透明 PNG、白底 PNG、SVG 和 JPEG；核心图片处理不上传服务器，仅适合学习、测试、设计预览和合规授权场景。
-      </p>
-      <div class="seo-meta" aria-label="核心特性">
-        <span>本地处理</span>
-        <span>透明 PNG</span>
-        <span>SVG / JPEG</span>
-        <span>模板草稿</span>
+      <h2 id="seo-title">{{ t('studio.seoContent.title') }}</h2>
+      <p>{{ t('studio.seoContent.intro') }}</p>
+      <div class="seo-meta" :aria-label="t('studio.seoContent.featuresAria')">
+        <span>{{ t('studio.seoContent.features.local') }}</span>
+        <span>{{ t('studio.seoContent.features.transparent') }}</span>
+        <span>{{ t('studio.seoContent.features.formats') }}</span>
+        <span>{{ t('studio.seoContent.features.drafts') }}</span>
       </div>
     </div>
 
     <div class="seo-grid">
       <article>
         <span>01</span>
-        <h3>电子印章生成器</h3>
-        <p>内置常用模板和精细参数面板，支持公司名称、印章类型、编码、税号、中间文字等内容编辑，适合制作测试、演示和合规授权场景下的印章图片。</p>
+        <h3>{{ t('studio.seoContent.cards.createTitle') }}</h3>
+        <p>{{ t('studio.seoContent.cards.createText') }}</p>
       </article>
       <article>
         <span>02</span>
-        <h3>图片提取透明印章</h3>
-        <p>支持拖拽上传印章扫描件或照片，在浏览器本地提取红色印章区域，输出透明背景结果，不需要把合同、票据或图片上传到服务器。</p>
+        <h3>{{ t('studio.seoContent.cards.extractTitle') }}</h3>
+        <p>{{ t('studio.seoContent.cards.extractText') }}</p>
       </article>
       <article>
         <span>03</span>
-        <h3>PNG / SVG / JPEG 导出</h3>
-        <p>导出面板支持透明 PNG、白底 PNG、SVG 和 JPEG，并可调整导出倍率、尺寸和文件名，方便插入 Word、PDF、PPT 或内部测试文档。</p>
+        <h3>{{ t('studio.seoContent.cards.exportTitle') }}</h3>
+        <p>{{ t('studio.seoContent.cards.exportText') }}</p>
       </article>
     </div>
 
-    <div class="seo-faq" aria-label="常见问题">
-      <h2>常见问题</h2>
+    <div class="seo-faq" :aria-label="t('studio.seoContent.faqAria')">
+      <h2>{{ t('studio.seoContent.faqTitle') }}</h2>
       <details open>
-        <summary>DrawStamp Studio 会上传我的印章图片吗？</summary>
-        <p>不会。印章绘制、图片提取、模板草稿和导出都在浏览器端完成，项目没有为这些核心流程配置后端上传接口。</p>
+        <summary>{{ t('studio.seoContent.faq.uploadQ') }}</summary>
+        <p>{{ t('studio.seoContent.faq.uploadA') }}</p>
       </details>
       <details>
-        <summary>可以导出透明背景印章吗？</summary>
-        <p>可以。推荐使用 PNG 格式并关闭白底选项，导出的透明 PNG 可用于文档排版、演示稿或内部测试素材。</p>
+        <summary>{{ t('studio.seoContent.faq.transparentQ') }}</summary>
+        <p>{{ t('studio.seoContent.faq.transparentA') }}</p>
       </details>
       <details>
-        <summary>这个工具适合真实盖章或伪造文件吗？</summary>
-        <p>不适合。本项目仅用于学习、测试、设计预览和合规授权场景，请勿用于伪造合同、公文、票据或任何违法用途。</p>
+        <summary>{{ t('studio.seoContent.faq.safetyQ') }}</summary>
+        <p>{{ t('studio.seoContent.faq.safetyA') }}</p>
       </details>
       <details>
-        <summary>可以保存和继续编辑模板吗？</summary>
-        <p>可以。当前配置可以导出为 JSON 模板，浏览器也会保存本地草稿，方便刷新后继续编辑。</p>
+        <summary>{{ t('studio.seoContent.faq.saveQ') }}</summary>
+        <p>{{ t('studio.seoContent.faq.saveA') }}</p>
       </details>
     </div>
 
-    <nav class="seo-links" aria-label="站点说明链接">
-      <RouterLink to="/about">关于项目</RouterLink>
-      <RouterLink to="/privacy">隐私政策</RouterLink>
-      <RouterLink to="/terms">服务条款</RouterLink>
-      <RouterLink to="/contact">联系反馈</RouterLink>
+    <nav class="seo-links" :aria-label="t('studio.nav.aria')">
+      <RouterLink to="/about">{{ t('studio.nav.about') }}</RouterLink>
+      <RouterLink to="/privacy">{{ t('studio.nav.privacy') }}</RouterLink>
+      <RouterLink to="/terms">{{ t('studio.nav.terms') }}</RouterLink>
+      <RouterLink to="/contact">{{ t('studio.nav.contact') }}</RouterLink>
     </nav>
   </section>
 </template>
@@ -580,6 +580,7 @@ import { IDrawStampConfig, IDrawImage } from '../../DrawStampTypes'
 import ElementList from './ElementList.vue'
 import PropertiesPanel from './PropertiesPanel.vue'
 import StampExtractor from './StampExtractor.vue'
+import LanguageSwitcher from '../LanguageSwitcher.vue'
 import { useStampStore } from '../../stores/stampStore'
 import type { ExtractStampResult } from '../../utils/extractStampImage'
 import { DEFAULT_STAMP_RED } from '../../Constants'
@@ -594,7 +595,7 @@ const emit = defineEmits<{
   (e: 'selectElement', payload: { id: string; type: string; index: number }): void
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const stampStore = useStampStore()
 const appVersion = __APP_VERSION__
 const onlineUrl = 'https://wosp.cc.cd/'
@@ -702,9 +703,9 @@ const templateCategories = ref('')
 const pendingTemplateConfig = ref<IDrawStampConfig | null>(null)
 
 const exportFormats = computed(() => [
-  { value: 'png' as const, name: 'PNG', icon: 'P', desc: '透明背景，适合文档和打印', tip: '最常用' },
-  { value: 'svg' as const, name: 'SVG', icon: 'S', desc: '矢量格式，适合设计软件', tip: '可放大' },
-  { value: 'jpeg' as const, name: 'JPEG', icon: 'J', desc: '白底图片，适合普通分享', tip: '体积小' }
+  { value: 'png' as const, name: 'PNG', icon: 'P', desc: t('studio.editor.formats.pngDesc'), tip: t('studio.editor.formats.pngTip') },
+  { value: 'svg' as const, name: 'SVG', icon: 'S', desc: t('studio.editor.formats.svgDesc'), tip: t('studio.editor.formats.svgTip') },
+  { value: 'jpeg' as const, name: 'JPEG', icon: 'J', desc: t('studio.editor.formats.jpegDesc'), tip: t('studio.editor.formats.jpegTip') }
 ])
 
 const selectedFormatInfo = computed(() => {
@@ -723,26 +724,26 @@ const exportSummary = computed(() => {
 
 const exportBackgroundLabel = computed(() => {
   if (selectedFormat.value === 'png') {
-    return useWhitePngBackground.value ? '白色背景' : '透明背景'
+    return useWhitePngBackground.value ? t('studio.editor.whiteBackground') : t('studio.editor.transparentBackground')
   }
   if (selectedFormat.value === 'svg') {
-    return '矢量导出'
+    return t('studio.editor.vectorExport')
   }
-  return `JPEG 质量 ${jpegQuality.value}%`
+  return t('studio.editor.jpegQuality', { quality: jpegQuality.value })
 })
 
 const draftStatusLabel = computed(() => {
-  if (draftSaveState.value === 'saving') return '保存中'
-  if (draftSaveState.value === 'failed') return '未保存'
-  if (!draftSavedAt.value) return hasLocalDraft.value ? '已恢复' : '自动保存'
+  if (draftSaveState.value === 'saving') return t('studio.editor.draft.saving')
+  if (draftSaveState.value === 'failed') return t('studio.editor.draft.unsaved')
+  if (!draftSavedAt.value) return hasLocalDraft.value ? t('studio.editor.draft.restored') : t('studio.editor.draft.autoSave')
 
   const savedDate = new Date(draftSavedAt.value)
-  const time = savedDate.toLocaleTimeString('zh-CN', {
+  const time = savedDate.toLocaleTimeString(locale.value === 'zh' ? 'zh-CN' : 'en', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false
   })
-  return `已保存 ${time}`
+  return t('studio.editor.draft.savedAt', { time })
 })
 
 const draftStatusClass = computed(() => ({
@@ -756,13 +757,13 @@ const formatDraftTime = (timestamp: number) => {
   const date = new Date(timestamp)
   const now = new Date()
   const isToday = date.toDateString() === now.toDateString()
-  const time = date.toLocaleTimeString('zh-CN', {
+  const time = date.toLocaleTimeString(locale.value === 'zh' ? 'zh-CN' : 'en', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false
   })
-  if (isToday) return `今天 ${time}`
-  return date.toLocaleString('zh-CN', {
+  if (isToday) return t('studio.editor.draft.todayAt', { time })
+  return date.toLocaleString(locale.value === 'zh' ? 'zh-CN' : 'en', {
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
@@ -789,24 +790,24 @@ const rulerMarks = computed(() => {
 })
 
 const selectedElementLabel = computed(() => {
-  if (!selectedElementType.value) return '已选中：基础设置'
   const typeMap: Record<string, string> = {
-    basic: '基础设置',
-    company: '公司文字',
-    stampType: '印章类型',
-    code: '编码',
-    taxNumber: '中间文字',
-    star: '中心图形',
-    circle: '内圆',
-    image: '图片',
-    svg: 'SVG 图形',
-    aging: '做旧效果',
-    roughEdge: '毛边效果',
-    security: '防伪纹路',
-    line: '线条'
+    basic: 'basic',
+    company: 'company',
+    stampType: 'stampType',
+    code: 'code',
+    taxNumber: 'taxNumber',
+    star: 'star',
+    circle: 'circle',
+    image: 'image',
+    svg: 'svg',
+    aging: 'aging',
+    roughEdge: 'roughEdge',
+    security: 'security',
+    line: 'line'
   }
-  const label = typeMap[selectedElementType.value] || '元素'
-  return `已选中：${label}${selectedElementIndex.value > 0 ? ` ${selectedElementIndex.value + 1}` : ''}`
+  const key = selectedElementType.value ? typeMap[selectedElementType.value] || 'element' : 'basic'
+  const label = `${t(`studio.editor.selection.${key}`)}${selectedElementIndex.value > 0 ? ` ${selectedElementIndex.value + 1}` : ''}`
+  return t('studio.editor.selection.selected', { name: label })
 })
 
 const showSelectionFrame = computed(() => {
@@ -860,41 +861,49 @@ const scaleOptions = [
   { value: 4 as const, label: '4x' }
 ]
 
-const canvasBackgroundOptions = [
-  { value: 'grid' as const, label: '淡网格背景', icon: '▦' },
-  { value: 'paper' as const, label: '纸张白底', icon: '□' },
-  { value: 'checker' as const, label: '透明棋盘格', icon: '▧' }
-]
+const canvasBackgroundOptions = computed(() => [
+  { value: 'grid' as const, label: t('studio.editor.backgrounds.grid'), icon: '▦' },
+  { value: 'paper' as const, label: t('studio.editor.backgrounds.paper'), icon: '□' },
+  { value: 'checker' as const, label: t('studio.editor.backgrounds.checker'), icon: '▧' }
+])
 
-const templatePresetCategories = [
-  { key: 'all' as const, label: '全部' },
-  { key: 'general' as const, label: '通用' },
-  { key: 'finance' as const, label: '财务' },
-  { key: 'business' as const, label: '业务' }
-]
+type TemplatePresetKey = 'contract' | 'official' | 'finance' | 'invoice' | 'receipt' | 'business' | 'quotation' | 'clean'
+type TemplateCategoryKey = 'all' | 'general' | 'finance' | 'business'
 
-const templatePresets = [
-  { key: 'contract' as const, category: 'general' as const, name: '合同专用章', desc: '圆章 · 公司名 · 五角星', mark: '合', badge: '常用', shape: 'circle' },
-  { key: 'official' as const, category: 'general' as const, name: '公司公章', desc: '圆章 · 标准公章布局', mark: '公', badge: '标准', shape: 'circle' },
-  { key: 'finance' as const, category: 'finance' as const, name: '财务专用章', desc: '椭圆章 · 内圈 · 编码', mark: '财', badge: '财务', shape: 'ellipse' },
-  { key: 'invoice' as const, category: 'finance' as const, name: '发票专用章', desc: '椭圆章 · 中间文字 · 编码', mark: '票', badge: '税务', shape: 'ellipse' },
-  { key: 'receipt' as const, category: 'finance' as const, name: '收讫专用章', desc: '椭圆章 · 收款确认', mark: '收', badge: '收款', shape: 'ellipse' },
-  { key: 'business' as const, category: 'business' as const, name: '业务专用章', desc: '圆章 · 业务办理', mark: '业', badge: '业务', shape: 'circle' },
-  { key: 'quotation' as const, category: 'business' as const, name: '报价专用章', desc: '椭圆章 · 报价文件', mark: '价', badge: '报价', shape: 'ellipse' },
-  { key: 'clean' as const, category: 'general' as const, name: '干净空白章', desc: '重置为清爽基础版', mark: '新', badge: '空白', shape: 'circle' }
-]
+const templatePresetCategories = computed(() => [
+  { key: 'all' as const, label: t('studio.editor.templateCategories.all') },
+  { key: 'general' as const, label: t('studio.editor.templateCategories.general') },
+  { key: 'finance' as const, label: t('studio.editor.templateCategories.finance') },
+  { key: 'business' as const, label: t('studio.editor.templateCategories.business') }
+])
 
-type TemplatePresetKey = typeof templatePresets[number]['key']
-type TemplateCategoryKey = typeof templatePresetCategories[number]['key']
+const templatePresets = computed(() => [
+  { key: 'contract' as const, category: 'general' as const, mark: '合', shape: 'circle', ...templateCopy('contract') },
+  { key: 'official' as const, category: 'general' as const, mark: '公', shape: 'circle', ...templateCopy('official') },
+  { key: 'finance' as const, category: 'finance' as const, mark: '财', shape: 'ellipse', ...templateCopy('finance') },
+  { key: 'invoice' as const, category: 'finance' as const, mark: '票', shape: 'ellipse', ...templateCopy('invoice') },
+  { key: 'receipt' as const, category: 'finance' as const, mark: '收', shape: 'ellipse', ...templateCopy('receipt') },
+  { key: 'business' as const, category: 'business' as const, mark: '业', shape: 'circle', ...templateCopy('business') },
+  { key: 'quotation' as const, category: 'business' as const, mark: '价', shape: 'ellipse', ...templateCopy('quotation') },
+  { key: 'clean' as const, category: 'general' as const, mark: '新', shape: 'circle', ...templateCopy('clean') }
+])
+
+function templateCopy(key: TemplatePresetKey) {
+  return {
+    name: t(`studio.editor.templates.${key}.name`),
+    desc: t(`studio.editor.templates.${key}.desc`),
+    badge: t(`studio.editor.templates.${key}.badge`)
+  }
+}
 const activeTemplatePreset = ref<TemplatePresetKey>('contract')
 const activeTemplateCategory = ref<TemplateCategoryKey>('all')
 const isTemplatePickerOpen = ref(false)
 const activeTemplatePresetInfo = computed(() => {
-  return templatePresets.find((preset) => preset.key === activeTemplatePreset.value) || templatePresets[0]
+  return templatePresets.value.find((preset) => preset.key === activeTemplatePreset.value) || templatePresets.value[0]
 })
 const filteredTemplatePresets = computed(() => {
-  if (activeTemplateCategory.value === 'all') return templatePresets
-  return templatePresets.filter(preset => preset.category === activeTemplateCategory.value)
+  if (activeTemplateCategory.value === 'all') return templatePresets.value
+  return templatePresets.value.filter(preset => preset.category === activeTemplateCategory.value)
 })
 
 const getRatioValue = (ratio: 'original' | 'square' | '4:3' | '16:9'): number => {
@@ -1044,13 +1053,13 @@ const getPrimaryCompanyName = (config: IDrawStampConfig) => {
   return (
     config.companyList?.find(item => item.companyName?.trim())?.companyName ||
     config.company?.companyName ||
-    '电子印章'
+    t('studio.editor.defaultFilename')
   ).trim()
 }
 
 const buildExportFilename = (config: IDrawStampConfig) => {
   const companyName = getPrimaryCompanyName(config)
-  const stampType = config.stampTypeList?.find(item => item.stampType?.trim())?.stampType || config.stampType?.stampType || '印章'
+  const stampType = config.stampTypeList?.find(item => item.stampType?.trim())?.stampType || config.stampType?.stampType || t('studio.editor.stampFallback')
   const today = new Date()
   const dateText = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`
   return `${companyName}_${stampType}_${dateText}`
@@ -1404,7 +1413,7 @@ const buildDraftSummary = (config: IDrawStampConfig) => {
   const stampType =
     config.stampTypeList?.find(item => item.stampType?.trim())?.stampType?.trim() ||
     config.stampType?.stampType?.trim()
-  const title = companyName || stampType || '未命名印章'
+  const title = companyName || stampType || t('studio.editor.untitledDraft')
   return `${title} · ${width} x ${height} mm`
 }
 

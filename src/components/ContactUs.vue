@@ -7,16 +7,16 @@
   >
     <template #aside>
       <div class="contact-aside">
-        <img src="/telegram-qr.png" alt="Telegram 联系二维码 @KEVIN627ZTZ" loading="lazy" />
+        <img src="/telegram-qr.png" :alt="t('studio.contact.qrAlt')" loading="lazy" />
         <strong>@KEVIN627ZTZ</strong>
-        <a target="_blank" rel="noopener noreferrer" :href="telegramUrl">打开 Telegram</a>
+        <a target="_blank" rel="noopener noreferrer" :href="telegramUrl">{{ t('studio.contact.openTelegram') }}</a>
       </div>
     </template>
 
     <section class="contact-primary">
       <article class="contact-card telegram-card">
         <p class="section-label">{{ t('contact.methods.telegram.title') }}</p>
-        <h2>首选联系入口</h2>
+        <h2>{{ t('studio.contact.primaryHeading') }}</h2>
         <p>{{ t('contact.methods.telegram.description') }}</p>
         <a class="primary-action" target="_blank" rel="noopener noreferrer" :href="telegramUrl">
           {{ t('contact.methods.telegram.joinGroup') }}
@@ -25,9 +25,9 @@
 
       <article class="contact-card">
         <p class="section-label">{{ t('contact.methods.email.title') }}</p>
-        <h2>邮件草稿</h2>
+        <h2>{{ t('studio.contact.emailHeading') }}</h2>
         <p>{{ t('contact.methods.email.description') }}</p>
-        <a class="secondary-action" href="mailto:fisherztz@gmail.com?subject=DrawStamp%20Studio反馈&body=请在此填写您的问题...">
+        <a class="secondary-action" :href="directMailtoHref">
           fisherztz@gmail.com
         </a>
       </article>
@@ -36,7 +36,7 @@
     <section class="feedback-panel">
       <div>
         <p class="section-label">{{ t('contact.form.title') }}</p>
-        <h2>打开邮件草稿</h2>
+        <h2>{{ t('studio.contact.formHeading') }}</h2>
         <p>{{ t('contact.form.description') }}</p>
       </div>
 
@@ -107,6 +107,12 @@ const TELEGRAM_USERNAME = 'KEVIN627ZTZ'
 const telegramUrl = `https://t.me/${TELEGRAM_USERNAME}`
 const COMPANY_EMAIL = 'fisherztz@gmail.com'
 
+const directMailtoHref = computed(() => {
+  const subject = encodeURIComponent(`DrawStamp Studio ${t('contact.form.subjects.question')}`)
+  const body = encodeURIComponent(t('studio.contact.mailBodyPlaceholder'))
+  return `mailto:${COMPANY_EMAIL}?subject=${subject}&body=${body}`
+})
+
 const form = ref({
   name: '',
   email: '',
@@ -154,12 +160,13 @@ const handleSubmit = () => {
 
   const subjectText = subjectLabels.value[form.value.subject] || t('contact.form.subjects.other')
   const subject = encodeURIComponent(`DrawStamp Studio ${subjectText}`)
+  const emptyValue = t('studio.contact.empty')
   const bodyLines = [
-    `姓名：${form.value.name || '未填写'}`,
-    `联系邮箱：${form.value.email || '未填写'}`,
-    `主题：${subjectText}`,
+    t('studio.contact.nameLine', { value: form.value.name || emptyValue }),
+    t('studio.contact.emailLine', { value: form.value.email || emptyValue }),
+    t('studio.contact.subjectLine', { value: subjectText }),
     '',
-    '反馈内容：',
+    t('studio.contact.messageLine'),
     form.value.message
   ]
   const body = encodeURIComponent(bodyLines.join('\n'))
@@ -168,7 +175,7 @@ const handleSubmit = () => {
     window.location.href = `mailto:${COMPANY_EMAIL}?subject=${subject}&body=${body}`
     submitStatus.value = 'success'
   } catch (error) {
-    console.error('生成邮件链接失败', error)
+    console.error(t('studio.contact.mailError'), error)
     submitStatus.value = 'error'
   }
 }
