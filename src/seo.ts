@@ -197,7 +197,7 @@ export const applyRouteSeo = (route: { name?: unknown; path: string }, locale: A
     image: PREVIEW_IMAGE,
     screenshot: `${SITE_URL}/readme-workspace.png`,
     inLanguage: languageTag,
-    softwareVersion: '0.6.1',
+    softwareVersion: '0.7.0',
     isAccessibleForFree: true,
     description: copy.description,
     featureList: schemaCopy.features,
