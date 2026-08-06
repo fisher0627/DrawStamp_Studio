@@ -1,203 +1,14 @@
 <template>
-  <!-- 导出格式弹窗 -->
-  <div v-if="showFormatDialog" class="legal-dialog-overlay" @click.self="closeFormatDialog">
-    <div class="legal-dialog export-dialog">
-      <div class="export-dialog-header">
-        <div>
-          <h3>{{ t('stamp.exportFormat.title') }}</h3>
-        </div>
-        <button type="button" class="export-close-button" @click="closeFormatDialog" :aria-label="t('homepage.canvas.close')">×</button>
-      </div>
-      <div class="legal-content export-dialog-content">
-        <section class="export-preview-panel">
-          <div class="export-preview-card" :class="{ checker: selectedFormat === 'png' && !useWhitePngBackground }">
-            <img v-if="exportPreviewUrl" :src="exportPreviewUrl" :alt="t('studio.editor.previewAlt')" />
-            <div v-else class="export-preview-empty" aria-busy="true" :aria-label="t('homepage.canvas.previewGenerating')">
-              <span class="skeleton-stamp"></span>
-            </div>
-          </div>
-          <div class="export-preview-meta">
-            <strong>{{ exportSummary }}</strong>
-            <span>{{ exportBackgroundLabel }}</span>
-          </div>
-        </section>
-
-        <section class="export-settings-panel">
-          <div class="export-section">
-            <div class="export-section-title">
-              <label>{{ t('studio.editor.fileFormat') }}</label>
-              <span>{{ selectedFormatInfo?.tip }}</span>
-            </div>
-            <div class="format-options">
-              <button
-                v-for="format in exportFormats"
-                :key="format.value"
-                type="button"
-                class="format-button"
-                :class="{ active: selectedFormat === format.value }"
-                @click="selectedFormat = format.value"
-              >
-                <span class="format-icon">{{ format.icon }}</span>
-                <span>
-                  <span class="format-name">{{ format.name }}</span>
-                  <span class="format-desc">{{ format.desc }}</span>
-                </span>
-                <em v-if="format.value === 'png'">{{ t('studio.editor.recommended') }}</em>
-              </button>
-            </div>
-          </div>
-
-          <div v-if="selectedFormat === 'jpeg'" class="quality-setting">
-            <label>{{ t('stamp.exportFormat.quality') }} <strong>{{ jpegQuality }}%</strong></label>
-            <input
-              type="range"
-              v-model.number="jpegQuality"
-              min="10"
-              max="100"
-              step="5"
-              class="quality-slider"
-            />
-          </div>
-
-          <div class="export-section">
-            <div class="export-section-title">
-              <label>{{ t('studio.editor.exportScale') }}</label>
-              <span>{{ exportSizeLabel }}</span>
-            </div>
-            <div class="scale-options">
-              <button
-                v-for="option in scaleOptions"
-                :key="option.value"
-                type="button"
-                class="scale-button"
-                :class="{ active: selectedScale === option.value }"
-                @click="applyExportScale(option.value)"
-              >
-                {{ option.label }}
-              </button>
-            </div>
-          </div>
-
-          <label v-if="selectedFormat === 'png'" class="export-checkbox">
-            <input type="checkbox" v-model="useWhitePngBackground" />
-            <span>{{ t('studio.editor.pngWhiteBackground') }}</span>
-          </label>
-
-          <div class="export-section">
-            <div class="export-section-title">
-              <label>{{ t('studio.editor.filename') }}</label>
-              <span>{{ t('studio.editor.autoExtension') }}</span>
-            </div>
-            <input
-              v-model="exportFilename"
-              type="text"
-              class="export-name-input"
-              :placeholder="t('studio.editor.filenamePlaceholder')"
-            />
-          </div>
-
-          <details class="export-advanced">
-            <summary>{{ t('studio.editor.moreSizeSettings') }}</summary>
-            <div class="size-setting">
-              <div class="size-setting-header">
-                <label>{{ t('stamp.exportFormat.sizeTitle') }}</label>
-                <button class="size-reset" type="button" @click="resetExportSize">
-                  {{ t('stamp.exportFormat.resetSize') }}
-                </button>
-              </div>
-              <div class="ratio-setting">
-                <label>{{ t('stamp.exportFormat.ratioTitle') }}</label>
-                <div class="ratio-options">
-                  <button
-                    v-for="option in ratioOptions"
-                    :key="option.value"
-                    type="button"
-                    class="ratio-button"
-                    :class="{ active: selectedRatio === option.value }"
-                    @click="applyRatio(option.value)"
-                  >
-                    {{ option.label }}
-                  </button>
-                </div>
-                <p class="ratio-hint">{{ t('stamp.exportFormat.ratioHint') }}</p>
-              </div>
-              <div class="size-inputs">
-                <div class="size-field">
-                  <span>{{ t('stamp.exportFormat.width') }} (px)</span>
-                  <input
-                    type="number"
-                    v-model.number="exportWidth"
-                    :min="MIN_EXPORT_SIZE"
-                    :max="MAX_EXPORT_SIZE"
-                    @input="handleWidthInput"
-                    @change="handleWidthInput"
-                  />
-                </div>
-                <div class="size-field">
-                  <span>{{ t('stamp.exportFormat.height') }} (px)</span>
-                  <input
-                    type="number"
-                    v-model.number="exportHeight"
-                    :min="MIN_EXPORT_SIZE"
-                    :max="MAX_EXPORT_SIZE"
-                    @input="handleHeightInput"
-                    @change="handleHeightInput"
-                  />
-                </div>
-              </div>
-              <p class="size-hint">
-                {{ t('stamp.exportFormat.sizeHint', { width: Math.round(defaultExportWidth) || 0, height: Math.round(defaultExportHeight) || 0 }) }}
-              </p>
-              <p class="size-hint">
-                {{ t('stamp.exportFormat.sizeLimit', { min: MIN_EXPORT_SIZE, max: MAX_EXPORT_SIZE }) }}
-              </p>
-            </div>
-          </details>
-        </section>
-      </div>
-      <div class="dialog-buttons">
-        <button @click="closeFormatDialog" class="cancel-button">{{ t('stamp.exportFormat.cancel') }}</button>
-        <button @click="confirmExport" class="confirm-button">
-          {{ t('studio.editor.downloadFormat', { format: selectedFormat.toUpperCase() }) }}
-        </button>
-      </div>
-    </div>
-  </div>
+  <ExportDialog v-if="exportDock.showFormatDialog" :dock="exportDock" />
 
   <!-- 导出模板元信息弹窗 -->
-  <div v-if="showTemplateMetaDialog" class="legal-dialog-overlay" @click.self="closeTemplateMetaDialog">
-    <div class="legal-dialog">
-      <h3>{{ t('homepage.canvas.exportTemplate') }}</h3>
-      <div class="legal-content">
-        <div class="meta-field">
-          <label>{{ t('stamp.templateMeta.titlePrompt') }}</label>
-          <input
-            v-model="templateTitle"
-            type="text"
-            class="meta-input"
-            :placeholder="t('stamp.templateMeta.titlePrompt')"
-          />
-        </div>
-        <div class="meta-field">
-          <label>{{ t('stamp.templateMeta.categoryPrompt') }}</label>
-          <input
-            v-model="templateCategories"
-            type="text"
-            class="meta-input"
-            :placeholder="t('stamp.templateMeta.categoryPrompt')"
-          />
-        </div>
-      </div>
-      <div class="dialog-buttons">
-        <button @click="closeTemplateMetaDialog" class="cancel-button">
-          {{ t('stamp.exportFormat.cancel') }}
-        </button>
-        <button @click="confirmSaveTemplate" class="confirm-button">
-          {{ t('stamp.exportFormat.export') }}
-        </button>
-      </div>
-    </div>
-  </div>
+  <TemplateMetaDialog
+    v-model="showTemplateMetaDialog"
+    :default-title="templateDefaultTitle"
+    :default-categories="templateDefaultCategories"
+    @confirm="confirmSaveTemplate"
+    @cancel="closeTemplateMetaDialog"
+  />
 
   <StampExtractor
     v-if="showExtractorDialog"
@@ -230,36 +41,36 @@
             <button
               type="button"
               class="toolbar-draft-status"
-              :class="draftStatusClass"
-              @click="handleDraftStatusClick"
-              :aria-expanded="isDraftMenuOpen"
-              :title="draftSaveState === 'failed' ? t('homepage.canvas.retrySave') : t('homepage.canvas.viewRecentDraft')"
+              :class="localDraft.draftStatusClass"
+              @click="localDraft.handleDraftStatusClick"
+              :aria-expanded="localDraft.isDraftMenuOpen"
+              :title="localDraft.draftSaveState === 'failed' ? t('homepage.canvas.retrySave') : t('homepage.canvas.viewRecentDraft')"
             >
               <span class="draft-status-dot"></span>
-              <span>{{ draftStatusLabel }}</span>
+              <span>{{ localDraft.draftStatusLabel }}</span>
               <span class="draft-status-chevron">⌄</span>
             </button>
-            <div v-if="isDraftMenuOpen" class="draft-menu">
+            <div v-if="localDraft.isDraftMenuOpen" class="draft-menu">
               <div class="draft-menu-head">
                 <strong>{{ t('homepage.canvas.recentDraft') }}</strong>
                 <button
-                  v-if="draftVersions.length"
+                  v-if="localDraft.draftVersions.length"
                   type="button"
-                  @click="clearLocalDraft"
+                  @click="localDraft.clearLocalDraft"
                 >
                   {{ t('homepage.canvas.clearDraft') }}
                 </button>
               </div>
-              <div v-if="draftVersions.length" class="draft-version-list">
+              <div v-if="localDraft.draftVersions.length" class="draft-version-list">
                 <button
-                  v-for="draft in draftVersions"
+                  v-for="draft in localDraft.draftVersions"
                   :key="draft.id"
                   type="button"
                   class="draft-version-item"
-                  @click="restoreDraftVersion(draft.id)"
+                  @click="localDraft.restoreDraftVersion(draft.id)"
                 >
                   <span>
-                    <strong>{{ formatDraftTime(draft.savedAt) }}</strong>
+                    <strong>{{ localDraft.formatDraftTime(draft.savedAt) }}</strong>
                     <small>{{ draft.summary }}</small>
                   </span>
                   <em>{{ t('homepage.canvas.restore') }}</em>
@@ -276,7 +87,7 @@
           <span class="toolbar-icon">印</span>
           <span class="toolbar-label">{{ t('homepage.canvas.extractStamp') }}</span>
         </button>
-        <button class="toolbar-btn compact primary" type="button" @click="saveStampAsPNG" :title="t('homepage.canvas.download')">
+        <button class="toolbar-btn compact primary" type="button" @click="exportDock.openExportDialog" :title="t('homepage.canvas.download')">
           <span class="toolbar-icon">↧</span>
           <span class="toolbar-label">{{ t('homepage.canvas.download') }}</span>
         </button>
@@ -300,46 +111,46 @@
             <button
               type="button"
               class="template-current"
-              :class="[`preset-${activeTemplatePresetInfo.key}`, `preset-${activeTemplatePresetInfo.shape}`, { open: isTemplatePickerOpen }]"
-              @click="isTemplatePickerOpen = !isTemplatePickerOpen"
-              :aria-expanded="isTemplatePickerOpen"
+              :class="[`preset-${templates.activeTemplatePresetInfo.key}`, `preset-${templates.activeTemplatePresetInfo.shape}`, { open: templates.isTemplatePickerOpen }]"
+              @click="templates.isTemplatePickerOpen = !templates.isTemplatePickerOpen"
+              :aria-expanded="templates.isTemplatePickerOpen"
             >
               <span class="preset-preview" aria-hidden="true">
                 <span class="preset-stamp">
                   <span class="preset-ring"></span>
                   <span class="preset-star">★</span>
-                  <span class="preset-type">{{ activeTemplatePresetInfo.mark }}</span>
+                  <span class="preset-type">{{ templates.activeTemplatePresetInfo.mark }}</span>
                 </span>
               </span>
               <span class="preset-copy">
                 <span class="preset-row">
-                  <strong>{{ activeTemplatePresetInfo.name }}</strong>
-                  <em>{{ activeTemplatePresetInfo.badge }}</em>
+                  <strong>{{ templates.activeTemplatePresetInfo.name }}</strong>
+                  <em>{{ templates.activeTemplatePresetInfo.badge }}</em>
                 </span>
-                <small>{{ activeTemplatePresetInfo.desc }}</small>
+                <small>{{ templates.activeTemplatePresetInfo.desc }}</small>
               </span>
               <span class="template-chevron" aria-hidden="true">⌄</span>
             </button>
 
-            <div v-if="isTemplatePickerOpen" class="template-menu">
+            <div v-if="templates.isTemplatePickerOpen" class="template-menu">
               <div class="template-category-tabs" :aria-label="t('studio.editor.templateCategoryAria')">
                 <button
-                  v-for="category in templatePresetCategories"
+                  v-for="category in templates.templatePresetCategories"
                   :key="category.key"
                   type="button"
-                  :class="{ active: activeTemplateCategory === category.key }"
-                  @click="activeTemplateCategory = category.key"
+                  :class="{ active: templates.activeTemplateCategory === category.key }"
+                  @click="templates.activeTemplateCategory = category.key"
                 >
                   {{ category.label }}
                 </button>
               </div>
               <button
-                v-for="preset in filteredTemplatePresets"
+                v-for="preset in templates.filteredTemplatePresets"
                 :key="preset.key"
                 type="button"
                 class="template-option"
-                :class="[`preset-${preset.key}`, `preset-${preset.shape}`, { active: activeTemplatePreset === preset.key }]"
-                @click="applyTemplatePreset(preset.key); isTemplatePickerOpen = false"
+                :class="[`preset-${preset.key}`, `preset-${preset.shape}`, { active: templates.activeTemplatePreset === preset.key }]"
+                @click="applyTemplatePreset(preset.key); templates.isTemplatePickerOpen = false"
               >
                 <span class="preset-preview" aria-hidden="true">
                   <span class="preset-stamp">
@@ -458,27 +269,27 @@
             <span class="export-dock-title">{{ t('homepage.canvas.quickExport') }}</span>
             <div class="export-scale-mini">
               <button
-                v-for="option in scaleOptions"
+                v-for="option in exportDock.scaleOptions"
                 :key="option.value"
                 type="button"
-                :class="{ active: selectedScale === option.value }"
-                @click="applyExportScale(option.value)"
+                :class="{ active: exportDock.selectedScale === option.value }"
+                @click="exportDock.applyExportScale(option.value)"
               >
                 {{ option.label }}
               </button>
             </div>
             <label class="white-bg-toggle" :title="t('homepage.canvas.whiteBackground')">
-              <input type="checkbox" v-model="useWhitePngBackground" />
+              <input type="checkbox" v-model="exportDock.useWhitePngBackground" />
               <span>{{ t('homepage.canvas.whiteBackground') }}</span>
             </label>
             <input
-              v-model="exportFilename"
+              v-model="exportDock.exportFilename"
               class="export-name-mini"
               type="text"
               :placeholder="t('homepage.canvas.filenamePlaceholder')"
-              @focus="prepareExportDock"
+              @focus="exportDock.prepareExportDock"
             />
-            <button class="canvas-action-btn primary" @click="quickExportFromDock" :title="t('homepage.canvas.quickExportTitle')">
+            <button class="canvas-action-btn primary" @click="exportDock.quickExportFromDock" :title="t('homepage.canvas.quickExportTitle')">
               <span>↧</span>
             </button>
           </div>
@@ -500,88 +311,29 @@
         <div class="loading-spinner"></div>
         <span>{{ t('common.loading') }}</span>
       </div>
-    </div>
-  </div>
-
-  <section class="seo-content" aria-labelledby="seo-title">
-    <div class="seo-hero">
-      <div class="seo-brand-lockup">
-        <img src="/logo-mark.svg" alt="DrawStamp Studio" width="52" height="52" loading="lazy" />
-        <div>
-          <strong>DrawStamp Studio</strong>
-          <span>Browser-local electronic stamp workspace</span>
-        </div>
-      </div>
-      <p class="seo-eyebrow">Browser Local Stamp Editor</p>
-      <h2 id="seo-title">{{ t('studio.seoContent.title') }}</h2>
-      <p>{{ t('studio.seoContent.intro') }}</p>
-      <div class="seo-meta" :aria-label="t('studio.seoContent.featuresAria')">
-        <span>{{ t('studio.seoContent.features.local') }}</span>
-        <span>{{ t('studio.seoContent.features.transparent') }}</span>
-        <span>{{ t('studio.seoContent.features.formats') }}</span>
-        <span>{{ t('studio.seoContent.features.drafts') }}</span>
       </div>
     </div>
 
-    <div class="seo-grid">
-      <article>
-        <span>01</span>
-        <h3>{{ t('studio.seoContent.cards.createTitle') }}</h3>
-        <p>{{ t('studio.seoContent.cards.createText') }}</p>
-      </article>
-      <article>
-        <span>02</span>
-        <h3>{{ t('studio.seoContent.cards.extractTitle') }}</h3>
-        <p>{{ t('studio.seoContent.cards.extractText') }}</p>
-      </article>
-      <article>
-        <span>03</span>
-        <h3>{{ t('studio.seoContent.cards.exportTitle') }}</h3>
-        <p>{{ t('studio.seoContent.cards.exportText') }}</p>
-      </article>
-    </div>
-
-    <div class="seo-faq" :aria-label="t('studio.seoContent.faqAria')">
-      <h2>{{ t('studio.seoContent.faqTitle') }}</h2>
-      <details open>
-        <summary>{{ t('studio.seoContent.faq.uploadQ') }}</summary>
-        <p>{{ t('studio.seoContent.faq.uploadA') }}</p>
-      </details>
-      <details>
-        <summary>{{ t('studio.seoContent.faq.transparentQ') }}</summary>
-        <p>{{ t('studio.seoContent.faq.transparentA') }}</p>
-      </details>
-      <details>
-        <summary>{{ t('studio.seoContent.faq.safetyQ') }}</summary>
-        <p>{{ t('studio.seoContent.faq.safetyA') }}</p>
-      </details>
-      <details>
-        <summary>{{ t('studio.seoContent.faq.saveQ') }}</summary>
-        <p>{{ t('studio.seoContent.faq.saveA') }}</p>
-      </details>
-    </div>
-
-    <nav class="seo-links" :aria-label="t('studio.nav.aria')">
-      <RouterLink to="/about">{{ t('studio.nav.about') }}</RouterLink>
-      <RouterLink to="/privacy">{{ t('studio.nav.privacy') }}</RouterLink>
-      <RouterLink to="/terms">{{ t('studio.nav.terms') }}</RouterLink>
-      <RouterLink to="/contact">{{ t('studio.nav.contact') }}</RouterLink>
-    </nav>
-  </section>
+    <SeoContent />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { DrawStampUtils } from '../../DrawStampUtils'
-import { InitDrawStampConfigsUtils } from '../../utils/InitDrawStampConfigsUtils'
 import { ensureStampFontsLoaded, getFontCssFamily, getSystemFonts } from '../../utils/fontUtils'
 import { IDrawStampConfig, IDrawImage } from '../../DrawStampTypes'
 import ElementList from './ElementList.vue'
 import PropertiesPanel from './PropertiesPanel.vue'
 import StampExtractor from './StampExtractor.vue'
+import ExportDialog from './ExportDialog.vue'
+import TemplateMetaDialog from './TemplateMetaDialog.vue'
+import SeoContent from './SeoContent.vue'
 import LanguageSwitcher from '../LanguageSwitcher.vue'
 import { useStampStore } from '../../stores/stampStore'
+import { useExportDock } from '../../composables/useExportDock'
+import { useTemplatePresets, type TemplatePresetKey } from '../../composables/useTemplatePresets'
+import { useLocalDraft } from '../../composables/useLocalDraft'
 import type { ExtractStampResult } from '../../utils/extractStampImage'
 import { DEFAULT_STAMP_RED } from '../../Constants'
 
@@ -662,115 +414,39 @@ const handleElementListRefresh = () => {
 const stampCanvas = ref<any | null>(null)
 const templateFileInput = ref<HTMLInputElement | null>(null)
 const MM_PER_PIXEL = 10 // 毫米换算像素
-const DRAFT_STORAGE_KEY = 'drawstamp-studio:draft:v1'
-const DRAFT_SAVE_DELAY = 500
-const DRAFT_VERSION_INTERVAL = 30 * 1000
-const MAX_DRAFT_VERSIONS = 5
 // 绘制工具
 let drawStampUtils: DrawStampUtils
-let exportPreviewRequestId = 0
-let draftSaveTimer: number | undefined
-let suppressDraftSave = false
 const isDraggable = ref(true) // 是否开启拖动
-const showFormatDialog = ref(false)
 const showExtractorDialog = ref(false)
-const selectedFormat = ref<'png' | 'jpeg' | 'svg'>('png')
-const jpegQuality = ref(92)
-const MIN_EXPORT_SIZE = 100
-const MAX_EXPORT_SIZE = 4096
-const defaultExportWidth = ref(0)
-const defaultExportHeight = ref(0)
-const exportWidth = ref(0)
-const exportHeight = ref(0)
-const selectedScale = ref<1 | 2 | 3 | 4>(1)
-const useWhitePngBackground = ref(false)
-const exportFilename = ref('')
-const exportPreviewUrl = ref('')
-const selectedRatio = ref<'original' | 'square' | '4:3' | '16:9' | 'custom'>('original')
 const viewScalePercent = ref(100)
 const canvasViewRevision = ref(0)
 const canvasBackgroundMode = ref<'grid' | 'paper' | 'checker'>('grid')
-const draftSavedAt = ref<number | null>(null)
-const draftSaveState = ref<'idle' | 'saved' | 'saving' | 'failed'>('idle')
-const hasLocalDraft = ref(false)
-const draftVersions = ref<LocalDraftItem[]>([])
-const isDraftMenuOpen = ref(false)
+
+// 导出共享状态（底部快速导出 dock + 导出格式弹窗）
+const exportDock = useExportDock(() => drawStampUtils)
+
+// 本地自动草稿
+const localDraft = useLocalDraft({
+  getConfig: () => stampStore.state.config,
+  onRestore: async (config) => {
+    drawStampUtils.setDrawConfigs(config)
+    stampStore.setConfig(config)
+    syncConfigToParent()
+    exportDock.exportFilename = exportDock.buildExportFilename(config)
+    drawStamp()
+    await nextTick()
+    propertiesPanelRef.value?.restoreDrawConfigs()
+  }
+})
+
+// 常用模板预设
+const templates = useTemplatePresets((config) => exportDock.getPrimaryCompanyName(config))
 
 // 导出模板元信息弹窗状态
 const showTemplateMetaDialog = ref(false)
-const templateTitle = ref('')
-const templateCategories = ref('')
+const templateDefaultTitle = ref('')
+const templateDefaultCategories = ref('')
 const pendingTemplateConfig = ref<IDrawStampConfig | null>(null)
-
-const exportFormats = computed(() => [
-  { value: 'png' as const, name: 'PNG', icon: 'P', desc: t('studio.editor.formats.pngDesc'), tip: t('studio.editor.formats.pngTip') },
-  { value: 'svg' as const, name: 'SVG', icon: 'S', desc: t('studio.editor.formats.svgDesc'), tip: t('studio.editor.formats.svgTip') },
-  { value: 'jpeg' as const, name: 'JPEG', icon: 'J', desc: t('studio.editor.formats.jpegDesc'), tip: t('studio.editor.formats.jpegTip') }
-])
-
-const selectedFormatInfo = computed(() => {
-  return exportFormats.value.find(format => format.value === selectedFormat.value)
-})
-
-const exportSizeLabel = computed(() => {
-  const width = Math.round(exportWidth.value) || Math.round(defaultExportWidth.value) || 0
-  const height = Math.round(exportHeight.value) || Math.round(defaultExportHeight.value) || 0
-  return `${width} x ${height}px`
-})
-
-const exportSummary = computed(() => {
-  return `${selectedFormat.value.toUpperCase()} · ${selectedScale.value}x · ${exportSizeLabel.value}`
-})
-
-const exportBackgroundLabel = computed(() => {
-  if (selectedFormat.value === 'png') {
-    return useWhitePngBackground.value ? t('studio.editor.whiteBackground') : t('studio.editor.transparentBackground')
-  }
-  if (selectedFormat.value === 'svg') {
-    return t('studio.editor.vectorExport')
-  }
-  return t('studio.editor.jpegQuality', { quality: jpegQuality.value })
-})
-
-const draftStatusLabel = computed(() => {
-  if (draftSaveState.value === 'saving') return t('studio.editor.draft.saving')
-  if (draftSaveState.value === 'failed') return t('studio.editor.draft.unsaved')
-  if (!draftSavedAt.value) return hasLocalDraft.value ? t('studio.editor.draft.restored') : t('studio.editor.draft.autoSave')
-
-  const savedDate = new Date(draftSavedAt.value)
-  const time = savedDate.toLocaleTimeString(locale.value === 'zh' ? 'zh-CN' : 'en', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  })
-  return t('studio.editor.draft.savedAt', { time })
-})
-
-const draftStatusClass = computed(() => ({
-  saving: draftSaveState.value === 'saving',
-  saved: draftSaveState.value === 'saved',
-  failed: draftSaveState.value === 'failed',
-  open: isDraftMenuOpen.value
-}))
-
-const formatDraftTime = (timestamp: number) => {
-  const date = new Date(timestamp)
-  const now = new Date()
-  const isToday = date.toDateString() === now.toDateString()
-  const time = date.toLocaleTimeString(locale.value === 'zh' ? 'zh-CN' : 'en', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  })
-  if (isToday) return t('studio.editor.draft.todayAt', { time })
-  return date.toLocaleString(locale.value === 'zh' ? 'zh-CN' : 'en', {
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  })
-}
 
 const canvasMeta = computed(() => {
   const config = stampStore.state.config
@@ -846,523 +522,11 @@ const selectionFrameStyle = computed(() => {
   }
 })
 
-const ratioOptions = computed(() => [
-  { value: 'original' as const, label: t('stamp.exportFormat.ratioOriginal') },
-  { value: 'square' as const, label: t('stamp.exportFormat.ratioSquare') },
-  { value: '4:3' as const, label: '4 : 3' },
-  { value: '16:9' as const, label: '16 : 9' },
-  { value: 'custom' as const, label: t('stamp.exportFormat.ratioCustom') }
-])
-
-const scaleOptions = [
-  { value: 1 as const, label: '1x' },
-  { value: 2 as const, label: '2x' },
-  { value: 3 as const, label: '3x' },
-  { value: 4 as const, label: '4x' }
-]
-
 const canvasBackgroundOptions = computed(() => [
   { value: 'grid' as const, label: t('studio.editor.backgrounds.grid'), icon: '▦' },
   { value: 'paper' as const, label: t('studio.editor.backgrounds.paper'), icon: '□' },
   { value: 'checker' as const, label: t('studio.editor.backgrounds.checker'), icon: '▧' }
 ])
-
-type TemplatePresetKey = 'contract' | 'official' | 'finance' | 'invoice' | 'receipt' | 'business' | 'quotation' | 'clean'
-type TemplateCategoryKey = 'all' | 'general' | 'finance' | 'business'
-
-const templatePresetCategories = computed(() => [
-  { key: 'all' as const, label: t('studio.editor.templateCategories.all') },
-  { key: 'general' as const, label: t('studio.editor.templateCategories.general') },
-  { key: 'finance' as const, label: t('studio.editor.templateCategories.finance') },
-  { key: 'business' as const, label: t('studio.editor.templateCategories.business') }
-])
-
-const templatePresets = computed(() => [
-  { key: 'contract' as const, category: 'general' as const, mark: '合', shape: 'circle', ...templateCopy('contract') },
-  { key: 'official' as const, category: 'general' as const, mark: '公', shape: 'circle', ...templateCopy('official') },
-  { key: 'finance' as const, category: 'finance' as const, mark: '财', shape: 'ellipse', ...templateCopy('finance') },
-  { key: 'invoice' as const, category: 'finance' as const, mark: '票', shape: 'ellipse', ...templateCopy('invoice') },
-  { key: 'receipt' as const, category: 'finance' as const, mark: '收', shape: 'ellipse', ...templateCopy('receipt') },
-  { key: 'business' as const, category: 'business' as const, mark: '业', shape: 'circle', ...templateCopy('business') },
-  { key: 'quotation' as const, category: 'business' as const, mark: '价', shape: 'ellipse', ...templateCopy('quotation') },
-  { key: 'clean' as const, category: 'general' as const, mark: '新', shape: 'circle', ...templateCopy('clean') }
-])
-
-function templateCopy(key: TemplatePresetKey) {
-  return {
-    name: t(`studio.editor.templates.${key}.name`),
-    desc: t(`studio.editor.templates.${key}.desc`),
-    badge: t(`studio.editor.templates.${key}.badge`)
-  }
-}
-const activeTemplatePreset = ref<TemplatePresetKey>('contract')
-const activeTemplateCategory = ref<TemplateCategoryKey>('all')
-const isTemplatePickerOpen = ref(false)
-const activeTemplatePresetInfo = computed(() => {
-  return templatePresets.value.find((preset) => preset.key === activeTemplatePreset.value) || templatePresets.value[0]
-})
-const filteredTemplatePresets = computed(() => {
-  if (activeTemplateCategory.value === 'all') return templatePresets.value
-  return templatePresets.value.filter(preset => preset.category === activeTemplateCategory.value)
-})
-
-const getRatioValue = (ratio: 'original' | 'square' | '4:3' | '16:9'): number => {
-  if (ratio === 'square') return 1
-  if (ratio === '4:3') return 4 / 3
-  if (ratio === '16:9') return 16 / 9
-  const baseWidth = Math.max(defaultExportWidth.value || MIN_EXPORT_SIZE, MIN_EXPORT_SIZE)
-  const baseHeight = Math.max(defaultExportHeight.value || MIN_EXPORT_SIZE, MIN_EXPORT_SIZE)
-  return baseWidth / baseHeight
-}
-
-const clampExportSize = (value: number, fallback: number) => {
-  if (!value || Number.isNaN(value)) return fallback
-  return Math.min(Math.max(value, MIN_EXPORT_SIZE), MAX_EXPORT_SIZE)
-}
-
-const applyRatio = (ratio: 'original' | 'square' | '4:3' | '16:9' | 'custom') => {
-  selectedRatio.value = ratio
-  if (ratio === 'custom') {
-    refreshExportPreview()
-    return
-  }
-  const baseWidth = clampExportSize(defaultExportWidth.value, MIN_EXPORT_SIZE)
-  const ratioValue = getRatioValue(ratio)
-  exportWidth.value = Math.round(baseWidth)
-  exportHeight.value = Math.round(baseWidth / ratioValue)
-  exportHeight.value = clampExportSize(exportHeight.value, MIN_EXPORT_SIZE)
-  refreshExportPreview()
-}
-
-const resetExportSize = () => {
-  selectedScale.value = 1
-  applyRatio('original')
-}
-
-const applyExportScale = (scale: 1 | 2 | 3 | 4) => {
-  if (!defaultExportWidth.value || !defaultExportHeight.value) {
-    refreshExportDefaults()
-  }
-  selectedScale.value = scale
-  const baseWidth = clampExportSize(defaultExportWidth.value, MIN_EXPORT_SIZE)
-  const baseHeight = clampExportSize(defaultExportHeight.value, MIN_EXPORT_SIZE)
-  exportWidth.value = clampExportSize(Math.round(baseWidth * scale), baseWidth)
-  exportHeight.value = clampExportSize(Math.round(baseHeight * scale), baseHeight)
-  selectedRatio.value = 'original'
-  refreshExportPreview()
-}
-
-const refreshExportDefaults = () => {
-  if (!drawStampUtils) return
-  const baseSize = drawStampUtils.getExportBaseSize()
-  defaultExportWidth.value = Math.round(baseSize.width)
-  defaultExportHeight.value = Math.round(baseSize.height)
-  exportWidth.value = clampExportSize(Math.round(defaultExportWidth.value * selectedScale.value), defaultExportWidth.value)
-  exportHeight.value = clampExportSize(Math.round(defaultExportHeight.value * selectedScale.value), defaultExportHeight.value)
-  if (!exportFilename.value) {
-    exportFilename.value = buildExportFilename(drawStampUtils.getDrawConfigs())
-  }
-  refreshExportPreview()
-}
-
-const prepareExportDock = () => {
-  refreshExportDefaults()
-}
-
-const quickExportFromDock = () => {
-  if (!drawStampUtils) return
-  refreshExportDefaults()
-  const width = clampExportSize(exportWidth.value, Math.round(defaultExportWidth.value) || MIN_EXPORT_SIZE)
-  const height = clampExportSize(exportHeight.value, Math.round(defaultExportHeight.value) || MIN_EXPORT_SIZE)
-  drawStampUtils.saveStampAsPNG('png', 0.92, Math.round(width), Math.round(height), {
-    filenameBase: exportFilename.value || buildExportFilename(drawStampUtils.getDrawConfigs()),
-    background: useWhitePngBackground.value ? 'white' : 'transparent'
-  })
-}
-
-const handleWidthInput = () => {
-  const fallback = Math.round(defaultExportWidth.value) || MIN_EXPORT_SIZE
-  exportWidth.value = clampExportSize(exportWidth.value, fallback)
-  if (selectedRatio.value !== 'custom') {
-    const ratioValue = getRatioValue(selectedRatio.value)
-    exportHeight.value = Math.round(exportWidth.value / ratioValue)
-    exportHeight.value = clampExportSize(exportHeight.value, Math.round(defaultExportHeight.value) || MIN_EXPORT_SIZE)
-  }
-  refreshExportPreview()
-}
-
-const handleHeightInput = () => {
-  const fallback = Math.round(defaultExportHeight.value) || MIN_EXPORT_SIZE
-  exportHeight.value = clampExportSize(exportHeight.value, fallback)
-  if (selectedRatio.value !== 'custom') {
-    const ratioValue = getRatioValue(selectedRatio.value)
-    exportWidth.value = Math.round(exportHeight.value * ratioValue)
-    exportWidth.value = clampExportSize(exportWidth.value, Math.round(defaultExportWidth.value) || MIN_EXPORT_SIZE)
-  }
-  refreshExportPreview()
-}
-
-const addWhiteBackgroundToDataUrl = (dataUrl: string): Promise<string> => {
-  return new Promise((resolve) => {
-    const image = new Image()
-    image.onload = () => {
-      const previewCanvas = document.createElement('canvas')
-      previewCanvas.width = image.naturalWidth || image.width
-      previewCanvas.height = image.naturalHeight || image.height
-      const ctx = previewCanvas.getContext('2d')
-      if (!ctx) {
-        resolve(dataUrl)
-        return
-      }
-      ctx.fillStyle = '#ffffff'
-      ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height)
-      ctx.drawImage(image, 0, 0)
-      resolve(previewCanvas.toDataURL('image/png'))
-    }
-    image.onerror = () => resolve(dataUrl)
-    image.src = dataUrl
-  })
-}
-
-const refreshExportPreview = async () => {
-  if (!drawStampUtils) return
-  const requestId = ++exportPreviewRequestId
-  const width = clampExportSize(exportWidth.value, Math.round(defaultExportWidth.value) || MIN_EXPORT_SIZE)
-  const height = clampExportSize(exportHeight.value, Math.round(defaultExportHeight.value) || MIN_EXPORT_SIZE)
-  try {
-    let previewUrl = await drawStampUtils.getStampImageBase64(
-      selectedFormat.value === 'jpeg' ? 'jpeg' : 'png',
-      selectedFormat.value === 'jpeg' ? jpegQuality.value / 100 : 0.92,
-      Math.round(width),
-      Math.round(height)
-    )
-    if (selectedFormat.value === 'png' && useWhitePngBackground.value) {
-      previewUrl = await addWhiteBackgroundToDataUrl(previewUrl)
-    }
-    if (requestId === exportPreviewRequestId) {
-      exportPreviewUrl.value = previewUrl
-    }
-  } catch {
-    if (requestId === exportPreviewRequestId) {
-      exportPreviewUrl.value = ''
-    }
-  }
-}
-
-const getPrimaryCompanyName = (config: IDrawStampConfig) => {
-  return (
-    config.companyList?.find(item => item.companyName?.trim())?.companyName ||
-    config.company?.companyName ||
-    t('studio.editor.defaultFilename')
-  ).trim()
-}
-
-const buildExportFilename = (config: IDrawStampConfig) => {
-  const companyName = getPrimaryCompanyName(config)
-  const stampType = config.stampTypeList?.find(item => item.stampType?.trim())?.stampType || config.stampType?.stampType || t('studio.editor.stampFallback')
-  const today = new Date()
-  const dateText = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`
-  return `${companyName}_${stampType}_${dateText}`
-}
-
-const createPresetConfig = (presetKey: TemplatePresetKey): IDrawStampConfig => {
-  const defaultConfig = new InitDrawStampConfigsUtils().initDrawStampConfigs()
-  const base = JSON.parse(JSON.stringify(defaultConfig)) as IDrawStampConfig
-  const companyBase = base.companyList?.[0] || base.company
-  const stampTypeBase = base.stampTypeList?.[0] || base.stampType
-  const codeBase = base.stampCodeList?.[0] || base.stampCode
-
-  base.primaryColor = DEFAULT_STAMP_RED
-  base.borderWidth = 1
-  base.scale = 1
-  base.offsetX = 0
-  base.offsetY = 0
-  base.ruler.showRuler = true
-  base.ruler.showFullRuler = true
-  base.ruler.showSideRuler = true
-  base.ruler.showCrossLine = true
-  base.ruler.showDashLine = true
-  base.ruler.showCurrentPositionText = true
-  base.agingEffect.applyAging = false
-  base.roughEdge.drawRoughEdge = false
-  base.securityPattern.openSecurityPattern = false
-  base.imageList = []
-  base.svgList = []
-  base.lineList = []
-  base.innerCircleList = []
-  base.openManualAging = false
-  base.taxNumber.code = ''
-  base.taxNumberList = []
-  base.stampCode = { ...codeBase, code: '', color: base.primaryColor }
-  base.stampCodeList = []
-
-  const companyName = getPrimaryCompanyName(base).includes('印章') ? '示例科技有限公司' : getPrimaryCompanyName(base)
-  const commonCompany = {
-    ...companyBase,
-    companyName,
-    shape: 'ellipse' as const,
-    fontFamily: 'SimSun',
-    fontHeight: 4.2,
-    fontWeight: 'normal' as const,
-    color: base.primaryColor,
-    borderOffset: 1,
-    textDistributionFactor: 3,
-    adjustEllipseText: true,
-    startAngle: 0,
-    rotateDirection: 'counterclockwise' as const
-  }
-
-  if (presetKey === 'clean') {
-    base.title = '干净空白章'
-    base.width = 40
-    base.height = 40
-    base.company = { ...commonCompany, companyName: '示例科技有限公司' }
-    base.companyList = [base.company]
-    base.stampType = { ...stampTypeBase, stampType: '专用章', positionY: -3, fontHeight: 4.5, color: base.primaryColor }
-    base.stampTypeList = [base.stampType]
-    base.drawStar = { ...base.drawStar, drawStar: false, color: base.primaryColor, starPositionX: 0, starPositionY: 0 }
-    return base
-  }
-
-  if (presetKey === 'contract') {
-    base.title = '合同专用章'
-    base.width = 42
-    base.height = 42
-    base.company = commonCompany
-    base.companyList = [commonCompany]
-    base.stampType = {
-      ...stampTypeBase,
-      stampType: '合同专用章',
-      fontHeight: 4.4,
-      fontFamily: 'SimSun',
-      fontWeight: 'bold',
-      positionX: 0,
-      positionY: -7,
-      fontWidth: 3,
-      color: base.primaryColor
-    }
-    base.stampTypeList = [base.stampType]
-    base.drawStar = { ...base.drawStar, drawStar: true, starDiameter: 11, starPositionX: 0, starPositionY: 0, color: base.primaryColor }
-    base.innerCircleList = [{
-      ...base.innerCircle,
-      drawInnerCircle: true,
-      innerCircleLineWidth: 0.35,
-      innerCircleLineRadiusX: 13,
-      innerCircleLineRadiusY: 13,
-      color: base.primaryColor,
-      shape: 'ellipse'
-    }]
-    return base
-  }
-
-  if (presetKey === 'official') {
-    base.title = '公司公章'
-    base.width = 42
-    base.height = 42
-    base.borderWidth = 1.1
-    base.company = { ...commonCompany, fontHeight: 4.1, textDistributionFactor: 3.2 }
-    base.companyList = [base.company]
-    base.stampType = {
-      ...stampTypeBase,
-      stampType: '公章',
-      fontHeight: 4.2,
-      fontFamily: 'SimSun',
-      fontWeight: 'bold',
-      positionX: 0,
-      positionY: -7,
-      fontWidth: 3,
-      color: base.primaryColor
-    }
-    base.stampTypeList = [base.stampType]
-    base.drawStar = { ...base.drawStar, drawStar: true, starDiameter: 11.5, starPositionX: 0, starPositionY: 0, color: base.primaryColor }
-    return base
-  }
-
-  if (presetKey === 'business') {
-    base.title = '业务专用章'
-    base.width = 40
-    base.height = 40
-    base.company = { ...commonCompany, fontHeight: 4, textDistributionFactor: 3.1 }
-    base.companyList = [base.company]
-    base.stampType = {
-      ...stampTypeBase,
-      stampType: '业务专用章',
-      fontHeight: 4.1,
-      fontFamily: 'SimSun',
-      fontWeight: 'bold',
-      positionX: 0,
-      positionY: -7,
-      fontWidth: 3,
-      color: base.primaryColor
-    }
-    base.stampTypeList = [base.stampType]
-    base.stampCode = {
-      ...codeBase,
-      code: '业务 000001',
-      fontHeight: 1.2,
-      borderOffset: 1.25,
-      color: base.primaryColor
-    }
-    base.stampCodeList = [base.stampCode]
-    base.drawStar = { ...base.drawStar, drawStar: true, starDiameter: 10, starPositionX: 0, starPositionY: -0.5, color: base.primaryColor }
-    return base
-  }
-
-  if (presetKey === 'finance') {
-    base.title = '财务专用章'
-    base.width = 46
-    base.height = 32
-    base.company = { ...commonCompany, fontHeight: 3.9, textDistributionFactor: 3.8 }
-    base.companyList = [base.company]
-    base.stampType = {
-      ...stampTypeBase,
-      stampType: '财务专用章',
-      fontHeight: 4,
-      fontFamily: 'SimSun',
-      fontWeight: 'bold',
-      positionY: -4,
-      color: base.primaryColor
-    }
-    base.stampTypeList = [base.stampType]
-    base.stampCode = {
-      ...codeBase,
-      code: 'NO.000001',
-      fontHeight: 1.3,
-      borderOffset: 1.2,
-      color: base.primaryColor
-    }
-    base.stampCodeList = [base.stampCode]
-    base.innerCircleList = [{
-      ...base.innerCircle,
-      drawInnerCircle: true,
-      innerCircleLineWidth: 0.28,
-      innerCircleLineRadiusX: 14,
-      innerCircleLineRadiusY: 9,
-      color: base.primaryColor,
-      shape: 'ellipse'
-    }]
-    base.drawStar = { ...base.drawStar, drawStar: false, color: base.primaryColor }
-    return base
-  }
-
-  if (presetKey === 'receipt') {
-    base.title = '收讫专用章'
-    base.width = 44
-    base.height = 30
-    base.company = { ...commonCompany, fontHeight: 3.6, textDistributionFactor: 4.1 }
-    base.companyList = [base.company]
-    base.stampType = {
-      ...stampTypeBase,
-      stampType: '收讫',
-      fontHeight: 5.2,
-      fontFamily: 'SimSun',
-      fontWeight: 'bold',
-      positionY: -3,
-      color: base.primaryColor
-    }
-    base.stampTypeList = [base.stampType]
-    base.stampCode = {
-      ...codeBase,
-      code: '经办人  日期',
-      fontHeight: 1.2,
-      borderOffset: 1.15,
-      color: base.primaryColor
-    }
-    base.stampCodeList = [base.stampCode]
-    base.innerCircleList = [{
-      ...base.innerCircle,
-      drawInnerCircle: true,
-      innerCircleLineWidth: 0.25,
-      innerCircleLineRadiusX: 12,
-      innerCircleLineRadiusY: 7.2,
-      color: base.primaryColor,
-      shape: 'ellipse'
-    }]
-    base.drawStar = { ...base.drawStar, drawStar: false, color: base.primaryColor }
-    return base
-  }
-
-  if (presetKey === 'quotation') {
-    base.title = '报价专用章'
-    base.width = 46
-    base.height = 30
-    base.company = { ...commonCompany, fontHeight: 3.7, textDistributionFactor: 3.9 }
-    base.companyList = [base.company]
-    base.stampType = {
-      ...stampTypeBase,
-      stampType: '报价专用章',
-      fontHeight: 4.2,
-      fontFamily: 'SimSun',
-      fontWeight: 'bold',
-      positionY: -4,
-      color: base.primaryColor
-    }
-    base.stampTypeList = [base.stampType]
-    base.taxNumber = {
-      ...base.taxNumber,
-      code: '报价有效期 7 日',
-      fontHeight: 1.8,
-      positionY: 7.4,
-      totalWidth: 26,
-      color: base.primaryColor
-    }
-    base.taxNumberList = [base.taxNumber]
-    base.innerCircleList = [{
-      ...base.innerCircle,
-      drawInnerCircle: true,
-      innerCircleLineWidth: 0.25,
-      innerCircleLineRadiusX: 13,
-      innerCircleLineRadiusY: 8.2,
-      color: base.primaryColor,
-      shape: 'ellipse'
-    }]
-    base.drawStar = { ...base.drawStar, drawStar: false, color: base.primaryColor }
-    return base
-  }
-
-  base.title = '发票专用章'
-  base.width = 48
-  base.height = 34
-  base.company = { ...commonCompany, fontHeight: 3.8, textDistributionFactor: 4 }
-  base.companyList = [base.company]
-  base.stampType = {
-    ...stampTypeBase,
-    stampType: '发票专用章',
-    fontHeight: 4.2,
-    fontFamily: 'SimSun',
-    fontWeight: 'bold',
-    positionY: -4,
-    color: base.primaryColor
-  }
-  base.stampTypeList = [base.stampType]
-  base.taxNumber = {
-    ...base.taxNumber,
-    code: '中间编号 000000000000000000',
-    fontHeight: 2,
-    positionY: 8,
-    totalWidth: 32,
-    color: base.primaryColor
-  }
-  base.taxNumberList = [base.taxNumber]
-  base.stampCode = {
-    ...codeBase,
-    code: '发票专用',
-    fontHeight: 1.2,
-    color: base.primaryColor
-  }
-  base.stampCodeList = [base.stampCode]
-  base.innerCircleList = [{
-    ...base.innerCircle,
-    drawInnerCircle: true,
-    innerCircleLineWidth: 0.25,
-    innerCircleLineRadiusX: 15,
-    innerCircleLineRadiusY: 9.8,
-    color: base.primaryColor,
-    shape: 'ellipse'
-  }]
-  base.drawStar = { ...base.drawStar, drawStar: false, color: base.primaryColor }
-  return base
-}
 
 // 标记当前是否为父组件驱动的配置同步，避免 v-model 循环更新
 let isUpdatingFromParent = false
@@ -1379,199 +543,6 @@ const updateViewState = () => {
   const view = drawStampUtils.getViewState()
   viewScalePercent.value = Math.round(view.scale * 100)
   canvasViewRevision.value += 1
-}
-
-type LocalDraftItem = {
-  id: string
-  savedAt: number
-  summary: string
-  config: IDrawStampConfig
-}
-
-type LegacyLocalDraftPayload = {
-  version: 1
-  savedAt: number
-  config: IDrawStampConfig
-}
-
-type LocalDraftPayload = {
-  version: 2
-  updatedAt: number
-  drafts: LocalDraftItem[]
-}
-
-const cloneConfig = (config: IDrawStampConfig): IDrawStampConfig => {
-  return JSON.parse(JSON.stringify(config)) as IDrawStampConfig
-}
-
-const buildDraftSummary = (config: IDrawStampConfig) => {
-  const width = Math.round(Number(config.width) || 0)
-  const height = Math.round(Number(config.height) || 0)
-  const companyName =
-    config.companyList?.find(item => item.companyName?.trim())?.companyName?.trim() ||
-    config.company?.companyName?.trim()
-  const stampType =
-    config.stampTypeList?.find(item => item.stampType?.trim())?.stampType?.trim() ||
-    config.stampType?.stampType?.trim()
-  const title = companyName || stampType || t('studio.editor.untitledDraft')
-  return `${title} · ${width} x ${height} mm`
-}
-
-const normalizeDraftList = (drafts: LocalDraftItem[]) => {
-  return drafts
-    .filter(draft => draft?.config && draft?.savedAt)
-    .sort((a, b) => b.savedAt - a.savedAt)
-    .slice(0, MAX_DRAFT_VERSIONS)
-}
-
-const readLocalDrafts = (): LocalDraftItem[] => {
-  try {
-    const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw) as LocalDraftPayload | LegacyLocalDraftPayload
-
-    if (parsed?.version === 2 && Array.isArray((parsed as LocalDraftPayload).drafts)) {
-      return normalizeDraftList((parsed as LocalDraftPayload).drafts)
-    }
-
-    if (parsed?.version === 1 && (parsed as LegacyLocalDraftPayload).config) {
-      const legacyDraft = parsed as LegacyLocalDraftPayload
-      return [{
-        id: `draft-${legacyDraft.savedAt}`,
-        savedAt: legacyDraft.savedAt,
-        summary: buildDraftSummary(legacyDraft.config),
-        config: legacyDraft.config
-      }]
-    }
-
-    return []
-  } catch (error) {
-    console.warn('读取本地草稿失败:', error)
-    return []
-  }
-}
-
-const writeLocalDrafts = (drafts: LocalDraftItem[]) => {
-  const nextDrafts = normalizeDraftList(drafts)
-  const payload: LocalDraftPayload = {
-    version: 2,
-    updatedAt: Date.now(),
-    drafts: nextDrafts
-  }
-  window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload))
-  draftVersions.value = nextDrafts
-  hasLocalDraft.value = nextDrafts.length > 0
-  draftSavedAt.value = nextDrafts[0]?.savedAt ?? null
-}
-
-const saveLocalDraftNow = (config: IDrawStampConfig | null) => {
-  if (!config || suppressDraftSave) return
-
-  draftSaveState.value = 'saving'
-  try {
-    const savedAt = Date.now()
-    const drafts = readLocalDrafts()
-    const latestDraft = drafts[0]
-    const nextDraft: LocalDraftItem = {
-      id: latestDraft && savedAt - latestDraft.savedAt < DRAFT_VERSION_INTERVAL ? latestDraft.id : `draft-${savedAt}`,
-      savedAt,
-      summary: buildDraftSummary(config),
-      config: cloneConfig(config)
-    }
-    const nextDrafts = latestDraft && nextDraft.id === latestDraft.id
-      ? [nextDraft, ...drafts.slice(1)]
-      : [nextDraft, ...drafts]
-    writeLocalDrafts(nextDrafts)
-    draftSavedAt.value = savedAt
-    draftSaveState.value = 'saved'
-    hasLocalDraft.value = true
-  } catch (error) {
-    console.warn('保存本地草稿失败:', error)
-    draftSaveState.value = 'failed'
-  }
-}
-
-const scheduleLocalDraftSave = (config: IDrawStampConfig | null) => {
-  if (!config || suppressDraftSave) return
-  if (draftSaveTimer) {
-    window.clearTimeout(draftSaveTimer)
-  }
-  draftSaveState.value = 'saving'
-  draftSaveTimer = window.setTimeout(() => {
-    saveLocalDraftNow(config)
-  }, DRAFT_SAVE_DELAY)
-}
-
-const clearLocalDraft = () => {
-  suppressDraftSave = true
-  if (draftSaveTimer) {
-    window.clearTimeout(draftSaveTimer)
-    draftSaveTimer = undefined
-  }
-  try {
-    window.localStorage.removeItem(DRAFT_STORAGE_KEY)
-  } catch (error) {
-    console.warn('清除本地草稿失败:', error)
-  }
-  hasLocalDraft.value = false
-  draftSavedAt.value = null
-  draftVersions.value = []
-  draftSaveState.value = 'idle'
-  isDraftMenuOpen.value = false
-  window.setTimeout(() => {
-    suppressDraftSave = false
-  }, DRAFT_SAVE_DELAY)
-}
-
-const retryDraftSave = () => {
-  const config = stampStore.state.config
-  if (!config) return
-  saveLocalDraftNow(config)
-}
-
-const handleDraftStatusClick = () => {
-  if (draftSaveState.value === 'failed') {
-    retryDraftSave()
-    return
-  }
-  isDraftMenuOpen.value = !isDraftMenuOpen.value
-}
-
-const restoreDraftVersion = async (draftId: string) => {
-  const draft = draftVersions.value.find(item => item.id === draftId)
-  if (!draft || !drawStampUtils) return
-
-  suppressDraftSave = true
-  const draftConfig = cloneConfig(draft.config)
-  drawStampUtils.setDrawConfigs(draftConfig)
-  stampStore.setConfig(draftConfig)
-  syncConfigToParent()
-  exportFilename.value = buildExportFilename(draftConfig)
-  drawStamp()
-  draftSavedAt.value = draft.savedAt
-  draftSaveState.value = 'saved'
-  isDraftMenuOpen.value = false
-
-  await nextTick()
-  propertiesPanelRef.value?.restoreDrawConfigs()
-  window.setTimeout(() => {
-    suppressDraftSave = false
-  }, DRAFT_SAVE_DELAY)
-}
-
-const handleGlobalClick = (event: MouseEvent) => {
-  const target = event.target as HTMLElement | null
-  if (!target?.closest?.('.draft-menu-wrap')) {
-    isDraftMenuOpen.value = false
-  }
-}
-
-const handleBeforeUnload = () => {
-  if (draftSaveTimer) {
-    window.clearTimeout(draftSaveTimer)
-    draftSaveTimer = undefined
-  }
-  saveLocalDraftNow(stampStore.state.config)
 }
 
 const zoomCanvas = (factor: number) => {
@@ -1596,30 +567,30 @@ const resetCanvasView = () => {
 const initDrawStampUtils = () => {
   drawStampUtils = new DrawStampUtils(stampCanvas.value, MM_PER_PIXEL)
   drawStampUtils.setOnConfigChange((config) => {
-    stampStore.setConfig(cloneConfig(config))
+    stampStore.setConfig(localDraft.cloneConfig(config))
     syncConfigToParent()
     updateViewState()
   })
 
   // 如果父组件传入了模板配置，优先使用该配置初始化
   if (props.modelValue) {
-    const initialConfig = cloneConfig(props.modelValue)
+    const initialConfig = localDraft.cloneConfig(props.modelValue)
     drawStampUtils.setDrawConfigs(initialConfig)
     stampStore.setConfig(initialConfig)
   } else {
-    const drafts = readLocalDrafts()
-    draftVersions.value = drafts
+    const drafts = localDraft.readLocalDrafts()
+    localDraft.draftVersions = drafts
     const draft = drafts[0]
     if (draft) {
-      const draftConfig = cloneConfig(draft.config)
+      const draftConfig = localDraft.cloneConfig(draft.config)
       drawStampUtils.setDrawConfigs(draftConfig)
       stampStore.setConfig(draftConfig)
-      draftSavedAt.value = draft.savedAt
-      draftSaveState.value = 'saved'
-      hasLocalDraft.value = true
+      localDraft.draftSavedAt = draft.savedAt
+      localDraft.draftSaveState = 'saved'
+      localDraft.hasLocalDraft = true
     } else {
       stampStore.setConfig(drawStampUtils.getDrawConfigs())
-      hasLocalDraft.value = false
+      localDraft.hasLocalDraft = false
     }
   }
 }
@@ -1698,50 +669,15 @@ const loadTemplateFile = async (event: Event) => {
   }
 }
 
-// 保存图片（本地下载，无后端限制）
-const saveStampAsPNG = () => {
-  if (!drawStampUtils) return
-  const baseSize = drawStampUtils.getExportBaseSize()
-  defaultExportWidth.value = Math.round(baseSize.width)
-  defaultExportHeight.value = Math.round(baseSize.height)
-  resetExportSize()
-  selectedFormat.value = 'png'
-  jpegQuality.value = 92
-  useWhitePngBackground.value = false
-  exportFilename.value = buildExportFilename(drawStampUtils.getDrawConfigs())
-  refreshExportPreview()
-
-  showFormatDialog.value = true
-}
-
-const closeFormatDialog = () => {
-  showFormatDialog.value = false
-}
-
-const confirmExport = async () => {
-  closeFormatDialog()
-
-  if (!drawStampUtils) return
-  const width = clampExportSize(exportWidth.value, Math.round(defaultExportWidth.value) || MIN_EXPORT_SIZE)
-  const height = clampExportSize(exportHeight.value, Math.round(defaultExportHeight.value) || MIN_EXPORT_SIZE)
-  const quality = selectedFormat.value === 'jpeg' ? jpegQuality.value / 100 : 0.92
-
-  // 执行下载
-  drawStampUtils.saveStampAsPNG(selectedFormat.value, quality, Math.round(width), Math.round(height), {
-    filenameBase: exportFilename.value || buildExportFilename(drawStampUtils.getDrawConfigs()),
-    background: selectedFormat.value === 'png' && useWhitePngBackground.value ? 'white' : 'transparent'
-  })
-}
-
 const applyTemplatePreset = async (presetKey: TemplatePresetKey) => {
   if (!drawStampUtils) return
-  activeTemplatePreset.value = presetKey
-  const presetConfig = createPresetConfig(presetKey)
+  templates.activeTemplatePreset = presetKey
+  const presetConfig = templates.createPresetConfig(presetKey)
   drawStampUtils.setDrawConfigs(presetConfig)
   drawStampUtils.resetZoom()
   stampStore.setConfig(presetConfig)
   syncConfigToParent()
-  exportFilename.value = buildExportFilename(presetConfig)
+  exportDock.exportFilename = exportDock.buildExportFilename(presetConfig)
   selectedElement.value = ''
   selectedElementType.value = ''
   selectedElementIndex.value = -1
@@ -1826,13 +762,13 @@ const saveCurrentAsTemplate = () => {
     cleanedConfig.stampType?.stampType ||
     cleanedConfig.company?.companyName ||
     ''
-  templateTitle.value = defaultTitle
+  templateDefaultTitle.value = defaultTitle
 
   // 预填分类（多个分类使用空格分隔）
   const defaultCategories = Array.isArray(cleanedConfig.categories)
     ? cleanedConfig.categories.join(' ')
     : cleanedConfig.category || ''
-  templateCategories.value = defaultCategories
+  templateDefaultCategories.value = defaultCategories
 
   pendingTemplateConfig.value = cleanedConfig
   showTemplateMetaDialog.value = true
@@ -1928,7 +864,7 @@ const handleExtractedStampImage = async (payload: ExtractStampResult) => {
   handleSelectElement(`image-${newIndex}`, 'image', newIndex)
 }
 
-const confirmSaveTemplate = () => {
+const confirmSaveTemplate = (payload: { title: string; categories: string }) => {
   if (!pendingTemplateConfig.value) {
     closeTemplateMetaDialog()
     return
@@ -1936,14 +872,12 @@ const confirmSaveTemplate = () => {
 
   const config = pendingTemplateConfig.value
 
-  const title = templateTitle.value.trim()
-  if (title) {
-    config.title = title
+  if (payload.title) {
+    config.title = payload.title
   }
 
-  const categoriesInput = templateCategories.value.trim()
-  if (categoriesInput) {
-    const parts = categoriesInput.split(/\s+/).filter(Boolean)
+  if (payload.categories) {
+    const parts = payload.categories.split(/\s+/).filter(Boolean)
     if (parts.length > 0) {
       config.category = parts[0]
       config.categories = parts
@@ -2076,19 +1010,21 @@ watch(
   }
 )
 
-watch([selectedFormat, jpegQuality, useWhitePngBackground], () => {
-  if (showFormatDialog.value) {
-    refreshExportPreview()
-  }
-})
-
 watch(
   () => stampStore.state.config,
   (config) => {
-    scheduleLocalDraftSave(config)
+    localDraft.scheduleLocalDraftSave(config)
   },
   { deep: true }
 )
+
+// 点击草稿菜单外部时关闭菜单
+const handleGlobalClick = (event: MouseEvent) => {
+  const target = event.target as HTMLElement | null
+  if (!target?.closest?.('.draft-menu-wrap')) {
+    localDraft.isDraftMenuOpen = false
+  }
+}
 
 // 在组件挂载时初始化
 onMounted(async () => {
@@ -2115,7 +1051,7 @@ onMounted(async () => {
   await nextTick()
   handleSelectElement('basic-settings', 'basic', 0)
 
-  window.addEventListener('beforeunload', handleBeforeUnload)
+  window.addEventListener('beforeunload', localDraft.handleBeforeUnload)
   window.addEventListener('mousemove', handleMouseMove)
   window.addEventListener('click', handleGlobalClick)
   drawStampUtils?.canvas?.addEventListener('click', handleCanvasClick)
@@ -2123,8 +1059,8 @@ onMounted(async () => {
 
 // 在组件卸载时移除事件监听
 onUnmounted(() => {
-  handleBeforeUnload()
-  window.removeEventListener('beforeunload', handleBeforeUnload)
+  localDraft.handleBeforeUnload()
+  window.removeEventListener('beforeunload', localDraft.handleBeforeUnload)
   window.removeEventListener('mousemove', handleMouseMove)
   window.removeEventListener('click', handleGlobalClick)
   drawStampUtils?.canvas?.removeEventListener('click', handleCanvasClick)
@@ -2220,235 +1156,6 @@ onUnmounted(() => {
   box-shadow:
     0 16px 44px rgba(40, 48, 38, 0.11),
     inset 0 1px 0 rgba(255, 255, 255, 0.72);
-}
-
-.seo-content {
-  position: relative;
-  isolation: isolate;
-  width: 100%;
-  margin: 18px 0 4px;
-  padding: clamp(18px, 3vw, 34px);
-  box-sizing: border-box;
-  text-align: left;
-  background:
-    radial-gradient(circle at 8% 12%, rgba(255, 255, 255, 0.88), transparent 28%),
-    linear-gradient(135deg, rgba(35, 76, 92, 0.055) 0 1px, transparent 1px 100%),
-    linear-gradient(180deg, #fffefa 0%, #f5f6f0 100%);
-  background-size: auto, 20px 20px, auto;
-  border: 1px solid var(--studio-line);
-  border-radius: 14px;
-  box-shadow: var(--studio-shadow-panel);
-  overflow: hidden;
-}
-
-.seo-content::after {
-  content: '';
-  position: absolute;
-  top: 22px;
-  right: 24px;
-  z-index: -1;
-  width: clamp(76px, 11vw, 132px);
-  height: clamp(76px, 11vw, 132px);
-  border: 2px solid rgba(255, 0, 21, 0.12);
-  border-radius: 50%;
-  box-shadow: inset 0 0 0 10px rgba(255, 0, 21, 0.035);
-}
-
-.seo-hero {
-  max-width: 880px;
-}
-
-.seo-brand-lockup {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 18px;
-  padding: 10px 14px 10px 10px;
-  background: rgba(255, 255, 255, 0.74);
-  border: 1px solid var(--studio-line-hair);
-  border-radius: 16px;
-  box-shadow: var(--studio-shadow-quiet);
-}
-
-.seo-brand-lockup img {
-  display: block;
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
-  filter: drop-shadow(0 8px 14px rgba(111, 18, 24, 0.14));
-}
-
-.seo-brand-lockup strong,
-.seo-brand-lockup span {
-  display: block;
-}
-
-.seo-brand-lockup strong {
-  color: var(--studio-ink);
-  font-size: 15px;
-  line-height: 1.25;
-  font-weight: 850;
-  letter-spacing: -0.01em;
-}
-
-.seo-brand-lockup span {
-  margin-top: 2px;
-  color: var(--studio-muted);
-  font-size: 11px;
-  line-height: 1.3;
-  font-weight: 750;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.seo-eyebrow {
-  margin: 0 0 10px;
-  color: var(--studio-tool-blue);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.seo-content h2,
-.seo-content h3,
-.seo-content p {
-  margin-top: 0;
-}
-
-.seo-content h2 {
-  color: var(--studio-ink);
-  font-size: clamp(24px, 3vw, 38px);
-  line-height: 1.16;
-  letter-spacing: -0.04em;
-}
-
-.seo-content p {
-  color: var(--studio-muted);
-  font-size: 15px;
-  line-height: 1.8;
-}
-
-.seo-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 16px;
-}
-
-.seo-meta span {
-  padding: 7px 10px;
-  color: var(--studio-tool-blue);
-  background: rgba(232, 242, 245, 0.86);
-  border: 1px solid rgba(46, 111, 143, 0.14);
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 900;
-}
-
-.seo-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 22px;
-}
-
-.seo-grid article,
-.seo-faq {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid var(--studio-line-hair);
-  border-radius: 12px;
-  box-shadow: var(--studio-shadow-quiet);
-}
-
-.seo-grid article {
-  position: relative;
-  padding: 18px;
-}
-
-.seo-grid span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 24px;
-  margin-bottom: 12px;
-  color: var(--studio-tool-blue);
-  background: rgba(232, 242, 245, 0.72);
-  border: 1px solid rgba(46, 111, 143, 0.12);
-  border-radius: 7px;
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.seo-grid h3 {
-  margin-bottom: 8px;
-  color: var(--studio-ink);
-  font-size: 17px;
-}
-
-.seo-grid p {
-  margin-bottom: 0;
-  font-size: 14px;
-}
-
-.seo-faq {
-  margin-top: 14px;
-  padding: 18px;
-}
-
-.seo-faq h2 {
-  margin-bottom: 14px;
-  font-size: 22px;
-  letter-spacing: -0.02em;
-}
-
-.seo-faq details {
-  border-top: 1px solid var(--studio-line-hair);
-  padding: 12px 0;
-}
-
-.seo-faq details:first-of-type {
-  border-top: 0;
-  padding-top: 0;
-}
-
-.seo-faq details:last-of-type {
-  padding-bottom: 0;
-}
-
-.seo-faq summary {
-  cursor: pointer;
-  color: var(--studio-ink);
-  font-weight: 700;
-}
-
-.seo-faq details p {
-  margin: 10px 0 0;
-}
-
-.seo-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.seo-links a {
-  padding: 8px 12px;
-  color: var(--studio-tool-blue);
-  background: rgba(255, 255, 255, 0.62);
-  border: 1px solid var(--studio-line);
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 800;
-  text-decoration: none;
-}
-
-.seo-links a:hover {
-  color: #ffffff;
-  background: var(--studio-tool-blue);
-  border-color: var(--studio-tool-blue);
 }
 
 .top-toolbar {
@@ -3641,531 +2348,6 @@ onUnmounted(() => {
 
 .save-count-small {
   font-size: 12px;
-}
-
-.export-dialog {
-  width: min(920px, calc(100vw - 40px));
-  max-width: none;
-  padding: 0;
-  border: 1px solid var(--studio-line-strong);
-  border-radius: 14px;
-  background: var(--studio-panel);
-  overflow: hidden;
-  box-shadow: 0 26px 80px rgba(32, 37, 34, 0.28);
-}
-
-.export-dialog-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  min-height: 64px;
-  padding: 16px 18px;
-  border-bottom: 1px solid var(--studio-line);
-  background: linear-gradient(180deg, #fffefa, #f7f8f3);
-}
-
-.export-dialog-header h3 {
-  margin: 1px 0 0;
-  color: var(--studio-ink);
-  font-size: 20px;
-  line-height: 1.2;
-}
-
-.export-eyebrow {
-  display: block;
-  color: var(--studio-muted);
-  font-size: 10px;
-  line-height: 1.3;
-  letter-spacing: 0;
-  font-weight: 800;
-}
-
-.export-close-button {
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  box-sizing: border-box;
-  flex: 0 0 30px;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--studio-muted);
-  cursor: pointer;
-  font-size: 22px;
-  line-height: 1;
-  transition: background 0.2s, color 0.2s, transform 0.2s;
-}
-
-.export-close-button:hover {
-  background: #f7eeee;
-  color: var(--studio-ui-red-deep);
-  transform: translateY(-1px);
-}
-
-.export-dialog-content {
-  display: grid;
-  grid-template-columns: minmax(260px, 0.86fr) minmax(360px, 1fr);
-  gap: 0;
-  margin: 0;
-}
-
-.export-preview-panel,
-.export-settings-panel {
-  min-width: 0;
-  padding: 18px;
-}
-
-.export-preview-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  border-right: 1px solid var(--studio-line);
-  background:
-    linear-gradient(#e5e9e0 1px, transparent 1px),
-    linear-gradient(90deg, #e5e9e0 1px, transparent 1px);
-  background-color: #f4f5f1;
-  background-size: 24px 24px;
-}
-
-.export-preview-card {
-  min-height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--studio-line);
-  border-radius: 10px;
-  background: var(--studio-panel);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), var(--studio-shadow-panel);
-  overflow: hidden;
-}
-
-.export-preview-card.checker {
-  background:
-    linear-gradient(45deg, #edf1f5 25%, transparent 25%),
-    linear-gradient(-45deg, #edf1f5 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #edf1f5 75%),
-    linear-gradient(-45deg, transparent 75%, #edf1f5 75%);
-  background-color: #ffffff;
-  background-position: 0 0, 0 10px, 10px -10px, -10px 0;
-  background-size: 20px 20px;
-}
-
-.export-preview-card img {
-  max-width: 86%;
-  max-height: 260px;
-  object-fit: contain;
-  filter: drop-shadow(0 10px 18px rgba(37, 48, 68, 0.08));
-}
-
-.export-preview-empty {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  height: 100%;
-}
-
-.skeleton-stamp {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  background: var(--studio-panel-muted);
-  border: 1px solid var(--studio-line);
-  animation: skeleton-pulse 1.4s ease-in-out infinite;
-}
-
-@keyframes skeleton-pulse {
-  0%,
-  100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.export-preview-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 10px 12px;
-  border: 1px solid var(--studio-line);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.9);
-}
-
-.export-preview-meta strong,
-.export-preview-meta span {
-  white-space: nowrap;
-}
-
-.export-preview-meta strong {
-  color: var(--studio-ink);
-  font-size: 13px;
-}
-
-.export-preview-meta span {
-  color: var(--studio-muted);
-  font-size: 12px;
-}
-
-.export-settings-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.export-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.export-section-title {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.export-section-title label {
-  color: var(--studio-ink);
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.export-section-title span {
-  color: var(--studio-muted);
-  font-size: 12px;
-}
-
-.export-dialog .format-options {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  margin-top: 0;
-}
-
-.export-dialog .format-button {
-  min-width: 0;
-  min-height: 78px;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px;
-  border: 1px solid var(--studio-line);
-  border-radius: 10px;
-  background: linear-gradient(180deg, #fffefa, #f7f8f3);
-  color: var(--studio-ink);
-  position: relative;
-}
-
-.export-dialog .format-button:hover,
-.export-dialog .format-button.active {
-  border-color: var(--studio-ui-red);
-  background: #fff8f6;
-  box-shadow: 0 0 0 2px rgba(163, 58, 50, 0.08);
-}
-
-.export-dialog .format-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  background: #f7eeee;
-  color: var(--studio-ui-red);
-  font-size: 12px;
-  font-weight: 900;
-}
-
-.export-dialog .format-name,
-.export-dialog .format-desc {
-  display: block;
-}
-
-.export-dialog .format-name {
-  min-width: 0;
-  color: var(--studio-ink);
-  font-size: 14px;
-}
-
-.export-dialog .format-desc {
-  margin-top: 3px;
-  color: var(--studio-muted);
-  font-size: 11px;
-  line-height: 1.35;
-}
-
-.export-dialog .format-button em {
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  padding: 2px 5px;
-  border-radius: 999px;
-  background: #f7eeee;
-  color: var(--studio-ui-red);
-  font-size: 10px;
-  font-style: normal;
-  font-weight: 800;
-}
-
-.export-dialog .quality-setting {
-  margin: 0;
-  padding: 12px;
-  border: 1px solid var(--studio-line);
-  border-radius: 10px;
-  background: #fbfaf6;
-}
-
-.export-dialog .quality-setting label {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  color: var(--studio-ink);
-  font-weight: 700;
-}
-
-.export-dialog .quality-slider::-webkit-slider-thumb,
-.export-dialog .quality-slider::-moz-range-thumb {
-  background: var(--studio-ui-red);
-}
-
-.export-dialog .quality-slider {
-  background: var(--studio-line);
-}
-
-.export-dialog .scale-options {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.export-dialog .scale-button {
-  min-height: 36px;
-}
-
-.export-dialog .export-checkbox {
-  min-height: 40px;
-  padding: 0 12px;
-  border: 1px solid var(--studio-line);
-  border-radius: 10px;
-  background: #fbfaf6;
-  color: var(--studio-ink);
-}
-
-.export-dialog .export-name-input {
-  height: 38px;
-}
-
-.export-advanced {
-  border: 1px solid var(--studio-line);
-  border-radius: 10px;
-  background: #fbfaf6;
-  overflow: hidden;
-}
-
-.export-advanced summary {
-  padding: 12px;
-  color: var(--studio-ink);
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 800;
-  list-style-position: inside;
-}
-
-.export-advanced .size-setting {
-  margin: 0;
-  padding: 0 12px 12px;
-  border-top: 1px solid var(--studio-line);
-}
-
-.export-dialog .size-setting-header {
-  margin-bottom: 10px;
-}
-
-.export-dialog .size-field input {
-  border-color: var(--studio-line);
-  background: var(--studio-panel);
-  color: var(--studio-ink);
-}
-
-.export-dialog .size-field input:focus {
-  border-color: rgba(35, 76, 92, 0.48);
-  box-shadow: var(--studio-focus);
-}
-
-.export-dialog .size-reset {
-  padding: 4px 8px;
-  border: 1px solid var(--studio-line);
-  border-radius: 999px;
-  background: var(--studio-panel);
-  color: var(--studio-tool-blue);
-  font-weight: 700;
-}
-
-.export-dialog .size-reset:hover {
-  border-color: rgba(35, 76, 92, 0.38);
-  background: var(--studio-tool-blue-soft);
-  color: var(--studio-tool-blue);
-  text-decoration: none;
-}
-
-.export-dialog .ratio-options {
-  gap: 6px;
-}
-
-.export-dialog .ratio-button {
-  border-color: var(--studio-line);
-  background: var(--studio-panel);
-  color: var(--studio-muted);
-  font-weight: 650;
-}
-
-.export-dialog .ratio-button:hover {
-  border-color: rgba(35, 76, 92, 0.38);
-  background: var(--studio-tool-blue-soft);
-  color: var(--studio-tool-blue);
-}
-
-.export-dialog .ratio-button.active {
-  border-color: rgba(163, 58, 50, 0.42);
-  background: #fff3f0;
-  color: var(--studio-ui-red);
-  box-shadow: 0 0 0 2px rgba(163, 58, 50, 0.08);
-}
-
-.export-dialog .dialog-buttons {
-  margin-top: 0;
-  padding: 14px 18px;
-  border-top: 1px solid var(--studio-line);
-  background: #f7f8f3;
-}
-
-.export-dialog .cancel-button,
-.export-dialog .confirm-button {
-  min-width: 96px;
-  min-height: 36px;
-  border-radius: 7px;
-  font-weight: 700;
-}
-
-.export-dialog .cancel-button {
-  border: 1px solid var(--studio-line);
-  background: var(--studio-panel);
-  color: var(--studio-muted);
-}
-
-.export-dialog .cancel-button:hover {
-  border-color: var(--studio-line-strong);
-  background: #f7f8f3;
-  color: var(--studio-ink);
-}
-
-.export-dialog .confirm-button {
-  border: 1px solid var(--studio-ui-red);
-  background: var(--studio-ui-red);
-  color: #ffffff;
-  box-shadow: 0 8px 18px rgba(132, 43, 38, 0.18);
-}
-
-.export-dialog .confirm-button:hover {
-  background: var(--studio-ui-red-deep);
-}
-
-.export-quick-settings {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #e0e0e0;
-}
-
-.quick-setting {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.quick-setting label,
-.export-checkbox {
-  color: #333;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.scale-options {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
-.scale-button {
-  min-height: 34px;
-  border: 1px solid var(--studio-line);
-  border-radius: 7px;
-  background: var(--studio-panel);
-  color: var(--studio-ink);
-  cursor: pointer;
-  font-size: 13px;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
-}
-
-.scale-button:hover,
-.scale-button.active {
-  border-color: var(--studio-ui-red);
-  background: #fff5f3;
-  color: var(--studio-ui-red);
-}
-
-.export-checkbox {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.export-checkbox input {
-  accent-color: var(--studio-ui-red);
-}
-
-.export-name-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 8px 10px;
-  border: 1px solid var(--studio-line);
-  border-radius: 7px;
-  color: var(--studio-ink);
-  font-size: 14px;
-}
-
-.export-name-input:focus {
-  border-color: var(--studio-ui-red);
-  box-shadow: 0 0 0 3px rgba(163, 58, 50, 0.12);
-  outline: none;
-}
-
-.meta-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 12px;
-}
-
-.meta-input {
-  padding: 6px 10px;
-  border: 1px solid var(--studio-line);
-  border-radius: 6px;
-  font-size: 13px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.meta-input:focus {
-  border-color: rgba(35, 76, 92, 0.34);
-  box-shadow: var(--studio-focus);
-  outline: none;
 }
 
 /* 左右侧面板 loading 状态 */
