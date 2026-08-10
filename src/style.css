@@ -27,10 +27,10 @@
 
 @font-face {
   font-family: "DrawStamp-STLiti";
-  src: url("./assets/fonts/STLiti.ttf") format("truetype");
+  src: url("./assets/fonts/STLiti.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
 }
 
 :root {
