@@ -1,6 +1,6 @@
 # Preserve the exact Google verification URL. Cloudflare's HTML handling would
 # otherwise redirect this .html path before Google can read the verification body.
-/google55fc926f50b815c.html /google55fc926f50b815c.txt 200
+/google55fc926f50b81f5c.html /google55fc926f50b81f5c.txt 200
 
 # Public routes are emitted as clean-URL static HTML during npm run build.
 # Unknown paths fall through to 404.html with a real 404 response.
