@@ -6,7 +6,7 @@ DrawStamp Studio is a browser-local electronic stamp workspace for creating, ext
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-FF0015?style=for-the-badge)](https://wosp.cc.cd/)
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://wosp.cc.cd/)
-[![Version](https://img.shields.io/badge/Version-0.7.0-234c5c?style=for-the-badge)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.7.1-234c5c?style=for-the-badge)](CHANGELOG.md)
 [![Vue 3](https://img.shields.io/badge/Vue-3-42b883?style=for-the-badge&logo=vue.js&logoColor=white)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5-646cff?style=for-the-badge)](https://vitejs.dev/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-334155?style=for-the-badge)](LICENSE)
@@ -23,7 +23,15 @@ DrawStamp Studio is a browser-local electronic stamp workspace for creating, ext
 
 DrawStamp Studio combines a template library, a canvas editor, browser-local image extraction, automatic local drafts, JSON template import/export, and PNG / SVG / JPEG downloads in one web interface.
 
-Version `0.7.0` refactors the editor into modular pieces: the export dialog, template meta dialog, and SEO content section become standalone components, while export, template preset, and local draft logic are extracted into reusable composables, with versioned SEO structured data updated accordingly.
+Version `0.7.1` adds bilingual, task-focused guides and synchronizes the GitHub documentation, sitemap output, and versioned structured data. The editor continues to use reusable modules for export, template presets, and local drafts.
+
+## Guides
+
+- [Extract a transparent stamp from an image](https://wosp.cc.cd/en/extract-transparent-stamp): clean a background locally, review edges, and export transparent PNG, SVG, or JPEG files.
+- [Round company seal template](https://wosp.cc.cd/en/round-company-seal-template): begin with a round or oval layout, then adjust text, borders, stars, and composition.
+- [Export an SVG stamp design](https://wosp.cc.cd/en/svg-stamp-export): choose between SVG, PNG, and JPEG for scalable designs, transparent previews, and delivery.
+
+These guides are for learning, design previews, and authorized use only. The tool does not verify seals, documents, or permissions.
 
 It is useful when you need to:
 
@@ -105,8 +113,9 @@ The repository includes:
 
 - `public/_redirects` for SPA route fallback.
 - `public/_headers` for baseline security headers.
-- `public/robots.txt` and `public/sitemap.xml` for crawl discovery.
-- Localized runtime metadata and structured data for the main routes.
+- `public/robots.txt` for crawler discovery.
+- `src/seo-pages.json` as the source of localized metadata and 16 public routes.
+- `scripts/prerender-seo.mjs` to generate prerendered pages and `dist/sitemap.xml` during builds, including the guide pages.
 
 ## Project structure
 

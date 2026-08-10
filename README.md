@@ -8,7 +8,7 @@ A browser-local electronic stamp editor for generating, extracting, editing and 
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-FF0015?style=for-the-badge)](https://wosp.cc.cd/)
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://wosp.cc.cd/)
-[![Version](https://img.shields.io/badge/Version-0.7.0-234c5c?style=for-the-badge)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.7.1-234c5c?style=for-the-badge)](CHANGELOG.md)
 [![Vue 3](https://img.shields.io/badge/Vue-3-42b883?style=for-the-badge&logo=vue.js&logoColor=white)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5-646cff?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-334155?style=for-the-badge)](LICENSE)
@@ -25,7 +25,7 @@ A browser-local electronic stamp editor for generating, extracting, editing and 
 
 DrawStamp Studio 已经从单纯的印章绘制工具，整理成一个完整的在线编辑器：支持常用模板、纸感专业画布、字体选择、图片提取印章、本地自动草稿、模板导入导出，以及 PNG / SVG / JPEG 多格式下载。
 
-当前版本 `0.7.0` 完成编辑器主界面的模块化重构：将导出弹窗、模板元信息弹窗和 SEO 内容区拆分为独立组件，导出、模板预设与本地草稿逻辑提炼为可复用组合式模块，并同步更新版本化 SEO 结构化数据。
+当前版本 `0.7.1` 补齐了面向实际任务的中英文说明页，并同步更新 GitHub 文档、站点地图和版本化结构化数据；编辑器的导出、模板预设与本地草稿逻辑继续保持模块化复用。
 
 相关文档：
 
@@ -35,6 +35,14 @@ DrawStamp Studio 已经从单纯的印章绘制工具，整理成一个完整的
 - [隐私政策](https://wosp.cc.cd/privacy)
 - [服务条款](https://wosp.cc.cd/terms)
 - [联系反馈](https://wosp.cc.cd/contact)
+
+## 实用指南
+
+- [从图片提取透明印章](https://wosp.cc.cd/extract-transparent-stamp)：在浏览器本地清理背景、检查边缘，并导出透明 PNG、SVG 或 JPEG。
+- [圆形印章模板](https://wosp.cc.cd/round-company-seal-template)：从基础圆形或椭圆形样式调整文字、边框、五角星与布局。
+- [SVG 印章导出](https://wosp.cc.cd/svg-stamp-export)：了解 SVG、PNG、JPEG 的适用场景，并保留可缩放的设计稿。
+
+以上说明仅适用于学习、设计预览和已获授权的使用场景；工具不会核验印章、文件或授权关系。
 
 ## 项目定位
 
@@ -131,13 +139,14 @@ Cloudflare Pages 构建配置：
 
 当前静态 SEO 与部署相关文件：
 
-- `index.html`：站点 meta、Open Graph、Twitter Card、SoftwareApplication 与 FAQ 结构化数据。
-- `public/sitemap.xml`：首页、关于、隐私、条款和联系页收录入口。
+- `index.html`：站点 meta、Open Graph、Twitter Card 与 SoftwareApplication 结构化数据。
+- `src/seo-pages.json`：中英文页面元数据与 16 个公开 URL 的配置来源。
+- `scripts/prerender-seo.mjs`：构建时生成预渲染页面与 `dist/sitemap.xml`，包括首页、说明页和 3 篇中英文实用指南。
 - `public/robots.txt`：允许抓取并声明 sitemap。
 - `public/_redirects`：Cloudflare Pages SPA 路由回退。
 - `public/_headers`：基础安全响应头。
 
-大版本或明显界面变动时，需要同步更新 `README.md`、`CHANGELOG.md`、`package.json`、`package-lock.json`、README 截图、`public/social-preview.png`、SEO 信息、`public/sitemap.xml`、`public/_headers` 和 `public/_redirects`，确保 GitHub 仓库首页与线上版本保持一致。
+大版本或明显界面变动时，需要同步更新 `README.md`、`README.en.md`、`CHANGELOG.md`、`package.json`、`package-lock.json`、README 截图、`public/social-preview.png`、SEO 页面配置、`public/_headers` 和 `public/_redirects`，确保 GitHub 仓库首页与线上版本保持一致。
 
 ## 项目结构
 
