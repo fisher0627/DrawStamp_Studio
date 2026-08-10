@@ -1,0 +1,103 @@
+{
+  "siteUrl": "https://wosp.cc.cd",
+  "previewImage": "/social-preview.png",
+  "logoImage": "/icon-512.png",
+  "lastmod": "2026-08-09",
+  "routes": {
+    "home": {
+      "schemaType": "WebPage",
+      "zh": {
+        "path": "/",
+        "title": "DrawStamp Studio - 在线电子印章生成器",
+        "description": "免费在线生成、提取和编辑电子印章，支持圆章、椭圆章、透明 PNG、SVG 和 JPEG 导出。核心图片处理在浏览器本地完成，不上传图片。",
+        "heading": "在线电子印章生成与图片提取工具",
+        "summary": "在浏览器中创建、编辑和提取电子印章，实时预览并导出透明 PNG、SVG 或 JPEG。核心图片处理保留在本地设备。",
+        "highlights": ["圆章与椭圆章模板", "图片提取透明印章", "PNG、SVG、JPEG 导出", "本地草稿与模板"]
+      },
+      "en": {
+        "path": "/en/",
+        "title": "Online Stamp Maker & Seal Editor | DrawStamp Studio",
+        "description": "Create, extract, edit, and export electronic stamp images online. Supports round and oval seals, transparent PNG, SVG, and JPEG. Core image processing stays in your browser.",
+        "heading": "Online Stamp Maker and Image Extraction Tool",
+        "summary": "Create, edit, and extract electronic stamp images in your browser, preview changes live, and export transparent PNG, SVG, or JPEG files without uploading source images.",
+        "highlights": ["Round and oval templates", "Extract transparent stamps", "PNG, SVG, and JPEG export", "Local drafts and templates"]
+      }
+    },
+    "about": {
+      "schemaType": "AboutPage",
+      "zh": {
+        "path": "/about",
+        "title": "关于在线电子印章工作台 | DrawStamp Studio",
+        "description": "了解 DrawStamp Studio 的功能定位、浏览器本地处理方式、开源说明与合规的电子印章制作场景。",
+        "heading": "关于 DrawStamp Studio",
+        "summary": "DrawStamp Studio 是开源、浏览器本地运行的电子印章编辑器，面向学习、测试、设计预览和合规授权场景。",
+        "highlights": ["浏览器本地处理", "开源项目", "可编辑模板", "合规使用说明"]
+      },
+      "en": {
+        "path": "/en/about",
+        "title": "About the Browser-Local Stamp Editor | DrawStamp Studio",
+        "description": "Learn how DrawStamp Studio creates, extracts, edits, and exports electronic stamp images locally in your browser as an open-source web tool.",
+        "heading": "About DrawStamp Studio",
+        "summary": "DrawStamp Studio is an open-source, browser-local electronic stamp editor intended for learning, testing, design previews, and legally authorized use.",
+        "highlights": ["Browser-local processing", "Open-source project", "Editable templates", "Responsible-use guidance"]
+      }
+    },
+    "privacy": {
+      "schemaType": "WebPage",
+      "zh": {
+        "path": "/privacy",
+        "title": "隐私政策 | DrawStamp Studio",
+        "description": "了解 DrawStamp Studio 如何在浏览器本地处理印章图片、模板和草稿，以及 Umami 分析和 Cloudflare Pages 的使用说明。",
+        "heading": "隐私政策",
+        "summary": "印章编辑、图片提取和导出在浏览器本地完成。本页说明本地数据、访问分析和托管服务的处理方式。",
+        "highlights": ["图片不主动上传", "草稿保存在本地", "基础访问分析", "Cloudflare Pages 托管"]
+      },
+      "en": {
+        "path": "/en/privacy",
+        "title": "Privacy Policy | DrawStamp Studio",
+        "description": "Learn how DrawStamp Studio handles stamp images, templates, drafts, local storage, Umami analytics, and Cloudflare Pages hosting.",
+        "heading": "Privacy Policy",
+        "summary": "Stamp editing, image extraction, and export run locally in your browser. This page explains local data, analytics, and hosting services.",
+        "highlights": ["No active image uploads", "Drafts stay local", "Basic site analytics", "Cloudflare Pages hosting"]
+      }
+    },
+    "terms": {
+      "schemaType": "WebPage",
+      "zh": {
+        "path": "/terms",
+        "title": "服务条款 | DrawStamp Studio",
+        "description": "阅读 DrawStamp Studio 的合法使用范围、禁止用途、用户责任、免责声明与开源许可说明。",
+        "heading": "服务条款",
+        "summary": "使用 DrawStamp Studio 前，请确认使用场景合法、内容真实并获得必要授权。禁止用于伪造文件或其他违法用途。",
+        "highlights": ["仅限合法用途", "禁止欺诈与伪造", "用户自行负责内容", "开源许可说明"]
+      },
+      "en": {
+        "path": "/en/terms",
+        "title": "Terms of Service | DrawStamp Studio",
+        "description": "Read the lawful-use rules, prohibited uses, user responsibilities, disclaimers, and open-source licensing terms for DrawStamp Studio.",
+        "heading": "Terms of Service",
+        "summary": "Before using DrawStamp Studio, confirm that your use is lawful, accurate, and authorized. Forgery, fraud, and other unlawful uses are prohibited.",
+        "highlights": ["Lawful use only", "No fraud or forgery", "User responsibility", "Open-source licensing"]
+      }
+    },
+    "contact": {
+      "schemaType": "ContactPage",
+      "zh": {
+        "path": "/contact",
+        "title": "联系反馈 | DrawStamp Studio",
+        "description": "联系 DrawStamp Studio，提交在线印章生成器的问题反馈、功能建议、Bug 报告或开源贡献线索。",
+        "heading": "联系与反馈",
+        "summary": "通过 Telegram 或电子邮件提交使用问题、功能建议、Bug 报告和开源贡献线索。",
+        "highlights": ["问题反馈", "功能建议", "Bug 报告", "开源贡献"]
+      },
+      "en": {
+        "path": "/en/contact",
+        "title": "Contact & Feedback | DrawStamp Studio",
+        "description": "Contact DrawStamp Studio with questions, feature requests, bug reports, collaboration ideas, or open-source contributions.",
+        "heading": "Contact and Feedback",
+        "summary": "Use Telegram or email to share questions, feature requests, bug reports, and open-source contribution ideas.",
+        "highlights": ["Questions", "Feature requests", "Bug reports", "Open-source contributions"]
+      }
+    }
+  }
+}

@@ -2,21 +2,22 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="canonical" href="https://wosp.cc.cd/" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- SEO Meta Tags -->
+    <link rel="canonical" href="https://wosp.cc.cd/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://wosp.cc.cd/" />
+    <link rel="alternate" hreflang="en" href="https://wosp.cc.cd/en/" />
+    <link rel="alternate" hreflang="x-default" href="https://wosp.cc.cd/" />
+
     <title>DrawStamp Studio - 在线电子印章生成器</title>
     <meta name="description" content="免费在线生成、提取和编辑电子印章，支持圆章、椭圆章、透明 PNG、SVG 和 JPEG 导出。核心图片处理在浏览器本地完成，不上传图片。" />
-    <meta name="keywords" content="电子印章,在线印章,印章工作台,印章生成器,电子印章生成器,透明印章PNG,图片提取印章,公章图片制作,合同专用章,财务专用章,发票专用章,stamp generator,digital seal,DrawStamp Studio" />
     <meta name="author" content="DrawStamp Studio" />
     <meta name="robots" content="index, follow" />
-    
-    <!-- Open Graph Meta Tags -->
+    <meta http-equiv="content-language" content="zh-CN" />
+
     <meta property="og:site_name" content="DrawStamp Studio" />
     <meta property="og:title" content="DrawStamp Studio - 在线电子印章生成器" />
     <meta property="og:description" content="免费在线生成、提取和编辑电子印章，支持透明 PNG、SVG 和 JPEG，核心图片处理不上传。" />
@@ -30,128 +31,71 @@
     <meta property="og:image:width" content="1280" />
     <meta property="og:image:height" content="640" />
     <meta property="og:image:alt" content="DrawStamp Studio 在线电子印章工作台社交预览图" />
-    
-    <!-- Twitter Card Meta Tags -->
+
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="DrawStamp Studio - 在线电子印章生成器" />
     <meta name="twitter:description" content="免费在线生成、提取和编辑电子印章，支持透明 PNG、SVG 和 JPEG，核心图片处理不上传。" />
     <meta name="twitter:image" content="https://wosp.cc.cd/social-preview.png" />
     <meta name="twitter:image:alt" content="DrawStamp Studio 在线电子印章工作台社交预览图" />
-    
-    <!-- Language -->
-    <meta http-equiv="content-language" content="zh-CN" />
-    
-    <!-- Theme Color -->
+
     <meta name="theme-color" content="#FF0015" />
     <script id="software-application-schema" type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
         "name": "DrawStamp Studio",
-        "alternateName": "在线电子印章工作台",
+        "alternateName": "在线电子印章生成与图片提取工具",
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "Web",
         "url": "https://wosp.cc.cd/",
-        "mainEntityOfPage": "https://wosp.cc.cd/",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://wosp.cc.cd/icon-512.png",
-          "width": 512,
-          "height": 512
-        },
         "image": "https://wosp.cc.cd/social-preview.png",
-        "thumbnailUrl": "https://wosp.cc.cd/social-preview.png",
         "screenshot": "https://wosp.cc.cd/readme-workspace.png",
         "inLanguage": "zh-CN",
         "softwareVersion": "0.7.0",
         "isAccessibleForFree": true,
-        "description": "在线电子印章工作台，支持圆章、椭圆章、图片提取印章、画布编辑、透明 PNG、SVG 和 JPEG 导出。",
-        "featureList": [
-          "在线电子印章生成",
-          "图片提取透明印章",
-          "圆章和椭圆章模板",
-          "PNG、SVG、JPEG 导出",
-          "浏览器本地图片处理",
-          "本地自动草稿和模板导入导出"
-        ],
+        "description": "免费在线生成、提取和编辑电子印章，支持圆章、椭圆章、透明 PNG、SVG 和 JPEG 导出。核心图片处理在浏览器本地完成，不上传图片。",
+        "featureList": ["圆章与椭圆章模板", "图片提取透明印章", "PNG、SVG、JPEG 导出", "本地草稿与模板"],
         "publisher": {
           "@type": "Organization",
           "name": "DrawStamp Studio",
           "url": "https://wosp.cc.cd/",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://wosp.cc.cd/icon-512.png",
-            "width": 512,
-            "height": 512
-          }
+          "logo": "https://wosp.cc.cd/icon-512.png"
         },
-        "author": {
-          "@type": "Organization",
-          "name": "DrawStamp Studio",
-          "url": "https://wosp.cc.cd/"
-        },
-        "creator": {
-          "@type": "Organization",
-          "name": "DrawStamp Studio",
-          "url": "https://wosp.cc.cd/"
-        },
-        "sameAs": [
-          "https://github.com/fisher0627/DrawStamp_Studio",
-          "https://t.me/KEVIN627ZTZ"
-        ],
         "license": "https://github.com/fisher0627/DrawStamp_Studio/blob/main/LICENSE",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "CNY"
-        }
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" }
       }
     </script>
-    <script id="faq-schema" type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "DrawStamp Studio 会上传我的印章图片吗？",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "不会。印章绘制、图片提取、模板草稿和导出都在浏览器端完成，项目没有为这些核心流程配置后端上传接口。"
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "可以导出透明背景印章吗？",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "可以。推荐使用 PNG 格式并关闭白底选项，导出的透明 PNG 可用于文档排版、演示稿或内部测试素材。"
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "这个工具适合真实盖章或伪造文件吗？",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "不适合。本项目仅用于学习、测试、设计预览和合规授权场景，请勿用于伪造合同、公文、票据或任何违法用途。"
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "可以保存和继续编辑模板吗？",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "可以。当前配置可以导出为 JSON 模板，浏览器也会保存本地草稿，方便刷新后继续编辑。"
-            }
-          }
-        ]
-      }
-    </script>
-    <!-- umani stats -->
+    <style>
+      .static-seo-shell{max-width:920px;margin:24px auto;padding:clamp(24px,5vw,64px);box-sizing:border-box;border:1px solid #d9ddd6;border-radius:18px;background:#fff;color:#202522;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;box-shadow:0 18px 48px rgba(31,42,36,.08)}
+      .static-seo-shell img{display:block;max-width:178px;height:auto}.static-seo-shell h1{margin:28px 0 14px;font-size:clamp(34px,6vw,68px);line-height:1.02;letter-spacing:-.05em}.static-seo-shell p{max-width:760px;color:#667067;line-height:1.8}.static-seo-shell ul{display:flex;flex-wrap:wrap;gap:8px;padding:0;list-style:none}.static-seo-shell li{padding:7px 12px;border:1px solid #d9ddd6;border-radius:999px}.static-seo-shell nav{display:flex;flex-wrap:wrap;gap:16px;margin-top:28px}.static-seo-shell a{color:#234c5c;font-weight:800;text-decoration:none}
+    </style>
     <script defer src="https://cloud.umami.is/script.js" data-website-id="51ef2aef-2499-463f-86f2-1a0b8d545263"></script>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <main class="static-seo-shell">
+        <header>
+          <img src="/logo-lockup.svg" alt="DrawStamp Studio" width="178" height="46" />
+          <p>浏览器本地电子印章工作台</p>
+          <h1>在线电子印章生成与图片提取工具</h1>
+          <p>在浏览器中创建、编辑和提取电子印章，实时预览并导出透明 PNG、SVG 或 JPEG。核心图片处理保留在本地设备。</p>
+        </header>
+        <ul>
+          <li>圆章与椭圆章模板</li>
+          <li>图片提取透明印章</li>
+          <li>PNG、SVG、JPEG 导出</li>
+          <li>本地草稿与模板</li>
+        </ul>
+        <nav aria-label="主要页面">
+          <a href="/">在线电子印章生成与图片提取工具</a>
+          <a href="/about">关于 DrawStamp Studio</a>
+          <a href="/privacy">隐私政策</a>
+          <a href="/terms">服务条款</a>
+          <a href="/contact">联系与反馈</a>
+        </nav>
+        <p><a href="/en/" hreflang="en">English</a></p>
+      </main>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

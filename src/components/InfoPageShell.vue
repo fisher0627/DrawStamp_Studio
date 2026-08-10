@@ -1,15 +1,15 @@
 <template>
   <main class="info-page-shell" :class="toneClass">
     <aside class="info-page-rail" :aria-label="t('studio.nav.aria')">
-      <RouterLink to="/" class="rail-home">
+      <RouterLink :to="routePath('/')" class="rail-home">
         <img src="/logo-lockup.svg" :alt="t('studio.nav.homeAlt')" width="178" height="46" />
         <span>{{ t('studio.nav.dossier') }}</span>
       </RouterLink>
       <nav>
-        <RouterLink to="/about">{{ t('studio.nav.about') }}</RouterLink>
-        <RouterLink to="/privacy">{{ t('studio.nav.privacy') }}</RouterLink>
-        <RouterLink to="/terms">{{ t('studio.nav.terms') }}</RouterLink>
-        <RouterLink to="/contact">{{ t('studio.nav.contact') }}</RouterLink>
+        <RouterLink :to="routePath('/about')">{{ t('studio.nav.about') }}</RouterLink>
+        <RouterLink :to="routePath('/privacy')">{{ t('studio.nav.privacy') }}</RouterLink>
+        <RouterLink :to="routePath('/terms')">{{ t('studio.nav.terms') }}</RouterLink>
+        <RouterLink :to="routePath('/contact')">{{ t('studio.nav.contact') }}</RouterLink>
       </nav>
       <LanguageSwitcher />
     </aside>
@@ -37,8 +37,10 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import LanguageSwitcher from './LanguageSwitcher.vue'
+import { localizedPath } from '../localizedRoutes'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const routePath = (path: string) => localizedPath(path, locale.value === 'zh' ? 'zh' : 'en')
 
 const props = defineProps<{
   title: string

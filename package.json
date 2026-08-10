@@ -32,7 +32,8 @@
   "main": "src/DrawStampUtils.ts",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender-seo.mjs && node scripts/validate-seo-build.mjs",
+    "check:seo": "node scripts/validate-seo-build.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

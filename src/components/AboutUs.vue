@@ -75,7 +75,7 @@
         <p class="section-label">{{ t('about.openSource.title') }}</p>
         <p>{{ t('about.openSource.description') }}</p>
       </div>
-      <RouterLink to="/contact">{{ t('about.contact.linkText') }}</RouterLink>
+      <RouterLink :to="contactPath">{{ t('about.contact.linkText') }}</RouterLink>
     </section>
   </InfoPageShell>
 </template>
@@ -83,8 +83,11 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import InfoPageShell from './InfoPageShell.vue'
+import { computed } from 'vue'
+import { localizedPath } from '../localizedRoutes'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const contactPath = computed(() => localizedPath('/contact', locale.value === 'zh' ? 'zh' : 'en'))
 </script>
 
 <style scoped>

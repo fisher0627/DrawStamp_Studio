@@ -1,39 +1,25 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import StampWorkspace from '../components/editor/StampWorkspace.vue'
-import AboutUs from '../components/AboutUs.vue'
-import ContactUs from '../components/ContactUs.vue'
-import PrivacyPolicy from '../components/PrivacyPolicy.vue'
-import TermsOfService from '../components/TermsOfService.vue'
 import i18n from '../i18n'
+import { setAppLocale } from '../i18n'
+import { localeFromPath } from '../localizedRoutes'
 import { applyRouteSeo } from '../seo'
 
-const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: StampWorkspace
-  },
-  {
-    path: '/about',
-    name: 'about',
-    component: AboutUs
-  },
-  {
-    path: '/privacy',
-    name: 'privacy',
-    component: PrivacyPolicy
-  },
-  {
-    path: '/terms',
-    name: 'terms',
-    component: TermsOfService
-  },
-  {
-    path: '/contact',
-    name: 'contact',
-    component: ContactUs
-  }
+const routeDefinitions = [
+  { key: 'home', path: '/', component: () => import('../components/editor/StampWorkspace.vue') },
+  { key: 'about', path: '/about', component: () => import('../components/AboutUs.vue') },
+  { key: 'privacy', path: '/privacy', component: () => import('../components/PrivacyPolicy.vue') },
+  { key: 'terms', path: '/terms', component: () => import('../components/TermsOfService.vue') },
+  { key: 'contact', path: '/contact', component: () => import('../components/ContactUs.vue') }
 ]
+
+const localizedRoutes = (locale) => routeDefinitions.map(({ key, path, component }) => ({
+  path: locale === 'en' ? (path === '/' ? '/en/' : `/en${path}`) : path,
+  name: `${key}-${locale}`,
+  component,
+  meta: { locale, seoKey: key }
+}))
+
+const routes = [...localizedRoutes('zh'), ...localizedRoutes('en')]
 
 const router = createRouter({
   history: createWebHistory(),
@@ -43,8 +29,13 @@ const router = createRouter({
   }
 })
 
+router.beforeEach((to) => {
+  const routeLocale = localeFromPath(to.path)
+  if (i18n.global.locale.value !== routeLocale) setAppLocale(routeLocale)
+})
+
 router.afterEach((to) => {
-  applyRouteSeo(to, i18n.global.locale.value)
+  applyRouteSeo(to, localeFromPath(to.path))
 })
 
 export default router

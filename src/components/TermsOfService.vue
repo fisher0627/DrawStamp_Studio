@@ -27,7 +27,7 @@
         </ul>
         <p v-if="section.contact">
           {{ content.contactPrefix }}
-          <RouterLink to="/contact">{{ content.contactLink }}</RouterLink>
+          <RouterLink :to="contactPath">{{ content.contactLink }}</RouterLink>
           {{ content.contactSuffix }}
         </p>
       </article>
@@ -40,9 +40,11 @@ import InfoPageShell from './InfoPageShell.vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { legalContent } from '../i18n/legalContent'
+import { localizedPath } from '../localizedRoutes'
 
 const { locale } = useI18n()
 const content = computed(() => legalContent[locale.value === 'zh' ? 'zh' : 'en'].terms)
+const contactPath = computed(() => localizedPath('/contact', locale.value === 'zh' ? 'zh' : 'en'))
 </script>
 
 <style scoped>

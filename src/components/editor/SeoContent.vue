@@ -58,18 +58,20 @@
     </div>
 
     <nav class="seo-links" :aria-label="t('studio.nav.aria')">
-      <RouterLink to="/about">{{ t('studio.nav.about') }}</RouterLink>
-      <RouterLink to="/privacy">{{ t('studio.nav.privacy') }}</RouterLink>
-      <RouterLink to="/terms">{{ t('studio.nav.terms') }}</RouterLink>
-      <RouterLink to="/contact">{{ t('studio.nav.contact') }}</RouterLink>
+      <RouterLink :to="routePath('/about')">{{ t('studio.nav.about') }}</RouterLink>
+      <RouterLink :to="routePath('/privacy')">{{ t('studio.nav.privacy') }}</RouterLink>
+      <RouterLink :to="routePath('/terms')">{{ t('studio.nav.terms') }}</RouterLink>
+      <RouterLink :to="routePath('/contact')">{{ t('studio.nav.contact') }}</RouterLink>
     </nav>
   </section>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { localizedPath } from '../../localizedRoutes'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const routePath = (path: string) => localizedPath(path, locale.value === 'zh' ? 'zh' : 'en')
 </script>
 
 <style scoped>

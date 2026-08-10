@@ -1,5 +1,6 @@
 import { createI18n } from 'vue-i18n'
 import { studioMessages } from './studioMessages'
+import { localeFromPath } from '../localizedRoutes'
 
 export type AppLocale = 'zh' | 'en'
 
@@ -11,6 +12,14 @@ const normalizeLocale = (value?: string | null): AppLocale => {
 
 export const getInitialLocale = (): AppLocale => {
   if (typeof window === 'undefined') return 'zh'
+
+  // Public language URLs are the stable source of truth for users and crawlers.
+  if (window.location.pathname === '/en' || window.location.pathname.startsWith('/en/')) {
+    return localeFromPath(window.location.pathname)
+  }
+
+  // Existing unprefixed URLs remain the canonical Chinese site.
+  if (window.location.pathname.startsWith('/')) return 'zh'
 
   try {
     const savedLocale = window.localStorage.getItem(LOCALE_STORAGE_KEY)

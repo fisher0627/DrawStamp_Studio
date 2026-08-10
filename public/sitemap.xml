@@ -1,33 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://wosp.cc.cd/</loc>
-    <lastmod>2026-07-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://wosp.cc.cd/about</loc>
-    <lastmod>2026-07-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wosp.cc.cd/privacy</loc>
-    <lastmod>2026-07-20</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://wosp.cc.cd/terms</loc>
-    <lastmod>2026-07-20</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://wosp.cc.cd/contact</loc>
-    <lastmod>2026-07-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url><loc>https://wosp.cc.cd/</loc><lastmod>2026-08-09</lastmod><xhtml:link rel="alternate" hreflang="zh-CN" href="https://wosp.cc.cd/"/><xhtml:link rel="alternate" hreflang="en" href="https://wosp.cc.cd/en/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://wosp.cc.cd/"/></url>
+  <url><loc>https://wosp.cc.cd/about</loc><lastmod>2026-08-09</lastmod><xhtml:link rel="alternate" hreflang="zh-CN" href="https://wosp.cc.cd/about"/><xhtml:link rel="alternate" hreflang="en" href="https://wosp.cc.cd/en/about"/><xhtml:link rel="alternate" hreflang="x-default" href="https://wosp.cc.cd/about"/></url>
+  <url><loc>https://wosp.cc.cd/privacy</loc><lastmod>2026-08-09</lastmod><xhtml:link rel="alternate" hreflang="zh-CN" href="https://wosp.cc.cd/privacy"/><xhtml:link rel="alternate" hreflang="en" href="https://wosp.cc.cd/en/privacy"/><xhtml:link rel="alternate" hreflang="x-default" href="https://wosp.cc.cd/privacy"/></url>
+  <url><loc>https://wosp.cc.cd/terms</loc><lastmod>2026-08-09</lastmod><xhtml:link rel="alternate" hreflang="zh-CN" href="https://wosp.cc.cd/terms"/><xhtml:link rel="alternate" hreflang="en" href="https://wosp.cc.cd/en/terms"/><xhtml:link rel="alternate" hreflang="x-default" href="https://wosp.cc.cd/terms"/></url>
+  <url><loc>https://wosp.cc.cd/contact</loc><lastmod>2026-08-09</lastmod><xhtml:link rel="alternate" hreflang="zh-CN" href="https://wosp.cc.cd/contact"/><xhtml:link rel="alternate" hreflang="en" href="https://wosp.cc.cd/en/contact"/><xhtml:link rel="alternate" hreflang="x-default" href="https://wosp.cc.cd/contact"/></url>
+  <url><loc>https://wosp.cc.cd/en/</loc><lastmod>2026-08-09</lastmod><xhtml:link rel="alternate" hreflang="zh-CN" href="https://wosp.cc.cd/"/><xhtml:link rel="alternate" hreflang="en" href="https://wosp.cc.cd/en/"/><xhtml:link rel="alternate" hreflang="x-default" href="https://wosp.cc.cd/"/></url>
+  <url><loc>https://wosp.cc.cd/en/about</loc><lastmod>2026-08-09</lastmod><xhtml:link rel="alternate" hreflang="zh-CN" href="https://wosp.cc.cd/about"/><xhtml:link rel="alternate" hreflang="en" href="https://wosp.cc.cd/en/about"/><xhtml:link rel="alternate" hreflang="x-default" href="https://wosp.cc.cd/about"/></url>
+  <url><loc>https://wosp.cc.cd/en/privacy</loc><lastmod>2026-08-09</lastmod><xhtml:link rel="alternate" hreflang="zh-CN" href="https://wosp.cc.cd/privacy"/><xhtml:link rel="alternate" hreflang="en" href="https://wosp.cc.cd/en/privacy"/><xhtml:link rel="alternate" hreflang="x-default" href="https://wosp.cc.cd/privacy"/></url>
+  <url><loc>https://wosp.cc.cd/en/terms</loc><lastmod>2026-08-09</lastmod><xhtml:link rel="alternate" hreflang="zh-CN" href="https://wosp.cc.cd/terms"/><xhtml:link rel="alternate" hreflang="en" href="https://wosp.cc.cd/en/terms"/><xhtml:link rel="alternate" hreflang="x-default" href="https://wosp.cc.cd/terms"/></url>
+  <url><loc>https://wosp.cc.cd/en/contact</loc><lastmod>2026-08-09</lastmod><xhtml:link rel="alternate" hreflang="zh-CN" href="https://wosp.cc.cd/contact"/><xhtml:link rel="alternate" hreflang="en" href="https://wosp.cc.cd/en/contact"/><xhtml:link rel="alternate" hreflang="x-default" href="https://wosp.cc.cd/contact"/></url>
 </urlset>

@@ -7,7 +7,7 @@
       type="button"
       :class="{ active: locale === option.value }"
       :aria-pressed="locale === option.value"
-      @click="setAppLocale(option.value)"
+      @click="switchLocale(option.value)"
     >
       {{ option.shortLabel }}
       <span class="sr-only">{{ t(option.labelKey) }}</span>
@@ -17,14 +17,28 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 import { setAppLocale, type AppLocale } from '../i18n'
+import { localizedPath } from '../localizedRoutes'
 
 const { locale, t } = useI18n({ useScope: 'global' })
+const route = useRoute()
+const router = useRouter()
 
 const options: Array<{ value: AppLocale; shortLabel: string; labelKey: string }> = [
   { value: 'zh', shortLabel: '中', labelKey: 'studio.language.zh' },
   { value: 'en', shortLabel: 'EN', labelKey: 'studio.language.en' }
 ]
+
+const switchLocale = (nextLocale: AppLocale) => {
+  if (locale.value === nextLocale) return
+  setAppLocale(nextLocale)
+  router.push({
+    path: localizedPath(route.path, nextLocale),
+    query: route.query,
+    hash: route.hash
+  })
+}
 </script>
 
 <style scoped>
