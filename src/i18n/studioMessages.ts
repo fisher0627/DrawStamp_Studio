@@ -133,6 +133,9 @@ export const studioMessages = {
           exportTitle: 'PNG、SVG 与 JPEG 导出',
           exportText: '可导出透明 PNG、白底 PNG、SVG 和 JPEG，并调整倍率、尺寸与文件名，便于用于文档、演示稿或内部测试素材。'
         },
+        guidesAria: '操作指南',
+        guidesEyebrow: '操作指南',
+        guidesTitle: '按具体任务查看使用方法',
         faqAria: '常见问题',
         faqTitle: '常见问题',
         faq: {
@@ -338,6 +341,9 @@ export const studioMessages = {
           exportTitle: 'PNG, SVG, and JPEG export',
           exportText: 'Export transparent PNG, white-background PNG, SVG, or JPEG files with adjustable scale, dimensions, and filenames for documents, presentations, or testing assets.'
         },
+        guidesAria: 'Task guides',
+        guidesEyebrow: 'Task guides',
+        guidesTitle: 'Find a guide for the task at hand',
         faqAria: 'Frequently asked questions',
         faqTitle: 'Frequently asked questions',
         faq: {

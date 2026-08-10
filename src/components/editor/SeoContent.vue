@@ -37,6 +37,17 @@
       </article>
     </div>
 
+    <section class="seo-guides" :aria-label="t('studio.seoContent.guidesAria')">
+      <div>
+        <p class="seo-eyebrow">{{ t('studio.seoContent.guidesEyebrow') }}</p>
+        <h2>{{ t('studio.seoContent.guidesTitle') }}</h2>
+      </div>
+      <RouterLink v-for="guide in guides" :key="guide.key" :to="routePath(guide.path)">
+        <span>{{ guide.index }}</span>
+        <strong>{{ guide.heading }}</strong>
+      </RouterLink>
+    </section>
+
     <div class="seo-faq" :aria-label="t('studio.seoContent.faqAria')">
       <h2>{{ t('studio.seoContent.faqTitle') }}</h2>
       <details open>
@@ -67,11 +78,19 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { localizedPath } from '../../localizedRoutes'
+import seoPages from '../../seo-pages.json'
 
 const { t, locale } = useI18n()
 const routePath = (path: string) => localizedPath(path, locale.value === 'zh' ? 'zh' : 'en')
+const guideKeys = ['extractTransparentStamp', 'roundSealTemplate', 'svgStampExport'] as const
+const guides = computed(() => guideKeys.map((key, index) => ({
+  key,
+  index: `0${index + 1}`,
+  ...seoPages.routes[key][locale.value === 'zh' ? 'zh' : 'en']
+})))
 </script>
 
 <style scoped>
@@ -222,6 +241,54 @@ const routePath = (path: string) => localizedPath(path, locale.value === 'zh' ? 
 .seo-grid p {
   margin-top: 6px;
   font-size: 13px;
+}
+
+.seo-guides {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(150px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+  margin-top: 14px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid var(--studio-line);
+  border-radius: 12px;
+}
+
+.seo-guides .seo-eyebrow {
+  margin-bottom: 6px;
+}
+
+.seo-guides h2 {
+  font-size: 18px;
+}
+
+.seo-guides a {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+  color: var(--studio-ink);
+  background: var(--studio-soft);
+  border: 1px solid var(--studio-line-hair);
+  border-radius: 10px;
+  text-decoration: none;
+}
+
+.seo-guides a:hover {
+  color: var(--studio-tool-blue);
+  border-color: rgba(35, 76, 92, 0.3);
+}
+
+.seo-guides a span {
+  color: var(--studio-ui-red);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.seo-guides a strong {
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .seo-faq {

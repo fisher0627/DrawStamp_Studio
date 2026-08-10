@@ -96,13 +96,18 @@ const buildSchemas = (entry) => {
 }
 
 const buildStaticShell = (entry) => {
-  const navigation = ['home', 'about', 'privacy', 'terms', 'contact']
+  const navigation = Object.keys(config.routes)
     .map((key) => routeByKey(key, entry.locale))
     .map((item) => `<a href="${escapeHtml(item.path)}">${escapeHtml(item.heading)}</a>`)
     .join('')
   const highlights = entry.highlights.map((item) => `<li>${escapeHtml(item)}</li>`).join('')
+  const guideSections = entry.sections?.map((section) => {
+    const paragraphs = section.paragraphs?.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('') || ''
+    const steps = section.steps?.map((step) => `<li>${escapeHtml(step)}</li>`).join('') || ''
+    return `<section><h2>${escapeHtml(section.title)}</h2>${paragraphs}${steps ? `<ol>${steps}</ol>` : ''}</section>`
+  }).join('') || ''
 
-  return `<div id="app"><main class="static-seo-shell"><header><img src="/logo-lockup.svg" alt="DrawStamp Studio" width="178" height="46"><p>${entry.locale === 'zh' ? '浏览器本地电子印章工作台' : 'Browser-local electronic stamp workspace'}</p><h1>${escapeHtml(entry.heading)}</h1><p>${escapeHtml(entry.summary)}</p></header><ul>${highlights}</ul><nav aria-label="${entry.locale === 'zh' ? '主要页面' : 'Primary pages'}">${navigation}</nav><p><a href="${entry.locale === 'zh' ? '/en/' : '/'}" hreflang="${entry.locale === 'zh' ? 'en' : 'zh-CN'}">${entry.locale === 'zh' ? 'English' : '中文'}</a></p></main></div>`
+  return `<div id="app"><main class="static-seo-shell"><header><img src="/logo-lockup.svg" alt="DrawStamp Studio" width="178" height="46"><p>${entry.locale === 'zh' ? '浏览器本地电子印章工作台' : 'Browser-local electronic stamp workspace'}</p><h1>${escapeHtml(entry.heading)}</h1><p>${escapeHtml(entry.summary)}</p></header><ul>${highlights}</ul>${guideSections}<nav aria-label="${entry.locale === 'zh' ? '主要页面' : 'Primary pages'}">${navigation}</nav><p><a href="${entry.locale === 'zh' ? '/en/' : '/'}" hreflang="${entry.locale === 'zh' ? 'en' : 'zh-CN'}">${entry.locale === 'zh' ? 'English' : '中文'}</a></p></main></div>`
 }
 
 const renderPage = (entry) => {
@@ -156,7 +161,7 @@ ${routeEntries.map((entry) => {
   const en = routeByKey(entry.key, 'en')
   return `  <url>
     <loc>${absoluteUrl(entry.path)}</loc>
-    <lastmod>${config.lastmod}</lastmod>
+    <lastmod>${entry.lastmod || config.lastmod}</lastmod>
     <xhtml:link rel="alternate" hreflang="zh-CN" href="${absoluteUrl(zh.path)}" />
     <xhtml:link rel="alternate" hreflang="en" href="${absoluteUrl(en.path)}" />
     <xhtml:link rel="alternate" hreflang="x-default" href="${absoluteUrl(zh.path)}" />

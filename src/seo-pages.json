@@ -98,6 +98,114 @@
         "summary": "Use Telegram or email to share questions, feature requests, bug reports, and open-source contribution ideas.",
         "highlights": ["Questions", "Feature requests", "Bug reports", "Open-source contributions"]
       }
+    },
+    "extractTransparentStamp": {
+      "schemaType": "WebPage",
+      "lastmod": "2026-08-10",
+      "zh": {
+        "path": "/extract-transparent-stamp",
+        "title": "透明印章提取工具：从图片提取印章 | DrawStamp Studio",
+        "description": "使用浏览器本地的透明印章提取工具，从印章图片中提取可编辑图案，调整保留范围、清理程度和边缘效果，再导出透明 PNG、SVG 或 JPEG。",
+        "heading": "透明印章提取：从图片到可编辑图案",
+        "summary": "将授权使用的印章图片拖入提取工具，保留所需颜色并移除背景；处理过程在浏览器本地完成。",
+        "highlights": ["拖入或选择图片", "保留范围与清理程度可调", "透明背景与边缘增强", "结果可放回编辑画布"],
+        "eyebrow": "Image extraction guide",
+        "sections": [
+          {"title": "适合什么图片", "paragraphs": ["适用于需要保留红色印章主体、去除纸张或白色背景的授权图片。清晰、对比度较高的原图通常更容易获得干净的边缘。", "请只处理自己拥有或已获授权的印章图像；本工具不能替代对文件、印章或授权关系的核验。"]},
+          {"title": "四步完成提取", "steps": ["在编辑器顶部打开“提取印章”。", "拖入图片或选择本地图片文件，等待预览生成。", "调整保留范围、清理程度、透明背景和边缘增强，直至主体与边缘符合预期。", "确认结果后放回画布，再按需要导出透明 PNG、SVG 或 JPEG。"]},
+          {"title": "提取效果不理想时", "paragraphs": ["先换用边缘更清晰、阴影更少的原图；再小幅调整保留范围和清理程度，避免一次把参数拉到极端。", "对于颜色复杂、遮挡严重或没有明显红色主体的图片，提取结果可能不完整，需要人工检查后再使用。"]}
+        ],
+        "ctaLabel": "打开印章提取工具",
+        "ctaDescription": "在浏览器本地选择图片、调整预览并放回编辑画布。"
+      },
+      "en": {
+        "path": "/en/extract-transparent-stamp",
+        "title": "Extract a Transparent Stamp from an Image | DrawStamp Studio",
+        "description": "Extract an editable stamp image in your browser, tune the retained range, cleanup, and edge treatment, then export transparent PNG, SVG, or JPEG files.",
+        "heading": "Extract a Transparent Stamp from an Image",
+        "summary": "Drop in an authorized stamp image, keep the required color information, and remove its background locally in your browser.",
+        "highlights": ["Drop or choose an image", "Adjust retained range and cleanup", "Transparent background and edge enhancement", "Return the result to the editor"],
+        "eyebrow": "Image extraction guide",
+        "sections": [
+          {"title": "When this works best", "paragraphs": ["Use it with authorized images where the red stamp subject needs to be kept while paper or white background is removed. A sharp, high-contrast source usually produces cleaner edges.", "Only process images you own or are authorized to use. The tool does not verify documents, seals, or permissions."]},
+          {"title": "Extract a stamp in four steps", "steps": ["Open Extract Stamp from the editor toolbar.", "Drop in an image or choose one from your device and wait for the preview.", "Adjust retained range, cleanup, transparent background, and edge enhancement until the preview looks right.", "Place the result back on the canvas, then export PNG, SVG, or JPEG as needed."]},
+          {"title": "If the result needs refinement", "paragraphs": ["Try a cleaner original first, then make small changes to retained range and cleanup instead of pushing either control to an extreme.", "Images with complex colors, heavy occlusion, or no clear red subject can produce incomplete results and should be reviewed manually."]}
+        ],
+        "ctaLabel": "Open the stamp extractor",
+        "ctaDescription": "Choose an image locally, tune the preview, and return the result to the editor."
+      }
+    },
+    "roundSealTemplate": {
+      "schemaType": "WebPage",
+      "lastmod": "2026-08-10",
+      "zh": {
+        "path": "/round-company-seal-template",
+        "title": "圆形公章模板：在线编辑与导出 | DrawStamp Studio",
+        "description": "使用 DrawStamp Studio 的圆形印章模板，在浏览器中调整外圈、公司名称、五角星、字体和尺寸，并导出 PNG、SVG 或 JPEG 预览图。",
+        "heading": "圆形印章模板：在线编辑与导出预览图",
+        "summary": "从圆形或椭圆形基础样式开始，逐项调整文字、边框、颜色和布局，并在导出前实时预览。",
+        "highlights": ["圆形与椭圆形基础样式", "公司名称与印章类型文字", "边框、五角星和颜色调整", "PNG、SVG、JPEG 导出"],
+        "eyebrow": "Round seal template guide",
+        "sections": [
+          {"title": "先确定使用边界", "paragraphs": ["本页说明的是图形设计与预览流程，不构成任何印章制作、备案、用章或文件真实性的建议。请仅在合法、已获授权的设计、学习和预览场景中使用。"]},
+          {"title": "从模板到预览图", "steps": ["打开编辑器，在基础设置中选择圆形或椭圆形印章样式。", "填写公司名称和印章类型等文字，并根据预览调整字体、字号、间距和位置。", "再调整边框宽度、五角星、印章颜色和画布尺寸，逐项确认视觉效果。", "选择 PNG、SVG 或 JPEG 导出；透明背景需求可优先选 PNG。"]},
+          {"title": "导出前的检查", "paragraphs": ["检查文字是否完整可读、图形是否居中、边缘是否被裁切，以及导出尺寸是否符合你的设计用途。", "需要可继续编辑或无损缩放的设计稿时，SVG 通常更合适；用于带透明背景的预览或排版时，可选 PNG。"]}
+        ],
+        "ctaLabel": "打开圆形印章编辑器",
+        "ctaDescription": "从基础样式开始调整文字、边框和布局，实时预览后再导出。"
+      },
+      "en": {
+        "path": "/en/round-company-seal-template",
+        "title": "Round Company Seal Template: Edit and Export | DrawStamp Studio",
+        "description": "Start with a round seal template, adjust the border, company text, star, font, and size in your browser, then export a PNG, SVG, or JPEG preview.",
+        "heading": "Round Seal Template: Edit and Export a Preview",
+        "summary": "Begin with a round or oval layout, tune text, border, color, and composition one element at a time, and preview changes before export.",
+        "highlights": ["Round and oval base styles", "Company and stamp-type text", "Border, star, and color controls", "PNG, SVG, and JPEG export"],
+        "eyebrow": "Round seal template guide",
+        "sections": [
+          {"title": "Set the right boundary first", "paragraphs": ["This guide covers graphic design and preview workflow only. It is not advice on seal production, filing, use, or document authenticity. Use the editor only for lawful, authorized design, learning, and preview scenarios."]},
+          {"title": "From template to preview", "steps": ["Open the editor and choose a round or oval base style in Basic Settings.", "Enter company and stamp-type text, then adjust font, size, spacing, and position while reviewing the canvas.", "Tune border width, star, stamp color, and canvas size one item at a time.", "Export as PNG, SVG, or JPEG. Choose PNG first when a transparent background is needed."]},
+          {"title": "Check before export", "paragraphs": ["Confirm that text is complete and readable, the composition is centered, the edges are not clipped, and the output size suits the design use.", "SVG is often the better choice for continued editing or lossless scaling. PNG works well for a transparent-background preview or layout."]}
+        ],
+        "ctaLabel": "Open the round seal editor",
+        "ctaDescription": "Adjust text, border, and layout from a base style, then export after a live preview."
+      }
+    },
+    "svgStampExport": {
+      "schemaType": "WebPage",
+      "lastmod": "2026-08-10",
+      "zh": {
+        "path": "/svg-stamp-export",
+        "title": "SVG 印章导出：保留矢量设计稿 | DrawStamp Studio",
+        "description": "了解如何从 DrawStamp Studio 导出 SVG 印章设计稿，并根据透明背景、缩放、继续编辑和交付场景选择 SVG、PNG 或 JPEG 格式。",
+        "heading": "SVG 印章导出：保留可缩放的设计稿",
+        "summary": "完成文字、边框和图形调整后，将设计稿导出为 SVG，以便在支持 SVG 的设计工具和网页中继续使用。",
+        "highlights": ["SVG 矢量格式", "可与 PNG、JPEG 对比选择", "导出前实时预览", "浏览器本地完成"],
+        "eyebrow": "SVG export guide",
+        "sections": [
+          {"title": "什么时候选择 SVG", "paragraphs": ["如果你需要继续编辑图形、在不同尺寸中保持清晰，或用于支持 SVG 的网页和设计流程，SVG 是合适的导出选项。", "若目标平台不支持 SVG 或需要透明位图预览，可改用 PNG；JPEG 更适合不需要透明背景、希望文件较小的普通图片场景。"]},
+          {"title": "导出 SVG 的步骤", "steps": ["在画布中完成文字、边框、五角星和其他图形元素的调整。", "预览并检查内容是否完整、边缘是否裁切、元素是否处于正确层级。", "点击下载印章，在导出格式中选择 SVG。", "将导出的文件在目标设计工具或网页环境中打开，确认字体和图形显示符合预期。"]},
+          {"title": "交付前需要注意", "paragraphs": ["不同软件对字体和 SVG 特性的支持可能不同；需要交付给他人时，请在目标软件中复核一次。", "SVG 是设计文件格式，不代表任何文件、印章或使用行为已获授权。请遵守适用法律和内部审批要求。"]}
+        ],
+        "ctaLabel": "打开编辑器并导出 SVG",
+        "ctaDescription": "调整设计稿后选择 SVG 格式，保留可缩放的图形输出。"
+      },
+      "en": {
+        "path": "/en/svg-stamp-export",
+        "title": "Export an SVG Stamp Design | DrawStamp Studio",
+        "description": "Learn how to export an SVG stamp design from DrawStamp Studio and choose between SVG, PNG, and JPEG for transparent backgrounds, scaling, continued editing, and delivery.",
+        "heading": "Export an SVG Stamp Design for Scalable Use",
+        "summary": "After adjusting text, border, and graphic elements, export the design as SVG for continued use in SVG-capable design tools and web workflows.",
+        "highlights": ["SVG vector output", "Compare SVG, PNG, and JPEG", "Preview before export", "Browser-local workflow"],
+        "eyebrow": "SVG export guide",
+        "sections": [
+          {"title": "When to choose SVG", "paragraphs": ["SVG is a suitable export option when you need to keep editing the graphic, retain clarity at different sizes, or use it in SVG-capable web and design workflows.", "Choose PNG when the destination does not support SVG or needs a transparent bitmap preview. JPEG is better for regular image uses where transparency is not required and a smaller file is useful."]},
+          {"title": "Export SVG in four steps", "steps": ["Finish adjusting text, border, star, and other graphic elements on the canvas.", "Preview the design and check that content is complete, edges are not clipped, and elements are layered correctly.", "Choose Download Stamp and select SVG from the export formats.", "Open the exported file in the destination design tool or web environment and confirm that fonts and shapes display as expected."]},
+          {"title": "Before delivery", "paragraphs": ["Software support for fonts and SVG features varies. When sharing a file, review it once in the intended destination software.", "SVG is a design-file format; it does not establish authorization for any seal, document, or use. Follow applicable law and internal approval requirements."]}
+        ],
+        "ctaLabel": "Open the editor and export SVG",
+        "ctaDescription": "Adjust the design, choose SVG, and keep a scalable graphic output."
+      }
     }
   }
 }

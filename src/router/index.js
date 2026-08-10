@@ -3,13 +3,17 @@ import i18n from '../i18n'
 import { setAppLocale } from '../i18n'
 import { localeFromPath } from '../localizedRoutes'
 import { applyRouteSeo } from '../seo'
+import SeoGuidePage from '../components/SeoGuidePage.vue'
 
 const routeDefinitions = [
   { key: 'home', path: '/', component: () => import('../components/editor/StampWorkspace.vue') },
   { key: 'about', path: '/about', component: () => import('../components/AboutUs.vue') },
   { key: 'privacy', path: '/privacy', component: () => import('../components/PrivacyPolicy.vue') },
   { key: 'terms', path: '/terms', component: () => import('../components/TermsOfService.vue') },
-  { key: 'contact', path: '/contact', component: () => import('../components/ContactUs.vue') }
+  { key: 'contact', path: '/contact', component: () => import('../components/ContactUs.vue') },
+  { key: 'extractTransparentStamp', path: '/extract-transparent-stamp', component: SeoGuidePage },
+  { key: 'roundSealTemplate', path: '/round-company-seal-template', component: SeoGuidePage },
+  { key: 'svgStampExport', path: '/svg-stamp-export', component: SeoGuidePage }
 ]
 
 const localizedRoutes = (locale) => routeDefinitions.map(({ key, path, component }) => ({

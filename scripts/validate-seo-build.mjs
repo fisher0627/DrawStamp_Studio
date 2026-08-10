@@ -36,6 +36,9 @@ for (const entry of entries) {
   assert(html.includes(`<title>${escapeHtml(entry.title)}</title>`), `${entry.path}: title is incorrect`)
   assert(html.includes(`<link rel="canonical" href="${canonical}">`), `${entry.path}: canonical is incorrect`)
   assert(html.includes(`<h1>${entry.heading}</h1>`), `${entry.path}: static H1 is missing`)
+  for (const section of entry.sections || []) {
+    assert(html.includes(`<h2>${section.title}</h2>`), `${entry.path}: static guide section is missing`)
+  }
   assert(html.includes(`hreflang="${otherLocale === 'zh' ? 'zh-CN' : 'en'}" href="${absoluteUrl(alternate.path)}"`), `${entry.path}: alternate locale is incorrect`)
   assert(!/name=["']keywords["']/i.test(html), `${entry.path}: obsolete keywords meta remains`)
   assert(!html.includes('FAQPage'), `${entry.path}: unsupported FAQ schema remains`)
@@ -55,6 +58,7 @@ const sitemap = await readFile(resolve(distDir, 'sitemap.xml'), 'utf8')
 assert((sitemap.match(/<url>/g) || []).length === entries.length, 'sitemap.xml: URL count does not match prerendered pages')
 for (const entry of entries) {
   assert(sitemap.includes(`<loc>${absoluteUrl(entry.path)}</loc>`), `sitemap.xml: missing ${entry.path}`)
+  assert(sitemap.includes(`<loc>${absoluteUrl(entry.path)}</loc>\n    <lastmod>${entry.lastmod || config.lastmod}</lastmod>`), `sitemap.xml: missing truthful lastmod for ${entry.path}`)
 }
 
 const notFound = await readFile(resolve(distDir, '404.html'), 'utf8')
