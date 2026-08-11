@@ -21,6 +21,9 @@ jspm_packages/
 # Vite
 .vite/
 
+# Local GEOHub input and run artifacts
+.geohub-runs/
+
 # Local environment files
 .env
 .env.local

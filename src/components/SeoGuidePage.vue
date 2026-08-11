@@ -38,6 +38,12 @@
         </RouterLink>
       </div>
     </nav>
+
+    <aside class="guide-evidence">
+      <p class="section-label">{{ evidence.label }}</p>
+      <p>{{ evidence.text }}</p>
+      <time :datetime="guideLastmod">{{ evidence.updated }}{{ guideLastmod }}</time>
+    </aside>
   </InfoPageShell>
 </template>
 
@@ -58,6 +64,18 @@ const page = computed(() => (seoPages.routes as Record<string, any>)[guideKey.va
 const relatedGuides = computed(() => guideKeys
   .filter((key) => key !== guideKey.value)
   .map((key) => ({ key, ...(seoPages.routes as Record<string, any>)[key][activeLocale.value] })))
+const guideLastmod = computed(() => (seoPages.routes as Record<string, any>)[guideKey.value]?.lastmod || seoPages.lastmod)
+const evidence = computed(() => activeLocale.value === 'zh'
+  ? {
+      label: '内容依据与使用边界',
+      text: '功能说明来源于 DrawStamp Studio 当前公开的浏览器端功能。印章编辑、图片提取和导出仅用于学习、测试、设计预览及其他合法授权场景。',
+      updated: '最后更新：'
+    }
+  : {
+      label: 'Content basis and use boundary',
+      text: 'Feature descriptions are based on DrawStamp Studio’s currently public browser workflow. Stamp editing, image extraction, and export are for learning, testing, design previews, and other lawful authorized uses.',
+      updated: 'Last updated: '
+    })
 const routePath = (path: string) => localizedPath(path, activeLocale.value)
 </script>
 
@@ -99,7 +117,8 @@ const routePath = (path: string) => localizedPath(path, activeLocale.value)
 
 .guide-section + .guide-section,
 .guide-cta,
-.related-guides {
+.related-guides,
+.guide-evidence {
   margin-top: 14px;
 }
 
@@ -181,6 +200,28 @@ const routePath = (path: string) => localizedPath(path, activeLocale.value)
 .related-guides a:hover {
   color: var(--studio-tool-blue);
   border-color: rgba(35, 76, 92, 0.3);
+}
+
+.guide-evidence {
+  padding: clamp(18px, 3vw, 26px);
+  border: 1px solid var(--studio-line-hair);
+  border-left: 3px solid var(--studio-tool-blue);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: var(--studio-shadow-quiet);
+}
+
+.guide-evidence p:not(.section-label) {
+  margin: 0;
+  color: var(--studio-muted);
+  line-height: 1.8;
+}
+
+.guide-evidence time {
+  display: block;
+  margin-top: 10px;
+  color: var(--studio-muted);
+  font-size: 12px;
 }
 
 @media (max-width: 800px) {

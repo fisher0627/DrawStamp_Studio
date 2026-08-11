@@ -2,17 +2,34 @@
   "siteUrl": "https://wosp.cc.cd",
   "previewImage": "/social-preview.png",
   "logoImage": "/icon-512.png",
-  "lastmod": "2026-08-09",
+  "lastmod": "2026-08-11",
   "routes": {
     "home": {
       "schemaType": "WebPage",
+      "lastmod": "2026-08-11",
       "zh": {
         "path": "/",
         "title": "DrawStamp Studio - 在线电子印章生成器",
         "description": "免费在线生成、提取和编辑电子印章，支持圆章、椭圆章、透明 PNG、SVG 和 JPEG 导出。核心图片处理在浏览器本地完成，不上传图片。",
         "heading": "在线电子印章生成与图片提取工具",
         "summary": "在浏览器中创建、编辑和提取电子印章，实时预览并导出透明 PNG、SVG 或 JPEG。核心图片处理保留在本地设备。",
-        "highlights": ["圆章与椭圆章模板", "图片提取透明印章", "PNG、SVG、JPEG 导出", "本地草稿与模板"]
+        "highlights": ["圆章与椭圆章模板", "图片提取透明印章", "PNG、SVG、JPEG 导出", "本地草稿与模板"],
+        "sections": [
+          {
+            "title": "在浏览器中完成设计预览",
+            "paragraphs": [
+              "DrawStamp Studio 可在浏览器中创建、编辑和提取电子印章设计预览。可以从圆形或椭圆形模板开始，调整文字、边框、五角星、颜色和尺寸。",
+              "核心图片处理、草稿保存和导出在本地浏览器完成；请仅处理自己拥有或已获授权的图片和内容。"
+            ]
+          },
+          {
+            "title": "提取与导出怎么选",
+            "paragraphs": [
+              "需要保留红色印章主体并移除背景时，可使用透明印章提取工具，并在预览中调整参数后放回画布。",
+              "透明背景预览可选择 PNG，需要继续编辑或缩放可选择 SVG；不需要透明背景的普通图片交付可选择 JPEG。"
+            ]
+          }
+        ]
       },
       "en": {
         "path": "/en/",
@@ -20,7 +37,23 @@
         "description": "Create, extract, edit, and export electronic stamp images online. Supports round and oval seals, transparent PNG, SVG, and JPEG. Core image processing stays in your browser.",
         "heading": "Online Stamp Maker and Image Extraction Tool",
         "summary": "Create, edit, and extract electronic stamp images in your browser, preview changes live, and export transparent PNG, SVG, or JPEG files without uploading source images.",
-        "highlights": ["Round and oval templates", "Extract transparent stamps", "PNG, SVG, and JPEG export", "Local drafts and templates"]
+        "highlights": ["Round and oval templates", "Extract transparent stamps", "PNG, SVG, and JPEG export", "Local drafts and templates"],
+        "sections": [
+          {
+            "title": "Create a design preview in your browser",
+            "paragraphs": [
+              "DrawStamp Studio lets you create, edit, and extract electronic stamp design previews in your browser. Start with a round or oval template, then adjust text, borders, stars, color, and size.",
+              "Core image processing, local drafts, and exports run in the browser. Only process images and content that you own or are authorized to use."
+            ]
+          },
+          {
+            "title": "Choose extraction and export options",
+            "paragraphs": [
+              "When an authorized image needs its red stamp subject kept while its background is removed, use the stamp extractor, adjust the preview, and return the result to the canvas.",
+              "Choose PNG for a transparent preview, SVG for continued editing or scaling, and JPEG for ordinary image delivery where transparency is not required."
+            ]
+          }
+        ]
       }
     },
     "about": {
@@ -101,7 +134,7 @@
     },
     "extractTransparentStamp": {
       "schemaType": "WebPage",
-      "lastmod": "2026-08-10",
+      "lastmod": "2026-08-11",
       "zh": {
         "path": "/extract-transparent-stamp",
         "title": "透明印章提取工具：从图片提取印章 | DrawStamp Studio",
@@ -137,7 +170,7 @@
     },
     "roundSealTemplate": {
       "schemaType": "WebPage",
-      "lastmod": "2026-08-10",
+      "lastmod": "2026-08-11",
       "zh": {
         "path": "/round-company-seal-template",
         "title": "圆形公章模板：在线编辑与导出 | DrawStamp Studio",
@@ -173,7 +206,7 @@
     },
     "svgStampExport": {
       "schemaType": "WebPage",
-      "lastmod": "2026-08-10",
+      "lastmod": "2026-08-11",
       "zh": {
         "path": "/svg-stamp-export",
         "title": "SVG 印章导出：保留矢量设计稿 | DrawStamp Studio",

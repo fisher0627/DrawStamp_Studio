@@ -68,6 +68,12 @@
       </details>
     </div>
 
+    <aside class="seo-evidence">
+      <p class="seo-eyebrow">{{ evidence.label }}</p>
+      <p>{{ evidence.text }}</p>
+      <time :datetime="homeLastmod">{{ evidence.updated }}{{ homeLastmod }}</time>
+    </aside>
+
     <nav class="seo-links" :aria-label="t('studio.nav.aria')">
       <RouterLink :to="routePath('/about')">{{ t('studio.nav.about') }}</RouterLink>
       <RouterLink :to="routePath('/privacy')">{{ t('studio.nav.privacy') }}</RouterLink>
@@ -91,6 +97,18 @@ const guides = computed(() => guideKeys.map((key, index) => ({
   index: `0${index + 1}`,
   ...seoPages.routes[key][locale.value === 'zh' ? 'zh' : 'en']
 })))
+const homeLastmod = seoPages.routes.home.lastmod || seoPages.lastmod
+const evidence = computed(() => locale.value === 'zh'
+  ? {
+      label: '内容依据与使用边界',
+      text: '功能说明来源于 DrawStamp Studio 当前公开的浏览器端功能。印章编辑、图片提取和导出仅用于学习、测试、设计预览及其他合法授权场景。',
+      updated: '最后更新：'
+    }
+  : {
+      label: 'Content basis and use boundary',
+      text: 'Feature descriptions are based on DrawStamp Studio’s currently public browser workflow. Stamp editing, image extraction, and export are for learning, testing, design previews, and other lawful authorized uses.',
+      updated: 'Last updated: '
+    })
 </script>
 
 <style scoped>
@@ -311,6 +329,26 @@ const guides = computed(() => guideKeys.map((key, index) => ({
 
 .seo-faq details:last-of-type {
   padding-bottom: 0;
+}
+
+.seo-evidence {
+  margin-top: 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--studio-line);
+  border-left: 3px solid var(--studio-tool-blue);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.seo-evidence p {
+  margin-top: 0;
+}
+
+.seo-evidence time {
+  display: block;
+  margin-top: 10px;
+  color: var(--studio-muted);
+  font-size: 12px;
 }
 
 .seo-faq summary {

@@ -36,6 +36,8 @@ for (const entry of entries) {
   assert(html.includes(`<title>${escapeHtml(entry.title)}</title>`), `${entry.path}: title is incorrect`)
   assert(html.includes(`<link rel="canonical" href="${canonical}">`), `${entry.path}: canonical is incorrect`)
   assert(html.includes(`<h1>${entry.heading}</h1>`), `${entry.path}: static H1 is missing`)
+  assert(html.includes(`<time datetime="${entry.lastmod || config.lastmod}">`), `${entry.path}: updated date is missing`)
+  assert(html.includes('static-seo-evidence'), `${entry.path}: content basis note is missing`)
   for (const section of entry.sections || []) {
     assert(html.includes(`<h2>${section.title}</h2>`), `${entry.path}: static guide section is missing`)
   }

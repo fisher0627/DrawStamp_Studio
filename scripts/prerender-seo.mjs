@@ -19,7 +19,13 @@ const imageUrl = absoluteUrl(config.previewImage)
 const logoUrl = absoluteUrl(config.logoImage)
 
 const routeEntries = Object.entries(config.routes).flatMap(([key, route]) => (
-  ['zh', 'en'].map((locale) => ({ key, locale, schemaType: route.schemaType, ...route[locale] }))
+  ['zh', 'en'].map((locale) => ({
+    key,
+    locale,
+    schemaType: route.schemaType,
+    lastmod: route.lastmod || config.lastmod,
+    ...route[locale]
+  }))
 ))
 
 const routeByKey = (key, locale) => routeEntries.find((entry) => entry.key === key && entry.locale === locale)
@@ -42,6 +48,7 @@ const buildSchemas = (entry) => {
     name: entry.title,
     description: entry.description,
     url: canonical,
+    dateModified: entry.lastmod || config.lastmod,
     image: imageUrl,
     inLanguage: entry.locale === 'zh' ? 'zh-CN' : 'en',
     isPartOf: { '@type': 'WebSite', name: 'DrawStamp Studio', url: homeUrl },
@@ -96,6 +103,12 @@ const buildSchemas = (entry) => {
 }
 
 const buildStaticShell = (entry) => {
+  const lastmod = entry.lastmod || config.lastmod
+  const updatedLabel = entry.locale === 'zh' ? `最后更新：${lastmod}` : `Last updated: ${lastmod}`
+  const evidenceHeading = entry.locale === 'zh' ? '内容依据与使用边界' : 'Content basis and use boundary'
+  const evidenceText = entry.locale === 'zh'
+    ? '功能说明来源于 DrawStamp Studio 当前公开的浏览器端功能。印章编辑、图片提取和导出仅用于学习、测试、设计预览及其他合法授权场景；隐私处理与使用限制请参阅隐私政策和服务条款。'
+    : 'Feature descriptions are based on DrawStamp Studio’s currently public browser workflow. Stamp editing, image extraction, and export are for learning, testing, design previews, and other lawful authorized uses; review the Privacy Policy and Terms of Service for data handling and use limits.'
   const navigation = Object.keys(config.routes)
     .map((key) => routeByKey(key, entry.locale))
     .map((item) => `<a href="${escapeHtml(item.path)}">${escapeHtml(item.heading)}</a>`)
@@ -107,7 +120,7 @@ const buildStaticShell = (entry) => {
     return `<section><h2>${escapeHtml(section.title)}</h2>${paragraphs}${steps ? `<ol>${steps}</ol>` : ''}</section>`
   }).join('') || ''
 
-  return `<div id="app"><main class="static-seo-shell"><header><img src="/logo-lockup.svg" alt="DrawStamp Studio" width="178" height="46"><p>${entry.locale === 'zh' ? '浏览器本地电子印章工作台' : 'Browser-local electronic stamp workspace'}</p><h1>${escapeHtml(entry.heading)}</h1><p>${escapeHtml(entry.summary)}</p></header><ul>${highlights}</ul>${guideSections}<nav aria-label="${entry.locale === 'zh' ? '主要页面' : 'Primary pages'}">${navigation}</nav><p><a href="${entry.locale === 'zh' ? '/en/' : '/'}" hreflang="${entry.locale === 'zh' ? 'en' : 'zh-CN'}">${entry.locale === 'zh' ? 'English' : '中文'}</a></p></main></div>`
+  return `<div id="app"><main class="static-seo-shell"><header><img src="/logo-lockup.svg" alt="DrawStamp Studio" width="178" height="46"><p>${entry.locale === 'zh' ? '浏览器本地电子印章工作台' : 'Browser-local electronic stamp workspace'}</p><h1>${escapeHtml(entry.heading)}</h1><p>${escapeHtml(entry.summary)}</p></header><ul>${highlights}</ul>${guideSections}<aside class="static-seo-evidence"><h2>${evidenceHeading}</h2><p>${escapeHtml(evidenceText)}</p><p><time datetime="${lastmod}">${updatedLabel}</time></p></aside><nav aria-label="${entry.locale === 'zh' ? '主要页面' : 'Primary pages'}">${navigation}</nav><p><a href="${entry.locale === 'zh' ? '/en/' : '/'}" hreflang="${entry.locale === 'zh' ? 'en' : 'zh-CN'}">${entry.locale === 'zh' ? 'English' : '中文'}</a></p></main></div>`
 }
 
 const renderPage = (entry) => {
