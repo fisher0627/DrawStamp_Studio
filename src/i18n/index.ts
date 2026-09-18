@@ -220,6 +220,15 @@ const messages: Record<string, any> = {
         refresh: '刷新纹路',
         count: '纹路数量',
         length: '纹路长度 (mm)',
+        angle: '断口倾斜范围 (°)',
+        roughness: '边缘不规则度',
+        selectedGap: '选择断口',
+        gapNumber: '第 {n} 处断口',
+        position: '断口位置 (°)',
+        moveBack: '逆时针移动',
+        moveForward: '顺时针移动',
+        positionHint: '顶部为 0°，顺时针移动。只调整选中的断口。',
+        refreshHint: '刷新纹路会重新随机排列全部断口。减少数量会移除末尾断口。',
         width: '纹路宽度 (mm)'
       },
       roughEdge: {
@@ -1019,6 +1028,15 @@ const messages: Record<string, any> = {
         refresh: 'Refresh Pattern',
         count: 'Pattern Count',
         length: 'Pattern Length (mm)',
+        angle: 'Gap Tilt Range (°)',
+        roughness: 'Edge Irregularity',
+        selectedGap: 'Select gap',
+        gapNumber: 'Gap {n}',
+        position: 'Gap position (°)',
+        moveBack: 'Move counterclockwise',
+        moveForward: 'Move clockwise',
+        positionHint: '0° is at the top; angles increase clockwise. Only the selected gap moves.',
+        refreshHint: 'Refresh randomizes all gaps. Reducing the count removes gaps from the end.',
         width: 'Pattern Width (mm)'
       },
       roughEdge: {
@@ -1938,6 +1956,15 @@ const messages: Record<string, any> = {
         refresh: '更新',
         count: '本数',
         length: '長さ (mm)',
+        angle: '切れ目の傾斜範囲 (°)',
+        roughness: 'エッジの不規則さ',
+        selectedGap: '切れ目を選択',
+        gapNumber: '切れ目 {n}',
+        position: '切れ目の位置 (°)',
+        moveBack: '反時計回りに移動',
+        moveForward: '時計回りに移動',
+        positionHint: '上が0°、時計回りに移動。選択した切れ目のみ変更します。',
+        refreshHint: '更新すると全ての位置が変わります。本数を減らすと末尾から削除されます。',
         width: '幅 (mm)'
       },
       aging: {

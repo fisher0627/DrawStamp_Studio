@@ -24,40 +24,76 @@
 
       <!-- 拖动条类设置 -->
       <div v-if="config.securityPattern.openSecurityPattern" class="range-section">
+        <div v-if="patternParams.length" class="position-editor">
+          <label class="range-label-text">
+            {{ t('stamp.security.selectedGap') }}
+            <select :value="activeGap" @change="selectedGap = parseNumber($event)" :aria-label="t('stamp.security.selectedGap')">
+              <option v-for="(_, index) in patternParams" :key="index" :value="index">
+                {{ t('stamp.security.gapNumber', { n: index + 1 }) }}
+              </option>
+            </select>
+          </label>
+          <svg class="position-map" viewBox="0 0 160 160" aria-hidden="true">
+            <circle cx="80" cy="80" r="56" fill="none" stroke="#d1d5db" stroke-width="2" />
+            <text x="80" y="12" text-anchor="middle">0°</text>
+            <g v-for="(gap, index) in patternParams" :key="index">
+              <circle :cx="80 + 56 * Math.cos(gap.angle)" :cy="80 + 56 * Math.sin(gap.angle)"
+                :r="index === activeGap ? 6 : 3" :fill="index === activeGap ? '#c0342b' : '#9ca3af'" />
+            </g>
+            <text x="80" y="77" text-anchor="middle">{{ t('stamp.security.gapNumber', { n: activeGap + 1 }) }}</text>
+            <text x="80" y="96" text-anchor="middle">{{ positionDegrees.toFixed(1) }}°</text>
+          </svg>
+          <div class="range-header">
+            <span class="range-label-text">{{ t('stamp.security.position') }}</span>
+            <input class="position-number" type="number" min="0" max="359.9" step="0.1"
+              :aria-label="t('stamp.security.position')" :value="positionDegrees"
+              @input="setPositionFromInput($event)" />
+          </div>
+          <div class="range-container">
+            <button type="button" class="range-btn" :aria-label="t('stamp.security.moveBack')" @click="setPosition(positionDegrees - 1)">◀</button>
+            <input type="range" min="0" max="359.9" step="0.1" :value="positionDegrees"
+              :aria-label="t('stamp.security.position')" @input="setPosition(parseNumber($event))" />
+            <button type="button" class="range-btn" :aria-label="t('stamp.security.moveForward')" @click="setPosition(positionDegrees + 1)">▶</button>
+          </div>
+          <p class="position-hint">{{ t('stamp.security.positionHint') }}</p>
+          <p class="position-hint">{{ t('stamp.security.refreshHint') }}</p>
+        </div>
         <div class="range-item">
           <div class="range-header">
             <span class="range-label-text">{{ t('stamp.security.count') }}</span>
-            <span class="range-value-display">[ {{ config.securityPattern.securityPatternCount.toFixed(1) }} ]</span>
+            <span class="range-value-display">[ {{ config.securityPattern.securityPatternCount.toFixed(0) }} ]</span>
           </div>
           <div class="range-container">
-            <button type="button" class="range-btn" @click.stop="adjustCount(-0.1)">◀</button>
+            <button type="button" class="range-btn" @click.stop="adjustCount(-1)">◀</button>
             <input
               type="range"
+              :aria-label="t('stamp.security.count')"
               :value="config.securityPattern.securityPatternCount"
               min="1"
               max="100"
-              step="0.1"
+              step="1"
               @input="updateSecurityPattern('securityPatternCount', parseNumber($event))"
             />
-            <button type="button" class="range-btn" @click.stop="adjustCount(0.1)">▶</button>
+            <button type="button" class="range-btn" @click.stop="adjustCount(1)">▶</button>
           </div>
         </div>
         <div class="range-item">
           <div class="range-header">
-            <span class="range-label-text">{{ t('stamp.security.length') }}</span>
-            <span class="range-value-display">[ {{ config.securityPattern.securityPatternLength.toFixed(1) }} ]</span>
+            <span class="range-label-text">{{ t('stamp.security.angle') }}</span>
+            <span class="range-value-display">[ {{ config.securityPattern.securityPatternAngleRange.toFixed(1) }} ]</span>
           </div>
           <div class="range-container">
-            <button type="button" class="range-btn" @click.stop="adjustLength(-0.1)">◀</button>
+            <button type="button" class="range-btn" @click.stop="adjustAngle(-1)">◀</button>
             <input
               type="range"
-              :value="config.securityPattern.securityPatternLength"
-              min="0.1"
-              max="100"
-              step="0.1"
-              @input="updateSecurityPattern('securityPatternLength', parseNumber($event))"
+              :aria-label="t('stamp.security.angle')"
+              :value="config.securityPattern.securityPatternAngleRange"
+              min="0"
+              max="60"
+              step="1"
+              @input="updateSecurityPattern('securityPatternAngleRange', parseNumber($event))"
             />
-            <button type="button" class="range-btn" @click.stop="adjustLength(0.1)">▶</button>
+            <button type="button" class="range-btn" @click.stop="adjustAngle(1)">▶</button>
           </div>
         </div>
         <div class="range-item">
@@ -69,6 +105,7 @@
             <button type="button" class="range-btn" @click.stop="adjustWidth(-0.01)">◀</button>
             <input
               type="range"
+              :aria-label="t('stamp.security.width')"
               :value="config.securityPattern.securityPatternWidth"
               min="0.05"
               max="0.5"
@@ -78,12 +115,25 @@
             <button type="button" class="range-btn" @click.stop="adjustWidth(0.01)">▶</button>
           </div>
         </div>
+        <div class="range-item">
+          <div class="range-header">
+            <span class="range-label-text">{{ t('stamp.security.roughness') }}</span>
+            <span class="range-value-display">[ {{ Math.round((config.securityPattern.securityPatternRoughness ?? 0.25) * 100) }}% ]</span>
+          </div>
+          <div class="range-container">
+            <input type="range" min="0" max="1" step="0.05"
+              :value="config.securityPattern.securityPatternRoughness ?? 0.25"
+              :aria-label="t('stamp.security.roughness')"
+              @input="updateSecurityPattern('securityPatternRoughness', parseNumber($event))" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { IDrawStampConfig, ISecurityPattern } from '../../../DrawStampTypes'
 
@@ -99,6 +149,26 @@ const emit = defineEmits<{
   (e: 'update-config', updater: (config: IDrawStampConfig) => void): void
   (e: 'refresh-security-pattern'): void
 }>()
+
+const selectedGap = ref(0)
+const patternParams = computed(() => props.config.securityPattern.securityPatternParams ?? [])
+const activeGap = computed(() => Math.min(selectedGap.value, Math.max(0, patternParams.value.length - 1)))
+const positionDegrees = computed(() => {
+  const angle = patternParams.value[activeGap.value]?.angle ?? -Math.PI / 2
+  return Math.round((((angle * 180 / Math.PI + 90) % 360 + 360) % 360) * 10) / 10 % 360
+})
+const setPositionFromInput = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  if (input.value !== '') setPosition(input.valueAsNumber)
+}
+const setPosition = (degrees: number) => {
+  if (!Number.isFinite(degrees)) return
+  const index = activeGap.value
+  emit('update-config', (config) => {
+    const gap = config.securityPattern.securityPatternParams?.[index]
+    if (gap) gap.angle = (((degrees % 360 + 360) % 360) - 90) * Math.PI / 180
+  })
+}
 
 const toggleExpanded = () => {
   emit('update:expanded', !props.expanded)
@@ -126,10 +196,10 @@ const adjustCount = (delta: number) => {
   })
 }
 
-const adjustLength = (delta: number) => {
+const adjustAngle = (delta: number) => {
   emit('update-config', (config) => {
-    const newValue = Math.max(0.1, Math.min(100, config.securityPattern.securityPatternLength + delta))
-    config.securityPattern.securityPatternLength = newValue
+    const newValue = Math.max(0, Math.min(60, config.securityPattern.securityPatternAngleRange + delta))
+    config.securityPattern.securityPatternAngleRange = newValue
   })
 }
 
@@ -142,6 +212,13 @@ const adjustWidth = (delta: number) => {
 </script>
 
 <style scoped>
+.position-editor { display: flex; flex-direction: column; gap: 8px; padding-bottom: 12px; border-bottom: 1px solid #e5e7eb; }
+.position-editor select, .position-number { border: 1px solid #d1d5db; border-radius: 4px; padding: 5px; background: #fff; color: #374151; }
+.position-editor select { width: 100%; margin-top: 6px; }
+.position-number { width: 76px; }
+.position-map { width: 160px; height: 160px; align-self: center; font-size: 12px; fill: #6b7280; }
+.position-hint { margin: 0; font-size: 12px; line-height: 1.5; color: #6b7280; }
+
 .group-content {
   padding: 12px;
   display: flex;

@@ -25,10 +25,11 @@ export class InitDrawStampConfigsUtils {
     // 防伪纹路
     private securityPattern: ISecurityPattern = {
         openSecurityPattern: true,
-        securityPatternWidth: 0.15,
+        securityPatternWidth: 0.22,
         securityPatternLength: 3,
-        securityPatternCount: 5,
-        securityPatternAngleRange: 40,
+        securityPatternCount: 12,
+        securityPatternAngleRange: 24,
+        securityPatternRoughness: 0.25,
         securityPatternParams: []
     }
     private company: ICompany = {

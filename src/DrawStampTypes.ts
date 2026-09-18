@@ -2,10 +2,12 @@
 export type ISecurityPattern = {
     openSecurityPattern: boolean // 是否启用防伪纹路
     securityPatternWidth: number // 防伪纹路宽度
-    securityPatternLength: number // 防伪纹路长度
+    securityPatternLength: number // 旧模板兼容字段；断口长度现在随外圈粗细计算
     securityPatternCount: number // 防伪纹路数量
     securityPatternAngleRange: number // 防伪纹路角度范围
-    securityPatternParams: Array<{ angle: number; lineAngle: number }> // 保存防伪纹路的参数数组
+    securityPatternRoughness?: number // 断口边缘不规则度，0—1
+    securityPatternVersion?: number // 断口算法版本
+    securityPatternParams: Array<{ angle: number; lineAngle: number; seed?: number }> // 保存防伪纹路的参数数组
 }
 // 毛边参数
 export type IRoughEdgeParams = {

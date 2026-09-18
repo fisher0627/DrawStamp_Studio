@@ -1829,7 +1829,7 @@ export class DrawStampUtils {
                 refreshRoughEdge
             );
         }
-        if (isEllipseShape && this.drawStampConfigs.securityPattern.openSecurityPattern) {
+        if (isEllipseShape && this.drawStampConfigs.outBorder.drawInnerCircle && this.drawStampConfigs.securityPattern.openSecurityPattern) {
             this.drawSecurityPatternUtils.drawSecurityPattern(
                 offscreenCtx,
                 this.drawStampConfigs.securityPattern,
@@ -1837,7 +1837,8 @@ export class DrawStampUtils {
                 centerY,
                 radiusX,
                 radiusY,
-                refreshSecurityPattern
+                refreshSecurityPattern,
+                this.drawStampConfigs.outBorder.innerCircleLineWidth * this.mmToPixel
             );
         }
 
