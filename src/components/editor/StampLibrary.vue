@@ -29,6 +29,7 @@
 </template>
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { trackEvent } from '../../utils/analytics'
 import { useI18n } from 'vue-i18n'
 import type { IDrawStampConfig } from '../../DrawStampTypes'
 import { deleteLibraryStamp, listLibraryStamps, putLibraryStamp, restoreLibraryBackup, type LibraryStamp } from '../../utils/stampLibrary'
@@ -61,6 +62,7 @@ const saveCurrent = () => run(async () => {
   const config = JSON.parse(JSON.stringify(current))
   const thumbnail = await props.getThumbnail()
   await putLibraryStamp({ id: crypto.randomUUID(), name: name.value.trim(), updatedAt: Date.now(), thumbnail, config })
+  trackEvent('library_save')
   await reload(); message.value = tr('已保存到本地印章库', 'Saved to your local library')
 })
 const openStamp = (item: LibraryStamp) => emit('open', JSON.parse(JSON.stringify(item.config)))

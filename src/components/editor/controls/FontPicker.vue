@@ -12,7 +12,7 @@
         type="button"
         class="font-chip"
         :class="{ active: modelValue === font }"
-        :style="{ fontFamily: getFontCssFamily(font) }"
+        :style="font === modelValue ? { fontFamily: getFontCssFamily(font) } : undefined"
         @click="updateFont(font)"
       >
         {{ getFontDisplayName(font).replace(/\s*\(.+\)\s*$/, '') }}
@@ -29,7 +29,7 @@
           v-for="font in allFonts"
           :key="font"
           :value="font"
-          :style="{ fontFamily: getFontCssFamily(font) }"
+          :style="font === modelValue ? { fontFamily: getFontCssFamily(font) } : undefined"
         >
           {{ getFontDisplayName(font) }}
         </option>

@@ -141,12 +141,81 @@
         "description": "使用浏览器本地的透明印章提取工具，从印章图片中提取可编辑图案，调整保留范围、清理程度和边缘效果，再导出透明 PNG、SVG 或 JPEG。",
         "heading": "透明印章提取：从图片到可编辑图案",
         "summary": "将授权使用的印章图片拖入提取工具，保留所需颜色并移除背景；处理过程在浏览器本地完成。",
-        "highlights": ["拖入或选择图片", "保留范围与清理程度可调", "透明背景与边缘增强", "结果可放回编辑画布"],
+        "highlights": [
+          "拖入或选择图片",
+          "保留范围与清理程度可调",
+          "透明背景与边缘增强",
+          "结果可放回编辑画布"
+        ],
         "eyebrow": "Image extraction guide",
         "sections": [
-          {"title": "适合什么图片", "paragraphs": ["适用于需要保留红色印章主体、去除纸张或白色背景的授权图片。清晰、对比度较高的原图通常更容易获得干净的边缘。", "请只处理自己拥有或已获授权的印章图像；本工具不能替代对文件、印章或授权关系的核验。"]},
-          {"title": "四步完成提取", "steps": ["在编辑器顶部打开“提取印章”。", "拖入图片或选择本地图片文件，先框选需要提取的区域，减少其他红色内容干扰。", "调整保留范围、清理程度和边缘增强，再用擦除与恢复画笔修整预览。", "确认结果后放回画布，再按需要导出透明 PNG、SVG 或 JPEG。"]},
-          {"title": "提取效果不理想时", "paragraphs": ["先换用边缘更清晰、阴影更少的原图；再小幅调整保留范围和清理程度，避免一次把参数拉到极端。", "对于颜色复杂、遮挡严重或没有明显红色主体的图片，提取结果可能不完整，需要人工检查后再使用。"]}
+          {
+            "title": "先用示例图片试一次",
+            "paragraphs": [
+              "下面使用程序绘制的示例圆环，不含真实公司印章或文件。原图故意加入了红色干扰条和圆环旁的红点，用来演示框选和手工清理。",
+              "点击“打开印章提取工具”可直接进入提取窗口。也可以先下载这张示例图，再拖入工具。"
+            ],
+            "image": {
+              "src": "/guides/extract-source.png",
+              "alt": "合成示例原图：纸张背景、左上红色干扰条、右侧圆环和多余红点",
+              "width": 960,
+              "height": 600,
+              "caption": "原图中的其他红色内容也可能被保留，先框选主体能减少干扰。"
+            },
+            "download": {
+              "href": "/guides/extract-source.png",
+              "label": "下载示例图片（PNG）"
+            }
+          },
+          {
+            "title": "第一步：框选要保留的区域",
+            "steps": [
+              "拖入图片后，在左侧原图上按住并拖动，框住圆环和周围少量留白，排除左上角红色条。",
+              "松开后会自动重新提取。选错时点击“使用整张图片”再重选。"
+            ],
+            "image": {
+              "src": "/guides/extract-crop.png",
+              "alt": "实际提取结果：框选后红色干扰条已排除，圆环旁仍保留一个红点",
+              "width": 480,
+              "height": 480,
+              "caption": "框选后得到的透明结果；棋盘格仅用于展示透明区域，不属于下载图片。"
+            }
+          },
+          {
+            "title": "第二步：调参数，再擦除杂点",
+            "steps": [
+              "小幅调整“保留范围”和“杂点清理”，以圆环或文字完整为先，不要一次把参数拉到极端。",
+              "选择“擦除”，用较小画笔清除圆环旁的孤立红点。擦错时可点“撤销笔画”，或用“恢复”画笔找回刚才擦掉的内容。",
+              "先确定框选和提取参数，再做手工修边；重新提取会重置本轮修边。"
+            ],
+            "image": {
+              "src": "/guides/extract-clean.png",
+              "alt": "擦除红点后的透明圆环示例，主体完整保留",
+              "width": 480,
+              "height": 480,
+              "caption": "清理后的示例。恢复画笔只能找回提取结果中被擦除的像素，不能补回原图中被遮挡的文字。"
+            }
+          },
+          {
+            "title": "第三步：放回画布并导出透明 PNG",
+            "steps": [
+              "保持“透明背景”选中，确认预览后点击“替换画布”。该操作会替换当前画布，可通过编辑器的“撤销”恢复。",
+              "点击“下载”，选择 PNG，并保持“PNG 使用白色背景”关闭。",
+              "如果用于指定尺寸打印，可开启“按实际尺寸导出”，输入章体宽度与 DPI；打印时使用 100% 原始大小。图片另有边缘留白。"
+            ],
+            "paragraphs": [
+              "JPEG 不保留透明背景；当前 SVG 内嵌 PNG，不是可无限放大的矢量图。"
+            ]
+          },
+          {
+            "title": "效果不理想时怎么处理",
+            "paragraphs": [
+              "主体缺笔或边缘过淡：降低清理强度，适当扩大保留范围，并检查原图清晰度。手工恢复不能恢复提取阶段已经丢失的内容。",
+              "仍有红字、红线或红点：优先缩小框选区域，再用小画笔清理独立杂点。",
+              "遮挡严重、阴影明显或没有清晰红色主体：换用更清楚的原图。工具不会推测或重建原图里不可见的内容。",
+              "只处理自己拥有或已获授权的图片；示例流程不核验印章、文件或授权关系。"
+            ]
+          }
         ],
         "ctaLabel": "打开印章提取工具",
         "ctaDescription": "在浏览器本地选择图片、调整预览并放回编辑画布。"
@@ -157,12 +226,81 @@
         "description": "Extract an editable stamp image in your browser, tune the retained range, cleanup, and edge treatment, then export transparent PNG, SVG, or JPEG files.",
         "heading": "Extract a Transparent Stamp from an Image",
         "summary": "Drop in an authorized stamp image, keep the required color information, and remove its background locally in your browser.",
-        "highlights": ["Drop or choose an image", "Adjust retained range and cleanup", "Transparent background and edge enhancement", "Return the result to the editor"],
+        "highlights": [
+          "Drop or choose an image",
+          "Adjust retained range and cleanup",
+          "Transparent background and edge enhancement",
+          "Return the result to the editor"
+        ],
         "eyebrow": "Image extraction guide",
         "sections": [
-          {"title": "When this works best", "paragraphs": ["Use it with authorized images where the red stamp subject needs to be kept while paper or white background is removed. A sharp, high-contrast source usually produces cleaner edges.", "Only process images you own or are authorized to use. The tool does not verify documents, seals, or permissions."]},
-          {"title": "Extract a stamp in four steps", "steps": ["Open Extract Stamp from the editor toolbar.", "Drop in an image or choose one from your device, then crop around the stamp to exclude unrelated red content.", "Adjust retained range, cleanup, and edge enhancement, then refine the preview with erase and restore brushes.", "Place the result back on the canvas, then export PNG, SVG, or JPEG as needed."]},
-          {"title": "If the result needs refinement", "paragraphs": ["Try a cleaner original first, then make small changes to retained range and cleanup instead of pushing either control to an extreme.", "Images with complex colors, heavy occlusion, or no clear red subject can produce incomplete results and should be reviewed manually."]}
+          {
+            "title": "Try the downloadable example",
+            "paragraphs": [
+              "This computer-drawn ring contains no real company seal or document. A red bar and a small red dot were added to demonstrate cropping and manual cleanup.",
+              "Choose “Open the stamp extractor” to enter the tool directly. Download the example below and drop it into the extractor."
+            ],
+            "image": {
+              "src": "/guides/extract-source.png",
+              "alt": "Synthetic source with a paper background, red distraction bar, ring and unwanted red dot",
+              "width": 960,
+              "height": 600,
+              "caption": "Other red content can be retained too. Crop around the subject first."
+            },
+            "download": {
+              "href": "/guides/extract-source.png",
+              "label": "Download the sample image (PNG)"
+            }
+          },
+          {
+            "title": "Step 1: Crop around the subject",
+            "steps": [
+              "After uploading, drag on the source preview around the ring with a little padding, excluding the red bar at the top left.",
+              "Release to re-extract automatically. Use the full-image button to reset a mistaken selection."
+            ],
+            "image": {
+              "src": "/guides/extract-crop.png",
+              "alt": "Actual extraction after cropping: the distraction bar is gone but the small red dot remains",
+              "width": 480,
+              "height": 480,
+              "caption": "Transparent result after cropping. The checkerboard shows transparency and is not part of the downloaded image."
+            }
+          },
+          {
+            "title": "Step 2: Adjust settings, then erase noise",
+            "steps": [
+              "Make small changes to retained range and cleanup, keeping the ring or lettering complete.",
+              "Choose Erase and use a small brush on the isolated dot. Undo a stroke or use Restore to recover accidentally erased pixels.",
+              "Finish crop and extraction settings before retouching; re-extraction resets the current retouch work."
+            ],
+            "image": {
+              "src": "/guides/extract-clean.png",
+              "alt": "Transparent ring after erasing the isolated red dot while preserving the subject",
+              "width": 480,
+              "height": 480,
+              "caption": "Cleaned sample. Restore recovers erased extraction pixels; it cannot reconstruct obscured text from the original image."
+            }
+          },
+          {
+            "title": "Step 3: Return to the canvas and export PNG",
+            "steps": [
+              "Keep Transparent Background selected and choose Replace Canvas. This replaces the current canvas; editor Undo can restore it.",
+              "Open Download, choose PNG, and leave the white-background option off.",
+              "For a specific print size, enable physical-size export, enter stamp width and DPI, and print at 100% original size. The image includes extra edge padding."
+            ],
+            "paragraphs": [
+              "JPEG does not preserve transparency. Current SVG output embeds a PNG bitmap and does not support unlimited lossless scaling."
+            ]
+          },
+          {
+            "title": "Troubleshooting the result",
+            "paragraphs": [
+              "Missing strokes or faint edges: reduce cleanup, adjust the retained range, and check the source quality. Restore cannot bring back pixels already discarded during extraction.",
+              "Remaining red text, lines or dots: tighten the crop first, then use a small brush on isolated noise.",
+              "Heavy occlusion, strong shadows or no distinct red subject: try a clearer source. The tool does not infer or reconstruct invisible content.",
+              "Only process images you own or are authorized to use. This workflow does not verify seals, documents or permissions."
+            ]
+          }
         ],
         "ctaLabel": "Open the stamp extractor",
         "ctaDescription": "Choose an image locally, tune the preview, and return the result to the editor."

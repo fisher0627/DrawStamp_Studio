@@ -27,7 +27,7 @@ export const legalContent: Record<'zh' | 'en', { privacy: LegalPageContent; term
       kicker: '数据处理说明',
       description: 'DrawStamp Studio 的核心编辑、提取和导出流程都在浏览器本地完成。本页说明哪些信息会留在本地，哪些服务用于站点运行。',
       lastUpdatedLabel: '最后更新',
-      lastUpdated: '2026 年 7 月 20 日',
+      lastUpdated: '2026 年 9 月 19 日',
       aside: [
         { label: '本地草稿', text: '印章模板、草稿和编辑设置保存在您的浏览器设备上。' },
         { label: '不上传印章', text: '核心印章图片处理不需要上传到 DrawStamp Studio 服务器。' },
@@ -46,7 +46,7 @@ export const legalContent: Record<'zh' | 'en', { privacy: LegalPageContent; term
         {
           title: '3. 第三方服务',
           items: [
-            'Umami Analytics：用于统计页面访问情况，帮助我们了解功能页面是否正常被访问和使用。',
+            'Umami Analytics：统计页面访问、教程入口点击，以及提取、导出和本地保存是否成功。操作事件只包含语言、固定页面或功能名称、导出格式等状态，不包含公司名称、文件名、图片或印章文字；不设置自定义用户标识，并尊重浏览器 Do Not Track 设置。',
             'Cloudflare Pages：用于托管静态网站，并提供基础 CDN、安全和访问日志能力。'
           ]
         },
@@ -102,7 +102,7 @@ export const legalContent: Record<'zh' | 'en', { privacy: LegalPageContent; term
       kicker: 'Data Processing',
       description: 'DrawStamp Studio performs its core editing, extraction, and export workflows locally in your browser. This page explains what stays on your device and which services support the website.',
       lastUpdatedLabel: 'Last updated',
-      lastUpdated: 'July 20, 2026',
+      lastUpdated: 'September 19, 2026',
       aside: [
         { label: 'Local drafts', text: 'Stamp templates, drafts, and editor settings are stored on your device.' },
         { label: 'No stamp uploads', text: 'Core stamp image processing does not require uploads to a DrawStamp Studio server.' },
@@ -111,7 +111,7 @@ export const legalContent: Record<'zh' | 'en', { privacy: LegalPageContent; term
       sections: [
         { title: '1. Information we process', paragraphs: ['DrawStamp Studio is designed to protect your privacy. This policy explains how information related to website visits is handled.'], items: ['Analytics data: site analytics may record basic information such as browser type, visit time, and page path to help us understand site usage.', 'Local storage: stamp templates, drafts, language preferences, and editor settings are stored on your device. DrawStamp Studio cannot access this local content.'] },
         { title: '2. How information is used', paragraphs: ['Visit data is used only to operate and improve the site, understand page usage, and protect site security.'] },
-        { title: '3. Third-party services', items: ['Umami Analytics: provides basic page-visit analytics so we can understand whether site features are being reached and used.', 'Cloudflare Pages: hosts the static website and provides CDN, security, and basic access-log services.'] },
+        { title: '3. Third-party services', items: ['Umami Analytics: measures page visits, guide links, and successful extraction, export and local saves. Events contain only language, fixed page or feature names, export format and similar states—not company names, file names, images or stamp text. We do not set custom user IDs and respect browser Do Not Track settings.', 'Cloudflare Pages: hosts the static website and provides CDN, security, and basic access-log services.'] },
         { title: '4. Cookies and local data', paragraphs: ['The core editor does not require an account. You can clear local drafts, templates, language preferences, and other local data through your browser settings.'] },
         { title: '5. Data security', paragraphs: ['Stamp drawing, image extraction, and export run locally in your browser. We do not actively upload your stamp images or templates.'] },
         { title: '6. Your choices', paragraphs: ['You can view or delete local data through your browser settings and use browser or privacy tools to limit analytics.'] },

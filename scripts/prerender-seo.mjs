@@ -117,10 +117,14 @@ const buildStaticShell = (entry) => {
   const guideSections = entry.sections?.map((section) => {
     const paragraphs = section.paragraphs?.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('') || ''
     const steps = section.steps?.map((step) => `<li>${escapeHtml(step)}</li>`).join('') || ''
-    return `<section><h2>${escapeHtml(section.title)}</h2>${paragraphs}${steps ? `<ol>${steps}</ol>` : ''}</section>`
+    const figure = section.image ? `<figure><img src="${escapeHtml(section.image.src)}" alt="${escapeHtml(section.image.alt)}" width="${section.image.width}" height="${section.image.height}" loading="lazy"><figcaption>${escapeHtml(section.image.caption)}</figcaption></figure>` : ''
+    const download = section.download ? `<a href="${escapeHtml(section.download.href)}" download>${escapeHtml(section.download.label)}</a>` : ''
+    return `<section><h2>${escapeHtml(section.title)}</h2>${paragraphs}${figure}${download}${steps ? `<ol>${steps}</ol>` : ''}</section>`
   }).join('') || ''
 
-  return `<div id="app"><main class="static-seo-shell"><header><img src="/logo-lockup.svg" alt="DrawStamp Studio" width="178" height="46"><p>${entry.locale === 'zh' ? '浏览器本地电子印章工作台' : 'Browser-local electronic stamp workspace'}</p><h1>${escapeHtml(entry.heading)}</h1><p>${escapeHtml(entry.summary)}</p></header><ul>${highlights}</ul>${guideSections}<aside class="static-seo-evidence"><h2>${evidenceHeading}</h2><p>${escapeHtml(evidenceText)}</p><p><time datetime="${lastmod}">${updatedLabel}</time></p></aside><nav aria-label="${entry.locale === 'zh' ? '主要页面' : 'Primary pages'}">${navigation}</nav><p><a href="${entry.locale === 'zh' ? '/en/' : '/'}" hreflang="${entry.locale === 'zh' ? 'en' : 'zh-CN'}">${entry.locale === 'zh' ? 'English' : '中文'}</a></p></main></div>`
+  const tool = { extractTransparentStamp: 'extract', roundSealTemplate: 'design', svgStampExport: 'export-svg' }[entry.key]
+  const cta = tool ? `<p><a href="${entry.locale === 'zh' ? '/' : '/en/'}?tool=${tool}&amp;guide=${entry.key}">${escapeHtml(entry.ctaLabel)}</a></p>` : ''
+  return `<div id="app"><main class="static-seo-shell"><header><img src="/logo-lockup.svg" alt="DrawStamp Studio" width="178" height="46"><p>${entry.locale === 'zh' ? '浏览器本地电子印章工作台' : 'Browser-local electronic stamp workspace'}</p><h1>${escapeHtml(entry.heading)}</h1><p>${escapeHtml(entry.summary)}</p></header><ul>${highlights}</ul>${guideSections}${cta}<aside class="static-seo-evidence"><h2>${evidenceHeading}</h2><p>${escapeHtml(evidenceText)}</p><p><time datetime="${lastmod}">${updatedLabel}</time></p></aside><nav aria-label="${entry.locale === 'zh' ? '主要页面' : 'Primary pages'}">${navigation}</nav><p><a href="${entry.locale === 'zh' ? '/en/' : '/'}" hreflang="${entry.locale === 'zh' ? 'en' : 'zh-CN'}">${entry.locale === 'zh' ? 'English' : '中文'}</a></p></main></div>`
 }
 
 const renderPage = (entry) => {

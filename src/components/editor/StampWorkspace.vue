@@ -324,8 +324,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
+import { trackEvent } from '../../utils/analytics'
 import { DrawStampUtils } from '../../DrawStampUtils'
-import { ensureStampFontsLoaded, getFontCssFamily, getSystemFonts } from '../../utils/fontUtils'
+import { ensureStampFontsLoaded, getFontCssFamily, getStampFontFamilies } from '../../utils/fontUtils'
 import { IDrawStampConfig, IDrawImage } from '../../DrawStampTypes'
 import ElementList from './ElementList.vue'
 import PropertiesPanel from './PropertiesPanel.vue'
@@ -425,6 +427,29 @@ const MM_PER_PIXEL = 10 // 毫米换算像素
 let drawStampUtils: DrawStampUtils
 const isDraggable = ref(true) // 是否开启拖动
 const showExtractorDialog = ref(false)
+const route = useRoute()
+let disposed = false
+let fontRevision = 0
+watch(() => JSON.stringify(getStampFontFamilies(stampStore.state.config || {})), async (signature) => {
+  const revision = ++fontRevision
+  try {
+    await ensureStampFontsLoaded(JSON.parse(signature))
+    if (!disposed && revision === fontRevision && isDrawStampUtilsReady.value) drawStamp(false, false, false)
+  } catch { /* The canvas keeps its fallback font; export reports a loading failure. */ }
+}, { immediate: true })
+
+const openRequestedTool = () => {
+  if (!isDrawStampUtilsReady.value) return
+  const action = route.query.tool
+  if (action === 'extract') openExtractorDialog()
+  if (action === 'export-svg') {
+    exportDock.openExportDialog()
+    exportDock.selectedFormat = 'svg'
+  }
+  if (action === 'design') handleSelectElement('basic-settings', 'basic', 0)
+}
+watch(() => route.query.tool, openRequestedTool)
+
 const viewScalePercent = ref(100)
 const canvasViewRevision = ref(0)
 const canvasBackgroundMode = ref<'grid' | 'paper' | 'checker'>('grid')
@@ -816,6 +841,7 @@ const closeTemplateMetaDialog = () => {
 }
 
 const openExtractorDialog = () => {
+  if (!showExtractorDialog.value) trackEvent('extract_start')
   showExtractorDialog.value = true
 }
 
@@ -898,6 +924,7 @@ const handleExtractedStampImage = async (payload: ExtractStampResult) => {
 
   await nextTick()
   handleSelectElement(`image-${newIndex}`, 'image', newIndex)
+  trackEvent('extract_success')
 }
 
 const confirmSaveTemplate = (payload: { title: string; categories: string }) => {
@@ -1066,8 +1093,6 @@ const handleGlobalClick = (event: MouseEvent) => {
 // 在组件挂载时初始化
 onMounted(async () => {
   initDrawStampUtils()
-  await getSystemFonts()
-  await ensureStampFontsLoaded()
 
   // 设置初始拖动状态
   drawStampUtils.setDraggable(isDraggable.value)
@@ -1089,6 +1114,7 @@ onMounted(async () => {
   handleSelectElement('basic-settings', 'basic', 0)
 
   history.start()
+  openRequestedTool()
   window.addEventListener('keydown', history.onKeydown)
   window.addEventListener('change', commitHistoryInteraction)
   window.addEventListener('pointerdown', history.beginGesture)
@@ -1102,6 +1128,8 @@ onMounted(async () => {
 
 // 在组件卸载时移除事件监听
 onUnmounted(() => {
+  disposed = true
+  fontRevision++
   localDraft.handleBeforeUnload()
   window.removeEventListener('keydown', history.onKeydown)
   window.removeEventListener('change', commitHistoryInteraction)

@@ -1,11 +1,13 @@
 import { createApp, watch } from 'vue'
 import App from './App.vue'
+import { initializeAnalytics } from './utils/analytics'
 import './style.css'
 import i18n from './i18n'
 import router from './router'
 import { applyRouteSeo } from './seo'
 import type { AppLocale } from './i18n'
 
+initializeAnalytics()
 const app = createApp(App)
 app.use(i18n)
 app.use(router)

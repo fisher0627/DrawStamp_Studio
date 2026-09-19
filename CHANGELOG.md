@@ -4,6 +4,13 @@
 
 ## Unreleased
 
+## 0.8.1 - 2026-09-19
+
+- Load only the fonts selected in the document; remove unused startup font enumeration and wait for selected fonts before export.
+- Add a bilingual extraction walkthrough with downloadable synthetic examples, crop/retouch comparisons, and direct tool links.
+- Track privacy-scoped guide, extraction, export, and library success events through the existing Umami integration; exclude preview hosts and respect Do Not Track.
+- Keep tutorial headings, example images, and tool links available in prerendered HTML.
+
 ## 0.8.0 - 2026-09-19
 
 ### Added

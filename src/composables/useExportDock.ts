@@ -1,6 +1,7 @@
 import { computed, onUnmounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { DrawStampUtils } from '../DrawStampUtils'
+import { trackEvent } from '../utils/analytics'
 import { downloadStampImage } from '../utils/exportImage'
 import type { IDrawStampConfig } from '../DrawStampTypes'
 
@@ -216,6 +217,7 @@ export function useExportDock(getUtils: () => DrawStampUtils | null) {
     physicalMode.value = false
     selectedFormat.value = 'png'
     refreshExportDefaults()
+    trackEvent('export_start', { source: 'quick' })
     await confirmExport(false)
   }
 
@@ -291,6 +293,7 @@ export function useExportDock(getUtils: () => DrawStampUtils | null) {
     refreshExportPreview()
 
     showFormatDialog.value = true
+    trackEvent('export_start')
   }
 
   const closeFormatDialog = () => {
@@ -312,6 +315,7 @@ export function useExportDock(getUtils: () => DrawStampUtils | null) {
       let data = await utils.getStampImageBase64(format === 'jpeg' ? 'jpeg' : 'png', jpegQuality.value / 100, Math.round(width), Math.round(height))
       if (white) data = await addWhiteBackgroundToDataUrl(data)
       await downloadStampImage(data, format, filename, resolution)
+      trackEvent('export_success', { format, mode: resolution ? 'physical' : 'pixels', source: closeAfter ? 'dialog' : 'quick' })
       if (closeAfter) closeFormatDialog()
     } catch {
       exportError.value = tr('导出失败，请检查图片和字体后重试。', 'Export failed. Check images and fonts, then retry.')

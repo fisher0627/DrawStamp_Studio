@@ -23,7 +23,7 @@ const outputPathFor = (path) => path === '/'
     : resolve(distDir, `${path.replace(/^\//, '')}.html`)
 
 const entries = Object.entries(config.routes).flatMap(([key, route]) => (
-  ['zh', 'en'].map((locale) => ({ key, locale, ...route[locale] }))
+  ['zh', 'en'].map((locale) => ({ key, locale, lastmod: route.lastmod, ...route[locale] }))
 ))
 
 for (const entry of entries) {
@@ -39,10 +39,16 @@ for (const entry of entries) {
   assert(html.includes(`<time datetime="${entry.lastmod || config.lastmod}">`), `${entry.path}: updated date is missing`)
   assert(html.includes('static-seo-evidence'), `${entry.path}: content basis note is missing`)
   for (const section of entry.sections || []) {
-    assert(html.includes(`<h2>${section.title}</h2>`), `${entry.path}: static guide section is missing`)
+    assert(html.includes(`<h2>${escapeHtml(section.title)}</h2>`), `${entry.path}: static guide section is missing`)
+    if (section.image) {
+      assert(html.includes(`alt="${escapeHtml(section.image.alt)}"`), `${entry.path}: example image is missing from static HTML`)
+      try { await readFile(resolve(distDir, section.image.src.replace(/^\//, ''))) }
+      catch { failures.push(`${entry.path}: example asset does not exist`) }
+    }
   }
   assert(html.includes(`hreflang="${otherLocale === 'zh' ? 'zh-CN' : 'en'}" href="${absoluteUrl(alternate.path)}"`), `${entry.path}: alternate locale is incorrect`)
   assert(!/name=["']keywords["']/i.test(html), `${entry.path}: obsolete keywords meta remains`)
+  if (entry.ctaLabel) assert(html.includes(`?tool=`) && html.includes(escapeHtml(entry.ctaLabel)), `${entry.path}: direct tool link is missing`)
   assert(!html.includes('FAQPage'), `${entry.path}: unsupported FAQ schema remains`)
 
   const schemas = [...html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)]

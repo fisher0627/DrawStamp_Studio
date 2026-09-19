@@ -306,3 +306,7 @@ npm test          # PNG/JPEG 分辨率元数据回归检查
 ## 许可证
 
 本项目基于 Apache-2.0 License。
+
+### SEO 与效果统计
+
+默认首页按需加载印章字体；[提取教程](https://wosp.cc.cd/extract-transparent-stamp)提供可下载的合成示例和工具直达入口。生产站点使用现有 Umami 记录匿名功能完成事件，详见[统计口径与验证](docs/seo-measurement.md)。

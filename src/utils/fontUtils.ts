@@ -1,3 +1,5 @@
+import type { IDrawStampConfig } from '../DrawStampTypes'
+
 const fontAliases: Record<string, string> = {
   '华文隶书': 'STLiti',
   '隶书': 'LiSu',
@@ -72,19 +74,24 @@ export function getCanvasFontString(
   return `${fontStyle} ${fontWeight} ${fontSizePx}px ${getFontCssFamily(fontName)}`
 }
 
-export async function ensureStampFontsLoaded(): Promise<void> {
-  if (typeof document === 'undefined' || !document.fonts) return
-
-  try {
-    await Promise.all([
-      document.fonts.load('16px "DrawStamp-STLiti"'),
-      document.fonts.load('16px "STLiti"'),
-      document.fonts.load('16px "FZXiaoBiaoSong-B05S"'),
-      document.fonts.ready
-    ])
-  } catch (error) {
-    console.warn('Stamp fonts failed to preload:', error)
+// Only load fonts present in the document; font pickers must not preload every option.
+export function getStampFontFamilies(config: Partial<IDrawStampConfig>): string[] {
+  const families = new Set<string>()
+  for (const key of ['company', 'stampType', 'stampCode', 'taxNumber'] as const) {
+    const list = config[`${key}List` as const]
+    // Match the renderer's legacy fallback for code and center text.
+    const fallback = (key === 'stampCode' || key === 'taxNumber') && !list?.length
+    const elements = !fallback && Array.isArray(list) ? list : [config[key]]
+    for (const element of elements) {
+      if (typeof element?.fontFamily === 'string') families.add(getCanonicalFontName(element.fontFamily))
+    }
   }
+  return [...families].sort()
+}
+
+export async function ensureStampFontsLoaded(families: string[]): Promise<void> {
+  if (typeof document === 'undefined' || !document.fonts) return
+  await Promise.all([...new Set(families)].map(family => document.fonts.load(`16px ${getFontCssFamily(family)}`)))
 }
 
 // 字体名称映射：英文字体名称 -> 中文显示名称

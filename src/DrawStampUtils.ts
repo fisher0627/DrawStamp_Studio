@@ -20,7 +20,7 @@ import { DrawImageCanvas } from "./utils/DrawImageCanvas.ts";
 import { DrawCodeUtils } from './utils/DrawCodeUtils'
 import { DrawStampTypeUtils } from './utils/DrawStampTypeUtils'
 import { DrawTaxNumberUtils } from './utils/DrawTaxNumberUtils'
-import { getCanvasFontString } from './utils/fontUtils'
+import { getCanvasFontString, getStampFontFamilies, ensureStampFontsLoaded } from './utils/fontUtils'
 import { DEFAULT_STAMP_RED } from './Constants'
 // 标尺宽度
 const RULER_WIDTH = 8
@@ -1337,7 +1337,7 @@ export class DrawStampUtils {
             param.noiseSize *= scale; param.strongNoiseSize *= scale
         }
         try {
-            await document.fonts.ready
+            await ensureStampFontsLoaded(getStampFontFamilies(config))
             await Promise.all((config.imageList || []).map(async image => {
                 if (!image.imageUrl || renderer.imageCache.has(image.imageUrl)) return
                 const img = new Image(); img.crossOrigin = 'anonymous'; img.src = image.imageUrl

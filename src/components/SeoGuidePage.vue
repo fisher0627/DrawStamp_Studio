@@ -12,11 +12,21 @@
       </div>
     </template>
 
+    <div class="guide-cta guide-start">
+      <p>{{ page.ctaDescription }}</p>
+      <RouterLink :to="toolLink" @click="trackEvent('guide_open_tool', { guide: guideKey })">{{ page.ctaLabel }}</RouterLink>
+    </div>
+
     <section v-for="section in page.sections" :key="section.title" class="guide-section">
-      <p class="section-label">{{ section.title }}</p>
+      <h2 class="section-label">{{ section.title }}</h2>
       <template v-if="section.paragraphs">
         <p v-for="paragraph in section.paragraphs" :key="paragraph">{{ paragraph }}</p>
       </template>
+      <figure v-if="section.image" class="guide-example">
+        <img :src="section.image.src" :alt="section.image.alt" :width="section.image.width" :height="section.image.height" loading="lazy" decoding="async" />
+        <figcaption>{{ section.image.caption }}</figcaption>
+      </figure>
+      <a v-if="section.download" :href="section.download.href" download>{{ section.download.label }}</a>
       <ol v-if="section.steps">
         <li v-for="step in section.steps" :key="step">{{ step }}</li>
       </ol>
@@ -27,7 +37,7 @@
         <p class="section-label">{{ locale === 'zh' ? '开始操作' : 'START IN THE EDITOR' }}</p>
         <p>{{ page.ctaDescription }}</p>
       </div>
-      <RouterLink :to="routePath('/')">{{ page.ctaLabel }}</RouterLink>
+      <RouterLink :to="toolLink" @click="trackEvent('guide_open_tool', { guide: guideKey })">{{ page.ctaLabel }}</RouterLink>
     </section>
 
     <nav class="related-guides" :aria-label="locale === 'zh' ? '相关指南' : 'Related guides'">
@@ -49,6 +59,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { trackEvent } from '../utils/analytics'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import InfoPageShell from './InfoPageShell.vue'
@@ -77,9 +88,17 @@ const evidence = computed(() => activeLocale.value === 'zh'
       updated: 'Last updated: '
     })
 const routePath = (path: string) => localizedPath(path, activeLocale.value)
+const toolLink = computed(() => ({ path: routePath('/'), query: {
+  tool: ({ extractTransparentStamp: 'extract', roundSealTemplate: 'design', svgStampExport: 'export-svg' } as Record<string, string>)[guideKey.value],
+  guide: guideKey.value
+} }))
 </script>
 
 <style scoped>
+.guide-example { margin: 20px 0; }
+.guide-example img { display:block; width:100%; height:auto; border:1px solid var(--studio-line); border-radius:12px; background:#f4f5f1; }
+.guide-example figcaption { margin-top:10px; font-size:14px; line-height:1.7; color:var(--studio-muted); }
+
 .guide-aside {
   display: grid;
   place-items: center;

@@ -195,3 +195,7 @@ Apache-2.0. See [LICENSE](LICENSE).
 ### Local stamp library
 
 ![Local stamp library](public/readme-library.png)
+
+### SEO and measurement
+
+Stamp fonts load on demand. The [extraction guide](https://wosp.cc.cd/en/extract-transparent-stamp) includes downloadable synthetic examples and direct tool links. The existing Umami integration tracks privacy-scoped product completion events on production; see [measurement definitions](docs/seo-measurement.md).
