@@ -32,13 +32,13 @@ export const studioMessages = {
         downloadFormat: '下载 {format}',
         transparentBackground: '透明背景',
         whiteBackground: '白色背景',
-        vectorExport: '矢量导出',
+        vectorExport: 'SVG 内嵌位图',
         jpegQuality: 'JPEG 质量 {quality}%',
         formats: {
           pngDesc: '透明背景，适合文档和打印',
           pngTip: '最常用',
-          svgDesc: '矢量格式，适合设计软件',
-          svgTip: '可放大',
+          svgDesc: 'SVG 容器，内嵌 PNG 位图',
+          svgTip: '放大会失真',
           jpegDesc: '白底图片，适合普通分享',
           jpegTip: '体积小'
         },
@@ -240,13 +240,13 @@ export const studioMessages = {
         downloadFormat: 'Download {format}',
         transparentBackground: 'Transparent background',
         whiteBackground: 'White background',
-        vectorExport: 'Vector export',
+        vectorExport: 'SVG with embedded bitmap',
         jpegQuality: 'JPEG quality {quality}%',
         formats: {
           pngDesc: 'Transparent background for documents and print',
           pngTip: 'Most popular',
-          svgDesc: 'Scalable vector format for design software',
-          svgTip: 'Scalable',
+          svgDesc: 'SVG container with an embedded PNG bitmap',
+          svgTip: 'Raster image',
           jpegDesc: 'White-background image for everyday sharing',
           jpegTip: 'Small file'
         },

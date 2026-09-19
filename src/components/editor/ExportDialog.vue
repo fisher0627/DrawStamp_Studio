@@ -60,6 +60,19 @@
           </div>
 
           <div class="export-section">
+            <label class="export-checkbox"><input type="checkbox" v-model="dock.physicalMode" @change="dock.setPhysicalMode" />{{ tr('按实际尺寸导出', 'Export at physical size') }}</label>
+            <div v-if="dock.physicalMode" class="physical-settings">
+              <div class="size-inputs">
+                <label class="size-field">{{ tr('章体宽度（mm）', 'Stamp width (mm)') }}<input aria-label="章体宽度 mm" type="number" min="1" step="0.1" v-model.number="dock.physicalWidth" @input="dock.applyPhysicalSize('width')" /></label>
+                <label class="size-field">{{ tr('章体高度（mm）', 'Stamp height (mm)') }}<input aria-label="章体高度 mm" type="number" min="1" step="0.1" v-model.number="dock.physicalHeight" @input="dock.applyPhysicalSize('height')" /></label>
+                <label class="size-field">DPI<input aria-label="DPI" type="number" min="72" max="1200" step="1" v-model.number="dock.dpi" @input="dock.applyPhysicalSize()" /></label>
+              </div>
+              <p class="size-hint">{{ dock.physicalSummary }}</p>
+              <p class="size-hint">{{ tr('宽高等比联动。图片包含每侧原始 1 mm 的等比留白；PNG/JPEG 写入分辨率信息，SVG 写入物理尺寸。打印请使用 100% 原始大小，关闭适应页面。', 'Size stays proportional, including scaled 1 mm edge padding. PNG/JPEG include resolution metadata; SVG includes physical dimensions. Print at 100%, with Fit to page off.') }}</p>
+              <p v-if="dock.physicalError" role="alert" class="export-error">{{ dock.physicalError }}</p>
+            </div>
+          </div>
+          <div v-if="!dock.physicalMode" class="export-section">
             <div class="export-section-title">
               <label>{{ t('studio.editor.exportScale') }}</label>
               <span>{{ dock.exportSizeLabel }}</span>
@@ -96,7 +109,7 @@
             />
           </div>
 
-          <details class="export-advanced">
+          <details v-if="!dock.physicalMode" class="export-advanced">
             <summary>{{ t('studio.editor.moreSizeSettings') }}</summary>
             <div class="size-setting">
               <div class="size-setting-header">
@@ -155,9 +168,10 @@
           </details>
         </section>
       </div>
+      <p v-if="dock.exportError" role="alert" class="export-error">{{ dock.exportError }}</p>
       <div class="dialog-buttons">
         <button @click="dock.closeFormatDialog" class="cancel-button">{{ t('stamp.exportFormat.cancel') }}</button>
-        <button @click="dock.confirmExport" class="confirm-button">
+        <button @click="dock.confirmExport()" :disabled="dock.exporting || !!dock.physicalError" class="confirm-button">
           {{ t('studio.editor.downloadFormat', { format: dock.selectedFormat.toUpperCase() }) }}
         </button>
       </div>
@@ -166,7 +180,6 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ExportDockModel } from '../../composables/useExportDock'
 
@@ -174,10 +187,14 @@ defineProps<{
   dock: ExportDockModel
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const tr = (zh: string, en: string) => locale.value === 'zh' ? zh : en
 </script>
 
 <style scoped>
+.export-error { color: #a23434; font-size:13px }
+.confirm-button:disabled { opacity:.45; cursor:default }
+.physical-settings { margin-top:12px }
 .export-dialog {
   max-width: 860px;
   width: 94%;

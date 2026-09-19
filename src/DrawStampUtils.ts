@@ -1317,129 +1317,53 @@ export class DrawStampUtils {
         targetWidth?: number,
         targetHeight?: number
     ): Promise<string> {
-        return new Promise((resolve, reject) => {
-            // 图像与边框的间距
-            let imagePadding = 1
-            let stampWidth = (this.drawStampConfigs.width + imagePadding*2) * this.mmToPixel
-            let stampHeight = (this.drawStampConfigs.height + imagePadding*2) * this.mmToPixel
-
-            const originalView = {
-                scale: this.scale,
-                offsetX: this.offsetX,
-                offsetY: this.offsetY
+        // Render a snapshot offscreen: previews must never mutate the editor or its history.
+        const config = JSON.parse(JSON.stringify(this.drawStampConfigs)) as IDrawStampConfig
+        const baseWidth = config.width + 2
+        const baseHeight = config.height + 2
+        const width = Math.round(targetWidth || baseWidth * this.mmToPixel)
+        const height = Math.round(targetHeight || baseHeight * this.mmToPixel)
+        if (width < 1 || height < 1 || width > 4096 || height > 4096) throw new Error('Export size out of range')
+        const density = Math.min(width / baseWidth, height / baseHeight)
+        const canvas = document.createElement('canvas')
+        canvas.width = width; canvas.height = height
+        const renderer = new DrawStampUtils(canvas, density)
+        renderer.drawStampConfigs = config
+        config.offsetX = 0; config.offsetY = 0
+        const scale = density / this.mmToPixel
+        for (const param of config.agingEffect.agingEffectParams) {
+            param.x = (param.x - RULER_WIDTH * this.mmToPixel - config.width * 5) * scale + width / 2
+            param.y = (param.y - RULER_HEIGHT * this.mmToPixel - config.height * 5) * scale + height / 2
+            param.noiseSize *= scale; param.strongNoiseSize *= scale
+        }
+        try {
+            await document.fonts.ready
+            await Promise.all((config.imageList || []).map(async image => {
+                if (!image.imageUrl || renderer.imageCache.has(image.imageUrl)) return
+                const img = new Image(); img.crossOrigin = 'anonymous'; img.src = image.imageUrl
+                await img.decode()
+                renderer.imageCache.set(image.imageUrl, await createImageBitmap(img))
+            }))
+            await Promise.all((config.svgList || []).map(async svg => {
+                if (!svg.svgContent) return
+                const bitmap = await renderer.createSvgBitmap(svg)
+                if (!bitmap) throw new Error('Could not render SVG element')
+                renderer.svgBitmapCache.set(renderer.getSvgCacheKey(svg), bitmap)
+            }))
+            const border = config.outBorder.drawInnerCircle ? config.outBorder.innerCircleLineWidth : 0
+            renderer.drawStamp(renderer.canvasCtx, width / 2, height / 2, (config.width - border) / 2 * density, (config.height - border) / 2 * density, config.primaryColor)
+            if (format === 'jpeg') {
+                renderer.canvasCtx.globalCompositeOperation = 'destination-over'
+                renderer.canvasCtx.fillStyle = '#fff'; renderer.canvasCtx.fillRect(0, 0, width, height)
             }
-            const originalRuler = {
-                showCrossLine: this.drawStampConfigs.ruler.showCrossLine,
-                showRuler: this.drawStampConfigs.ruler.showRuler,
-                showDashLine: this.drawStampConfigs.ruler.showDashLine,
-                showSideRuler: this.drawStampConfigs.ruler.showSideRuler,
-                showFullRuler: this.drawStampConfigs.ruler.showFullRuler,
-                showCurrentPositionText: this.drawStampConfigs.ruler.showCurrentPositionText
-            }
-
-            const restoreView = () => {
-                this.scale = originalView.scale
-                this.offsetX = originalView.offsetX
-                this.offsetY = originalView.offsetY
-                this.drawStampConfigs.ruler.showCrossLine = originalRuler.showCrossLine
-                this.drawStampConfigs.ruler.showRuler = originalRuler.showRuler
-                this.drawStampConfigs.ruler.showDashLine = originalRuler.showDashLine
-                this.drawStampConfigs.ruler.showSideRuler = originalRuler.showSideRuler
-                this.drawStampConfigs.ruler.showFullRuler = originalRuler.showFullRuler
-                this.drawStampConfigs.ruler.showCurrentPositionText = originalRuler.showCurrentPositionText
-                this.normalizeWorkspaceRuler()
-                this.refreshStamp()
-            }
-
-            this.scale = 1
-            this.offsetX = 0
-            this.offsetY = 0
-            this.drawStampConfigs.ruler.showCrossLine = false
-            this.drawStampConfigs.ruler.showRuler = false
-            this.drawStampConfigs.ruler.showDashLine = false
-            this.drawStampConfigs.ruler.showSideRuler = false
-            this.drawStampConfigs.ruler.showFullRuler = false
-            this.drawStampConfigs.ruler.showCurrentPositionText = false
-            this.refreshStamp()
-
-            setTimeout(() => {
-                try {
-                    // 创建一个新的 canvas 元素
-                    const saveCanvas = document.createElement('canvas')
-                    saveCanvas.width = stampWidth
-                    saveCanvas.height = stampHeight
-                    const saveCtx = saveCanvas.getContext('2d')
-                    if (!saveCtx) {
-                        restoreView()
-                        reject(new Error('无法创建 canvas context'))
-                        return
-                    }
-
-                    // 清除画布，使背景透明
-                    saveCtx.clearRect(0, 0, stampWidth, stampHeight)
-
-                    // 将原始 canvas 中的印章部分绘制到新的 canvas 上
-                    saveCtx.drawImage(
-                        this.canvas,
-                        RULER_WIDTH*this.mmToPixel + this.stampOffsetX * this.mmToPixel,
-                        RULER_HEIGHT*this.mmToPixel + this.stampOffsetY * this.mmToPixel,
-                        stampWidth,
-                        stampHeight,
-                        imagePadding * this.mmToPixel,
-                        imagePadding * this.mmToPixel,
-                        stampWidth,
-                        stampHeight
-                    )
-
-                    // 如果启用了做旧效果，在新的 canvas 上应用做旧效果
-                    if (this.drawStampConfigs.agingEffect.applyAging) {
-                        this.addAgingEffect(saveCtx, stampWidth, stampHeight, false)
-                    }
-
-                    // 如果需要自定义导出尺寸，创建缩放后的画布
-                    let outputCanvas = saveCanvas
-                    const exportWidth = targetWidth && targetWidth > 0 ? targetWidth : stampWidth
-                    const exportHeight = targetHeight && targetHeight > 0 ? targetHeight : stampHeight
-                    if (exportWidth !== stampWidth || exportHeight !== stampHeight) {
-                        const scaledCanvas = document.createElement('canvas')
-                        scaledCanvas.width = exportWidth
-                        scaledCanvas.height = exportHeight
-                        const scaledCtx = scaledCanvas.getContext('2d')
-                        if (scaledCtx) {
-                            scaledCtx.drawImage(saveCanvas, 0, 0, exportWidth, exportHeight)
-                            outputCanvas = scaledCanvas
-                        }
-                    }
-
-                    let dataURL: string
-
-                    if (format === 'jpeg') {
-                        // JPEG 格式，需要白色背景
-                        const tempCanvas = document.createElement('canvas')
-                        tempCanvas.width = outputCanvas.width
-                        tempCanvas.height = outputCanvas.height
-                        const tempCtx = tempCanvas.getContext('2d')
-                        if (tempCtx) {
-                            tempCtx.fillStyle = '#FFFFFF'
-                            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height)
-                            tempCtx.drawImage(outputCanvas, 0, 0, tempCanvas.width, tempCanvas.height)
-                            dataURL = tempCanvas.toDataURL('image/jpeg', quality)
-                        } else {
-                            dataURL = outputCanvas.toDataURL('image/jpeg', quality)
-                        }
-                    } else {
-                        // PNG 格式（默认）
-                        dataURL = outputCanvas.toDataURL('image/png')
-                    }
-
-                    restoreView()
-                    resolve(dataURL)
-                } catch (error) {
-                    restoreView()
-                    reject(error)
-                }
-            }, 50)
-        })
+            return canvas.toDataURL(`image/${format}`, quality)
+        } finally {
+            for (const bitmap of renderer.imageCache.values()) bitmap.close()
+            for (const bitmap of renderer.svgBitmapCache.values()) bitmap.close()
+            renderer.imageCache.clear(); renderer.svgBitmapCache.clear()
+            renderer.offscreenCanvas.width = 0; renderer.offscreenCanvas.height = 0
+            canvas.width = 0; canvas.height = 0
+        }
     }
 
     /**

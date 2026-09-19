@@ -1,4 +1,5 @@
 <template>
+  <StampLibrary v-if="showLibrary" :get-config="() => stampStore.state.config" :get-thumbnail="getLibraryThumbnail" @close="showLibrary = false" @open="openLibraryStamp" />
   <ExportDialog v-if="exportDock.showFormatDialog" :dock="exportDock" />
 
   <!-- 导出模板元信息弹窗 -->
@@ -82,6 +83,9 @@
         </div>
       </div>
       <div class="toolbar-actions">
+        <button class="toolbar-btn compact" :disabled="!history.canUndo" @click="history.undo" :title="locale === 'zh' ? '撤销（⌘/Ctrl Z）' : 'Undo (⌘/Ctrl Z)'">↶ {{ locale === 'zh' ? '撤销' : 'Undo' }}</button>
+        <button class="toolbar-btn compact" :disabled="!history.canRedo" @click="history.redo" :title="locale === 'zh' ? '重做（⌘/Ctrl Shift Z）' : 'Redo (⌘/Ctrl Shift Z)'">↷ {{ locale === 'zh' ? '重做' : 'Redo' }}</button>
+        <button class="toolbar-btn compact" @click="history.commit(); showLibrary = true">{{ locale === 'zh' ? '印章库' : 'Library' }}</button>
         <LanguageSwitcher />
         <button class="toolbar-btn compact" type="button" @click="openExtractorDialog" :title="t('homepage.canvas.extractStampTitle')">
           <span class="toolbar-icon">印</span>
@@ -336,6 +340,9 @@ import { useTemplatePresets, type TemplatePresetKey } from '../../composables/us
 import { useLocalDraft } from '../../composables/useLocalDraft'
 import type { ExtractStampResult } from '../../utils/extractStampImage'
 import { DEFAULT_STAMP_RED } from '../../Constants'
+import { useEditHistory } from '../../composables/useEditHistory'
+import StampLibrary from './StampLibrary.vue'
+import { validateStampConfig } from '../../utils/stampLibrary'
 
 const props = defineProps<{
   /** 传入的印章模板配置，用于初始化或联动 */
@@ -425,10 +432,36 @@ const canvasBackgroundMode = ref<'grid' | 'paper' | 'checker'>('grid')
 // 导出共享状态（底部快速导出 dock + 导出格式弹窗）
 const exportDock = useExportDock(() => drawStampUtils)
 
+const showLibrary = ref(false)
+const restoreEditorConfig = async (config: IDrawStampConfig) => {
+  const preset = templates.templatePresets.find(item => {
+    const candidate = templates.createPresetConfig(item.key)
+    return config.title ? candidate.title === config.title : candidate.stampType.stampType === config.stampType?.stampType
+  })
+  if (preset) templates.activeTemplatePreset = preset.key
+  drawStampUtils.setDrawConfigs(config)
+  stampStore.setConfig(config)
+  clearSelectedElement()
+  drawStamp()
+  await nextTick()
+  propertiesPanelRef.value?.restoreDrawConfigs()
+}
+const history = useEditHistory(() => stampStore.state.config, restoreEditorConfig)
+const getLibraryThumbnail = () => drawStampUtils.getStampImageBase64('png', 0.92, 220, Math.max(1, Math.round(220 * drawStampUtils.getExportBaseSize().height / drawStampUtils.getExportBaseSize().width)))
+const openLibraryStamp = async (config: IDrawStampConfig) => {
+  history.commit()
+  await restoreEditorConfig(config)
+  history.commit()
+  exportDock.exportFilename = exportDock.buildExportFilename(config)
+  showLibrary.value = false
+}
+const commitHistoryInteraction = () => { void nextTick(() => history.commit()) }
+
 // 本地自动草稿
 const localDraft = useLocalDraft({
   getConfig: () => stampStore.state.config,
   onRestore: async (config) => {
+    history.commit()
     drawStampUtils.setDrawConfigs(config)
     stampStore.setConfig(config)
     syncConfigToParent()
@@ -632,7 +665,9 @@ const loadTemplateFile = async (event: Event) => {
   try {
     const file = inputEl.files[0]
     const text = await file.text()
-    const config = JSON.parse(text) as IDrawStampConfig
+    const config = JSON.parse(text)
+    validateStampConfig(config)
+    history.commit()
 
     // 设置新的配置
     const newConfig = JSON.parse(JSON.stringify(config)) as IDrawStampConfig
@@ -670,6 +705,7 @@ const loadTemplateFile = async (event: Event) => {
 }
 
 const applyTemplatePreset = async (presetKey: TemplatePresetKey) => {
+  history.commit()
   if (!drawStampUtils) return
   templates.activeTemplatePreset = presetKey
   const presetConfig = templates.createPresetConfig(presetKey)
@@ -1020,6 +1056,7 @@ watch(
 
 // 点击草稿菜单外部时关闭菜单
 const handleGlobalClick = (event: MouseEvent) => {
+  if ((event.target as HTMLElement)?.closest('button')) commitHistoryInteraction()
   const target = event.target as HTMLElement | null
   if (!target?.closest?.('.draft-menu-wrap')) {
     localDraft.isDraftMenuOpen = false
@@ -1051,6 +1088,12 @@ onMounted(async () => {
   await nextTick()
   handleSelectElement('basic-settings', 'basic', 0)
 
+  history.start()
+  window.addEventListener('keydown', history.onKeydown)
+  window.addEventListener('change', commitHistoryInteraction)
+  window.addEventListener('pointerdown', history.beginGesture)
+  window.addEventListener('pointerup', history.endGesture)
+  window.addEventListener('pointercancel', history.endGesture)
   window.addEventListener('beforeunload', localDraft.handleBeforeUnload)
   window.addEventListener('mousemove', handleMouseMove)
   window.addEventListener('click', handleGlobalClick)
@@ -1060,6 +1103,11 @@ onMounted(async () => {
 // 在组件卸载时移除事件监听
 onUnmounted(() => {
   localDraft.handleBeforeUnload()
+  window.removeEventListener('keydown', history.onKeydown)
+  window.removeEventListener('change', commitHistoryInteraction)
+  window.removeEventListener('pointerdown', history.beginGesture)
+  window.removeEventListener('pointerup', history.endGesture)
+  window.removeEventListener('pointercancel', history.endGesture)
   window.removeEventListener('beforeunload', localDraft.handleBeforeUnload)
   window.removeEventListener('mousemove', handleMouseMove)
   window.removeEventListener('click', handleGlobalClick)

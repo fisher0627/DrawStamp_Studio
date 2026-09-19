@@ -30,8 +30,8 @@
               <span>{{ t('studio.extractor.sourcePreview') }}</span>
               <small>{{ sourceSize || t('studio.extractor.waitingUpload') }}</small>
             </div>
-            <div class="source-preview" :class="{ empty: !sourceUrl }">
-              <img v-if="sourceUrl" :src="sourceUrl" :alt="t('studio.extractor.sourcePreview')" />
+            <div :class="{ empty: !sourceUrl }">
+              <ImageCropper v-if="sourceUrl" :source="sourceUrl" @crop="changeCrop" />
               <span v-else>{{ t('studio.extractor.sourcePlaceholder') }}</span>
             </div>
           </div>
@@ -68,7 +68,7 @@
 
           <div class="toggle-grid">
             <label>
-              <input v-model="transparentBackground" type="checkbox" @change="scheduleProcess" />
+              <input v-model="transparentBackground" type="checkbox" />
               <span>{{ t('studio.extractor.transparent') }}</span>
             </label>
             <label>
@@ -91,7 +91,7 @@
               </div>
             </div>
             <div class="result-preview">
-              <img v-if="resultUrl" :src="resultUrl" :alt="t('studio.extractor.resultTitle')" />
+              <ExtractRetouch v-if="resultUrl" :key="retouchRevision" :source="resultUrl" :white="!transparentBackground" @update="retouchedUrl = $event" />
               <span v-else>{{ statusText }}</span>
             </div>
           </div>
@@ -102,7 +102,7 @@
         <p>{{ helperText }}</p>
         <div>
           <button type="button" class="extractor-secondary" @click="close">{{ t('studio.extractor.cancel') }}</button>
-          <button type="button" class="extractor-primary" :disabled="!resultUrl" @click="addToCanvas">
+          <button type="button" class="extractor-primary" :disabled="!resultUrl || isProcessing || !retouchedUrl" @click="addToCanvas">
             {{ t('studio.extractor.replaceCanvas') }}
           </button>
         </div>
@@ -115,6 +115,9 @@
 import { computed, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { extractStampFromFile, type ExtractStampResult } from '../../utils/extractStampImage'
+import ImageCropper from './ImageCropper.vue'
+import ExtractRetouch from './ExtractRetouch.vue'
+import type { StampCrop } from '../../utils/extractStampImage'
 import { DEFAULT_STAMP_RED } from '../../Constants'
 
 const props = defineProps<{
@@ -145,6 +148,11 @@ const edgeEnhance = ref(true)
 const isDraggingOver = ref(false)
 let processTimer = 0
 let isDisposed = false
+let processRevision = 0
+const crop = ref<StampCrop>()
+const retouchedUrl = ref('')
+const retouchRevision = ref(0)
+const changeCrop = (value: StampCrop | undefined) => { crop.value = value; scheduleProcess() }
 
 const sourceSize = computed(() => (
   sourceWidth.value && sourceHeight.value ? `${sourceWidth.value} x ${sourceHeight.value}px` : ''
@@ -202,28 +210,32 @@ const close = () => {
 const process = async () => {
   if (!selectedFile.value || isDisposed) return
 
+  const revision = ++processRevision
   isProcessing.value = true
   errorMessage.value = ''
+  retouchedUrl.value = ''
 
   try {
     const nextResult = await extractStampFromFile(selectedFile.value, {
+      crop: crop.value,
       threshold: threshold.value,
       cleanup: cleanup.value,
       targetColor: targetColor.value,
-      transparentBackground: transparentBackground.value,
+      transparentBackground: true,
       preserveShading: preserveShading.value,
       edgeEnhance: edgeEnhance.value
     })
-    if (isDisposed) return
+    if (isDisposed || revision !== processRevision) return
     result.value = nextResult
+    retouchRevision.value++
   } catch (error) {
-    if (isDisposed) return
+    if (isDisposed || revision !== processRevision) return
     result.value = null
     errorMessage.value = error instanceof Error && error.message.includes('红色印章')
       ? t('studio.extractor.noRedArea')
       : t('studio.extractor.failed')
   } finally {
-    if (!isDisposed) {
+    if (!isDisposed && revision === processRevision) {
       isProcessing.value = false
     }
   }
@@ -231,6 +243,8 @@ const process = async () => {
 
 const scheduleProcess = () => {
   if (isDisposed) return
+  processRevision++
+  isProcessing.value = true
   window.clearTimeout(processTimer)
   processTimer = window.setTimeout(() => {
     void process()
@@ -253,6 +267,10 @@ const applyFile = async (file: File) => {
 
   if (!file) return
 
+  processRevision++
+  window.clearTimeout(processTimer)
+  crop.value = undefined
+  retouchedUrl.value = ''
   selectedFile.value = file
   result.value = null
   errorMessage.value = ''
@@ -286,6 +304,10 @@ const triggerUpload = () => {
 }
 
 const clearResult = () => {
+  processRevision++
+  window.clearTimeout(processTimer)
+  isProcessing.value = false
+  retouchedUrl.value = ''
   result.value = null
   errorMessage.value = ''
 }
@@ -317,9 +339,18 @@ const handleDrop = async (event: DragEvent) => {
   await applyFile(file)
 }
 
-const addToCanvas = () => {
-  if (!result.value) return
-  emit('add-image', result.value)
+const addToCanvas = async () => {
+  if (!result.value || isProcessing.value || !retouchedUrl.value) return
+  let dataUrl = retouchedUrl.value
+  if (!transparentBackground.value) {
+    const image = new Image(); image.src = dataUrl; await image.decode()
+    if (isDisposed) return
+    const canvas = document.createElement('canvas'); canvas.width = image.naturalWidth; canvas.height = image.naturalHeight
+    const ctx = canvas.getContext('2d')!
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.drawImage(image, 0, 0)
+    dataUrl = canvas.toDataURL('image/png')
+  }
+  emit('add-image', { ...result.value, dataUrl })
   close()
 }
 
@@ -327,6 +358,10 @@ onUnmounted(cleanupResources)
 </script>
 
 <style scoped>
+.drop-zone.filled { min-height: 76px; padding: 12px; }
+.drop-zone.filled .drop-mark, .drop-zone.filled .drop-hint { display: none; }
+.result-preview:has(.retouch) { background: var(--studio-panel); }
+
 .extractor-overlay {
   position: fixed;
   inset: 0;

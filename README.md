@@ -8,7 +8,7 @@ A browser-local electronic stamp editor for generating, extracting, editing and 
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-FF0015?style=for-the-badge)](https://wosp.cc.cd/)
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://wosp.cc.cd/)
-[![Version](https://img.shields.io/badge/Version-0.7.1-234c5c?style=for-the-badge)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.8.0-234c5c?style=for-the-badge)](CHANGELOG.md)
 [![Vue 3](https://img.shields.io/badge/Vue-3-42b883?style=for-the-badge&logo=vue.js&logoColor=white)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5-646cff?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-334155?style=for-the-badge)](LICENSE)
@@ -25,7 +25,7 @@ A browser-local electronic stamp editor for generating, extracting, editing and 
 
 DrawStamp Studio 已经从单纯的印章绘制工具，整理成一个完整的在线编辑器：支持常用模板、纸感专业画布、字体选择、图片提取印章、本地自动草稿、模板导入导出，以及 PNG / SVG / JPEG 多格式下载。
 
-当前版本 `0.7.1` 补齐了面向实际任务的中英文说明页，并同步更新 GitHub 文档、站点地图和版本化结构化数据；编辑器的导出、模板预设与本地草稿逻辑继续保持模块化复用。
+当前版本 `0.8.0` 新增完整撤销／重做、提取框选与修边、按毫米和 DPI 导出，以及可备份的本地印章库。所有核心操作仍在浏览器本地完成。
 
 相关文档：
 
@@ -40,7 +40,7 @@ DrawStamp Studio 已经从单纯的印章绘制工具，整理成一个完整的
 
 - [从图片提取透明印章](https://wosp.cc.cd/extract-transparent-stamp)：在浏览器本地清理背景、检查边缘，并导出透明 PNG、SVG 或 JPEG。
 - [圆形印章模板](https://wosp.cc.cd/round-company-seal-template)：从基础圆形或椭圆形样式调整文字、边框、五角星与布局。
-- [SVG 印章导出](https://wosp.cc.cd/svg-stamp-export)：了解 SVG、PNG、JPEG 的适用场景，并保留可缩放的设计稿。
+- [SVG 印章导出](https://wosp.cc.cd/svg-stamp-export)：了解 SVG、PNG、JPEG 的适用场景，并了解当前 SVG 内嵌 PNG 位图的限制。
 
 以上说明仅适用于学习、设计预览和已获授权的使用场景；工具不会核验印章、文件或授权关系。
 
@@ -64,15 +64,17 @@ DrawStamp Studio 更适合这些场景：
 ## 功能特点
 
 - 常用印章模板：支持合同、公章、财务、发票、收讫、业务、报价和空白基础章，并提供分类筛选。
+- 完整撤销与重做：覆盖文字、参数、元素删除、模板切换和提取替换；支持 ⌘/Ctrl Z 与 ⌘/Ctrl Shift Z，连续拖动合并为一步。
+- 本地印章库：使用 IndexedDB 保存命名作品和缩略图，支持搜索、改名、复制、删除恢复与 JSON 备份导入导出。
 - 专业画布编辑：缩放、适配窗口、重置视图、网格背景、纸张背景、透明棋盘格背景。
 - 克制编辑器界面：纸感工作台、标尺网格、蓝色选框、分组工具栏和清晰的底部导出区域。
 - 元素列表管理：公司名称、印章类型、编码、税号、五角星、内圈、图片、线条、SVG 等元素集中管理。
 - 属性面板：基础设置与高级设置分区，按当前选中元素显示对应参数。
 - 字体选择：内置常用中文字体选项，并支持本地打包的华文隶书字体。
-- 图片提取印章：支持拖拽上传图片，本地提取红色印章区域，生成透明 PNG，并可直接替换到画布。
+- 图片提取印章：支持拖拽上传、原图框选后提取、擦除／恢复笔刷和笔画撤销；恢复笔刷找回已擦除的像素，重新提取会重置修边。
 - 模板导入导出：可将当前印章配置保存为 JSON，也可以重新导入继续编辑。
 - 本地自动草稿：编辑状态会保存在当前浏览器，并保留最近 5 个草稿版本，刷新页面后可以继续处理。
-- 导出面板：支持 PNG / SVG / JPEG、多倍导出、白底 PNG、文件名设置、导出预览和高级尺寸设置。
+- 导出面板：支持 PNG / SVG / JPEG、多倍导出、白底 PNG、文件名设置、独立画布预览和毫米＋DPI 导出；PNG/JPEG 写入分辨率信息，SVG 写入物理尺寸。
 - 本地优先：印章生成、图片提取、导出都在浏览器端完成。
 - 中英文界面：根据浏览器语言自动选择中文或英文，也可在页面中手动切换并记住选择。
 - 公开说明页：提供关于项目、隐私政策、服务条款和联系反馈页面，方便 GitHub 与搜索引擎展示。
@@ -234,6 +236,10 @@ src/utils/Draw*.ts
 
 ![导出面板](public/readme-export.png)
 
+### 本地印章库
+
+![本地印章库](public/readme-library.png)
+
 ### 画布细节
 
 ![画布细节](public/readme-canvas-detail.png)
@@ -254,6 +260,18 @@ src/utils/Draw*.ts
 ### 图片提取会上传到服务器吗？
 
 不会。图片提取逻辑在浏览器本地执行，不会主动上传图片。
+
+### 按实际尺寸导出时如何打印？
+
+导出面板启用“按实际尺寸导出”，输入章体毫米尺寸及 72–1200 的整数 DPI。宽高保持等比；图片另含原始每侧 1 mm 的等比留白，像素尺寸按整数取整。打印选择 100% 原始大小，关闭“适应页面”。不同文档软件可能忽略分辨率元数据，插入后应复核物理尺寸。
+
+### SVG 是真正的矢量图吗？
+
+当前导出是内嵌 PNG 位图的 SVG 容器，放大仍会失真，文字不能作为独立矢量元素编辑。继续编辑请保存 JSON 模板或存入本地印章库。
+
+### 本地印章库会跨设备同步吗？
+
+不会。作品保存在当前浏览器和站点地址下；清除站点数据可能删除作品。可下载 JSON 备份，并在另一设备导入。导入备份会新增作品，不覆盖现有作品。
 
 ### 为什么某些字体在不同电脑上显示不同？
 
@@ -282,6 +300,7 @@ npm install --package-lock-only --include=optional
 npm run dev       # 启动本地开发服务
 npm run build     # 构建生产版本
 npm run preview   # 本地预览生产构建
+npm test          # PNG/JPEG 分辨率元数据回归检查
 ```
 
 ## 许可证

@@ -1,7 +1,7 @@
 {
   "name": "drawstamp-studio",
   "private": false,
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "Browser-local online stamp maker and electronic seal editor with image extraction and PNG, SVG, and JPEG export",
   "keywords": [
     "stamp",
@@ -33,6 +33,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && node scripts/prerender-seo.mjs && node scripts/validate-seo-build.mjs",
+    "test": "node --test tests/*.test.mjs",
     "check:seo": "node scripts/validate-seo-build.mjs",
     "preview": "vite preview"
   },

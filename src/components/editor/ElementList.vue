@@ -14,10 +14,7 @@
       </button>
     </div>
     <div class="panel-content">
-      <div v-if="undoLabel" class="undo-toast" role="status" aria-live="polite">
-        <span>{{ t('elementList.undo.deleted', { name: undoLabel }) }}</span>
-        <button type="button" @click="undoDelete">{{ t('elementList.undo.button') }}</button>
-      </div>
+
       <!-- 全部元素 -->
       <div v-show="activeTab === 'all'" class="element-category">
         <div class="element-item"
@@ -447,28 +444,8 @@ const shouldClearSelectionAfterDelete = (elementType: string, index: number) => 
 }
 
 // 删除元素（快照 + 撤销窗口，替代原生 confirm）
-const undoSnapshot = ref<IDrawStampConfig | null>(null)
-const undoLabel = ref('')
-let undoTimer: number | undefined
-
-const buildDeleteLabel = (elementType: string, index: number) => {
-  const map: Record<string, string> = {
-    company: 'company', stampType: 'stampType', code: 'code', taxNumber: 'taxNumber',
-    circle: 'circle', image: 'image', line: 'line', svg: 'svg', star: 'star'
-  }
-  const base = t(`studio.editor.selection.${map[elementType] || 'element'}`)
-  return index > 0 ? `${base} ${index + 1}` : base
-}
-
 const deleteElement = (elementType: string, index: number) => {
   const shouldClearSelection = shouldClearSelectionAfterDelete(elementType, index)
-
-  // 快照用于撤销
-  const currentConfig = stampStore.state.config
-  if (currentConfig) {
-    undoSnapshot.value = JSON.parse(JSON.stringify(currentConfig)) as IDrawStampConfig
-    undoLabel.value = buildDeleteLabel(elementType, index)
-  }
 
   stampStore.updateConfig((config) => {
     if (elementType === 'company' && config.companyList) {
@@ -535,22 +512,6 @@ const deleteElement = (elementType: string, index: number) => {
   emit('updateConfig')
   emit('refresh')
 
-  // 5 秒撤销窗口
-  if (undoTimer) window.clearTimeout(undoTimer)
-  undoTimer = window.setTimeout(() => {
-    undoLabel.value = ''
-    undoSnapshot.value = null
-  }, 5000)
-}
-
-const undoDelete = () => {
-  if (!undoSnapshot.value) return
-  if (undoTimer) window.clearTimeout(undoTimer)
-  stampStore.setConfig(JSON.parse(JSON.stringify(undoSnapshot.value)) as IDrawStampConfig)
-  undoLabel.value = ''
-  undoSnapshot.value = null
-  emit('updateConfig')
-  emit('refresh')
 }
 
 // 暴露给父组件调用，方便右侧面板折叠时同步清空左侧选中状态

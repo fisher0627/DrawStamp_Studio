@@ -6,7 +6,7 @@ DrawStamp Studio is a browser-local electronic stamp workspace for creating, ext
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-FF0015?style=for-the-badge)](https://wosp.cc.cd/)
 [![Cloudflare Pages](https://img.shields.io/badge/Cloudflare-Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://wosp.cc.cd/)
-[![Version](https://img.shields.io/badge/Version-0.7.1-234c5c?style=for-the-badge)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-0.8.0-234c5c?style=for-the-badge)](CHANGELOG.md)
 [![Vue 3](https://img.shields.io/badge/Vue-3-42b883?style=for-the-badge&logo=vue.js&logoColor=white)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5-646cff?style=for-the-badge)](https://vitejs.dev/)
 [![License](https://img.shields.io/badge/License-Apache--2.0-334155?style=for-the-badge)](LICENSE)
@@ -23,13 +23,13 @@ DrawStamp Studio is a browser-local electronic stamp workspace for creating, ext
 
 DrawStamp Studio combines a template library, a canvas editor, browser-local image extraction, automatic local drafts, JSON template import/export, and PNG / SVG / JPEG downloads in one web interface.
 
-Version `0.7.1` adds bilingual, task-focused guides and synchronizes the GitHub documentation, sitemap output, and versioned structured data. The editor continues to use reusable modules for export, template presets, and local drafts.
+Version `0.8.0` adds document undo/redo, crop and retouch tools, physical-size exports with DPI metadata, and a local stamp library with backup and restore. Core editing stays in the browser.
 
 ## Guides
 
 - [Extract a transparent stamp from an image](https://wosp.cc.cd/en/extract-transparent-stamp): clean a background locally, review edges, and export transparent PNG, SVG, or JPEG files.
 - [Round company seal template](https://wosp.cc.cd/en/round-company-seal-template): begin with a round or oval layout, then adjust text, borders, stars, and composition.
-- [Export an SVG stamp design](https://wosp.cc.cd/en/svg-stamp-export): choose between SVG, PNG, and JPEG for scalable designs, transparent previews, and delivery.
+- [Export an SVG stamp design](https://wosp.cc.cd/en/svg-stamp-export): choose between SVG, PNG, and JPEG for transparent previews and delivery; current SVG exports embed a PNG bitmap.
 
 These guides are for learning, design previews, and authorized use only. The tool does not verify seals, documents, or permissions.
 
@@ -182,3 +182,16 @@ Open a [GitHub Issue](https://github.com/fisher0627/DrawStamp_Studio/issues) wit
 ## License
 
 Apache-2.0. See [LICENSE](LICENSE).
+
+## Editing and reuse improvements (0.8.0)
+
+- Undo/redo for document changes, with Cmd/Ctrl Z and Cmd/Ctrl Shift Z. Continuous dragging is grouped into one step. Text inputs retain native text undo.
+- Crop the source image before extraction; erase, restore erased pixels, and undo brush strokes. New extraction settings reset retouch edits.
+- Export proportional stamp sizes in millimeters at 72–1200 integer DPI. PNG/JPEG contain resolution metadata, SVG contains physical dimensions. Output includes scaled 1 mm edge padding on each side. Print at 100% with Fit to page disabled; verify sizing in the destination application.
+- Save named stamps and thumbnails in an IndexedDB library, with search, rename, duplicate, undo delete, and JSON backup/import. Import adds copies and never overwrites existing work. Library data stays in the current browser and origin.
+- Current SVG exports wrap a PNG bitmap; they are not lossless vectors. Keep JSON templates for editing.
+- Run `npm test` for image resolution metadata regression checks.
+
+### Local stamp library
+
+![Local stamp library](public/readme-library.png)

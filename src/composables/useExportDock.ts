@@ -1,6 +1,7 @@
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, onUnmounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { DrawStampUtils } from '../DrawStampUtils'
+import { downloadStampImage } from '../utils/exportImage'
 import type { IDrawStampConfig } from '../DrawStampTypes'
 
 export const MIN_EXPORT_SIZE = 100
@@ -14,7 +15,8 @@ export type ExportScale = 1 | 2 | 3 | 4
  * 导出相关的共享状态与逻辑（底部快速导出 dock + 导出格式弹窗共用）
  */
 export function useExportDock(getUtils: () => DrawStampUtils | null) {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
+  const tr = (zh: string, en: string) => locale.value === 'zh' ? zh : en
 
   const showFormatDialog = ref(false)
   const selectedFormat = ref<ExportFormat>('png')
@@ -28,6 +30,41 @@ export function useExportDock(getUtils: () => DrawStampUtils | null) {
   const exportFilename = ref('')
   const exportPreviewUrl = ref('')
   const selectedRatio = ref<ExportRatio>('original')
+
+  const physicalMode = ref(false)
+  const physicalWidth = ref(40)
+  const physicalHeight = ref(40)
+  const dpi = ref(300)
+  const exportError = ref('')
+  const exporting = ref(false)
+  const physicalError = computed(() => {
+    if (!physicalMode.value) return ''
+    const config = getUtils()?.getDrawConfigs()
+    if (!config) return ''
+    const width = physicalWidth.value * (config.width + 2) / config.width * dpi.value / 25.4
+    const height = physicalHeight.value * (config.height + 2) / config.height * dpi.value / 25.4
+    if (![physicalWidth.value, physicalHeight.value, dpi.value].every(Number.isFinite) || physicalWidth.value <= 0 || physicalHeight.value <= 0 || !Number.isInteger(dpi.value) || dpi.value < 72 || dpi.value > 1200) return tr('请输入有效尺寸及 72–1200 DPI。', 'Enter a valid size and 72–1200 DPI.')
+    if (width < 1 || height < 1 || width > MAX_EXPORT_SIZE || height > MAX_EXPORT_SIZE) return tr('此尺寸超出 1–4096 像素，请降低尺寸或 DPI。', 'Output exceeds 1–4096 pixels. Reduce size or DPI.')
+    return ''
+  })
+  const physicalSummary = computed(() => tr(`章体 ${physicalWidth.value} × ${physicalHeight.value} mm · ${dpi.value} DPI（另含边缘留白）`, `Stamp ${physicalWidth.value} × ${physicalHeight.value} mm · ${dpi.value} DPI (plus edge padding)`))
+  const applyPhysicalSize = (axis: 'width' | 'height' = 'width') => {
+    const config = getUtils()?.getDrawConfigs()
+    if (!config) return
+    if (axis === 'width') physicalHeight.value = Number((physicalWidth.value * config.height / config.width).toFixed(3))
+    else physicalWidth.value = Number((physicalHeight.value * config.width / config.height).toFixed(3))
+    if (physicalError.value) return
+    exportWidth.value = Math.round(physicalWidth.value * (config.width + 2) / config.width * dpi.value / 25.4)
+    exportHeight.value = Math.round(physicalHeight.value * (config.height + 2) / config.height * dpi.value / 25.4)
+    void refreshExportPreview()
+  }
+  const setPhysicalMode = () => {
+    if (physicalMode.value) {
+      const config = getUtils()?.getDrawConfigs()
+      if (config) { physicalWidth.value = config.width; physicalHeight.value = config.height }
+      applyPhysicalSize()
+    } else { resetExportSize() }
+  }
 
   let exportPreviewRequestId = 0
 
@@ -48,7 +85,7 @@ export function useExportDock(getUtils: () => DrawStampUtils | null) {
   })
 
   const exportSummary = computed(() => {
-    return `${selectedFormat.value.toUpperCase()} · ${selectedScale.value}x · ${exportSizeLabel.value}`
+    return `${selectedFormat.value.toUpperCase()} · ${physicalMode.value ? `${dpi.value} DPI` : `${selectedScale.value}x`} · ${exportSizeLabel.value}`
   })
 
   const exportBackgroundLabel = computed(() => {
@@ -110,8 +147,10 @@ export function useExportDock(getUtils: () => DrawStampUtils | null) {
     const utils = getUtils()
     if (!utils) return
     const requestId = ++exportPreviewRequestId
-    const width = clampExportSize(exportWidth.value, Math.round(defaultExportWidth.value) || MIN_EXPORT_SIZE)
-    const height = clampExportSize(exportHeight.value, Math.round(defaultExportHeight.value) || MIN_EXPORT_SIZE)
+    await new Promise(resolve => setTimeout(resolve, 100))
+    if (requestId !== exportPreviewRequestId) return
+    const width = physicalMode.value ? exportWidth.value : clampExportSize(exportWidth.value, Math.round(defaultExportWidth.value) || MIN_EXPORT_SIZE)
+    const height = physicalMode.value ? exportHeight.value : clampExportSize(exportHeight.value, Math.round(defaultExportHeight.value) || MIN_EXPORT_SIZE)
     try {
       let previewUrl = await utils.getStampImageBase64(
         selectedFormat.value === 'jpeg' ? 'jpeg' : 'png',
@@ -172,19 +211,16 @@ export function useExportDock(getUtils: () => DrawStampUtils | null) {
     refreshExportDefaults()
   }
 
-  const quickExportFromDock = () => {
-    const utils = getUtils()
-    if (!utils) return
+  const quickExportFromDock = async () => {
+    if (exporting.value) return
+    physicalMode.value = false
+    selectedFormat.value = 'png'
     refreshExportDefaults()
-    const width = clampExportSize(exportWidth.value, Math.round(defaultExportWidth.value) || MIN_EXPORT_SIZE)
-    const height = clampExportSize(exportHeight.value, Math.round(defaultExportHeight.value) || MIN_EXPORT_SIZE)
-    utils.saveStampAsPNG('png', 0.92, Math.round(width), Math.round(height), {
-      filenameBase: exportFilename.value || buildExportFilename(utils.getDrawConfigs()),
-      background: useWhitePngBackground.value ? 'white' : 'transparent'
-    })
+    await confirmExport(false)
   }
 
   const applyRatio = (ratio: ExportRatio) => {
+    physicalMode.value = false
     selectedRatio.value = ratio
     if (ratio === 'custom') {
       refreshExportPreview()
@@ -204,6 +240,7 @@ export function useExportDock(getUtils: () => DrawStampUtils | null) {
   }
 
   const applyExportScale = (scale: ExportScale) => {
+    physicalMode.value = false
     if (!defaultExportWidth.value || !defaultExportHeight.value) {
       refreshExportDefaults()
     }
@@ -244,6 +281,8 @@ export function useExportDock(getUtils: () => DrawStampUtils | null) {
     const baseSize = utils.getExportBaseSize()
     defaultExportWidth.value = Math.round(baseSize.width)
     defaultExportHeight.value = Math.round(baseSize.height)
+    physicalMode.value = false
+    exportError.value = ''
     resetExportSize()
     selectedFormat.value = 'png'
     jpegQuality.value = 92
@@ -258,20 +297,26 @@ export function useExportDock(getUtils: () => DrawStampUtils | null) {
     showFormatDialog.value = false
   }
 
-  const confirmExport = async () => {
-    closeFormatDialog()
-
+  const confirmExport = async (closeAfter = true) => {
     const utils = getUtils()
-    if (!utils) return
-    const width = clampExportSize(exportWidth.value, Math.round(defaultExportWidth.value) || MIN_EXPORT_SIZE)
-    const height = clampExportSize(exportHeight.value, Math.round(defaultExportHeight.value) || MIN_EXPORT_SIZE)
-    const quality = selectedFormat.value === 'jpeg' ? jpegQuality.value / 100 : 0.92
-
-    // 执行下载
-    utils.saveStampAsPNG(selectedFormat.value, quality, Math.round(width), Math.round(height), {
-      filenameBase: exportFilename.value || buildExportFilename(utils.getDrawConfigs()),
-      background: selectedFormat.value === 'png' && useWhitePngBackground.value ? 'white' : 'transparent'
-    })
+    if (!utils || exporting.value || physicalError.value) return
+    exporting.value = true; exportError.value = ''
+    // Snapshot options before awaiting image decoding.
+    const format = selectedFormat.value
+    const resolution = physicalMode.value ? dpi.value : undefined
+    const width = physicalMode.value ? exportWidth.value : clampExportSize(exportWidth.value, defaultExportWidth.value)
+    const height = physicalMode.value ? exportHeight.value : clampExportSize(exportHeight.value, defaultExportHeight.value)
+    const white = format === 'png' && useWhitePngBackground.value
+    const filename = exportFilename.value || buildExportFilename(utils.getDrawConfigs())
+    try {
+      let data = await utils.getStampImageBase64(format === 'jpeg' ? 'jpeg' : 'png', jpegQuality.value / 100, Math.round(width), Math.round(height))
+      if (white) data = await addWhiteBackgroundToDataUrl(data)
+      await downloadStampImage(data, format, filename, resolution)
+      if (closeAfter) closeFormatDialog()
+    } catch {
+      exportError.value = tr('导出失败，请检查图片和字体后重试。', 'Export failed. Check images and fonts, then retry.')
+      showFormatDialog.value = true
+    } finally { exporting.value = false }
   }
 
   watch([selectedFormat, jpegQuality, useWhitePngBackground], () => {
@@ -280,7 +325,10 @@ export function useExportDock(getUtils: () => DrawStampUtils | null) {
     }
   })
 
+  onUnmounted(() => { exportPreviewRequestId++ })
+
   return reactive({
+    physicalMode, physicalWidth, physicalHeight, dpi, physicalError, physicalSummary, applyPhysicalSize, setPhysicalMode, exportError, exporting,
     showFormatDialog,
     selectedFormat,
     jpegQuality,

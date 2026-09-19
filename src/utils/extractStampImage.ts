@@ -1,4 +1,7 @@
+export type StampCrop = { x: number; y: number; width: number; height: number }
+
 export type ExtractStampOptions = {
+  crop?: StampCrop
   threshold: number
   cleanup: number
   targetColor: string
@@ -256,9 +259,14 @@ const getBounds = (mask: Uint8Array, width: number, height: number) => {
 
 export async function extractStampFromFile(file: File, options: ExtractStampOptions): Promise<ExtractStampResult> {
   const bitmap = await createImageBitmap(file)
-  const scale = Math.min(1, MAX_SOURCE_SIZE / Math.max(bitmap.width, bitmap.height))
-  const width = Math.max(1, Math.round(bitmap.width * scale))
-  const height = Math.max(1, Math.round(bitmap.height * scale))
+  const crop = options.crop
+  const sx = crop ? clamp(Math.floor(crop.x), 0, bitmap.width - 1) : 0
+  const sy = crop ? clamp(Math.floor(crop.y), 0, bitmap.height - 1) : 0
+  const sw = crop ? clamp(Math.round(crop.width), 1, bitmap.width - sx) : bitmap.width
+  const sh = crop ? clamp(Math.round(crop.height), 1, bitmap.height - sy) : bitmap.height
+  const scale = Math.min(1, MAX_SOURCE_SIZE / Math.max(sw, sh))
+  const width = Math.max(1, Math.round(sw * scale))
+  const height = Math.max(1, Math.round(sh * scale))
 
   const sourceCanvas = document.createElement('canvas')
   sourceCanvas.width = width
@@ -269,7 +277,7 @@ export async function extractStampFromFile(file: File, options: ExtractStampOpti
     throw new Error('Canvas is not available')
   }
 
-  sourceCtx.drawImage(bitmap, 0, 0, width, height)
+  sourceCtx.drawImage(bitmap, sx, sy, sw, sh, 0, 0, width, height)
   bitmap.close()
 
   const imageData = sourceCtx.getImageData(0, 0, width, height)
